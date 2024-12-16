@@ -1,0 +1,12 @@
+# Chuẩn hóa ký tự xuống dòng cho tệp văn bản
+* text=auto
+
+# Sử dụng bộ lọc cho các tệp hình ảnh lớn
+*.jpg filter=lfs
+*.png filter=lfs
+
+# Định nghĩa cách xử lý diff đặc biệt cho tệp properties
+*.properties diff=properties
+
+# Thiết lập UTF-8 cho tệp nguồn Java
+*.java text eol=lf charset=utf-8

@@ -1,0 +1,22 @@
+# Ignore các tệp biên dịch và thư mục build
+*.class
+*.war
+*.jar
+/target/
+
+# Ignore tệp cấu hình môi trường và nhật ký
+*.env
+*.log
+
+# Ignore thư mục cài đặt IDE và các tệp hệ thống
+/.idea/
+/.vscode/
+/*.iml
+.DS_Store
+
+# Ignore tệp bộ nhớ đệm của các hệ điều hành
+Thumbs.db
+
+# Ignore các thư mục và tệp tài nguyên tạm thời
+/tmp/
+/*.temp

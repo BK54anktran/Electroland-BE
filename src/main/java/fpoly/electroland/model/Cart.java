@@ -1,0 +1,36 @@
+package fpoly.electroland.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table
+public class Cart {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	int id;
+
+	@Column(nullable = false)
+	int quantity;
+
+	@Column(nullable = true, columnDefinition = "nvarchar(225)")
+	String description;
+
+	@Column(nullable = true)
+	Boolean status;
+
+	@ManyToOne
+	@JoinColumn(name = "idProduct", nullable = false)
+	Product product;
+
+	@ManyToOne
+	@JoinColumn(name = "idCustomer", nullable = false)
+	Customer customer;
+
+}

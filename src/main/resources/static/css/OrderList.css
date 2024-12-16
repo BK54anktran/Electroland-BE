@@ -1,0 +1,63 @@
+body {
+    background-color: #F0F3F7;
+}
+/* Style for input and dropdown icon */
+.input-group {
+    width: 500px;
+    position: relative;
+}
+
+/* Style for the dropdown filter container */
+#dropdownFilters {
+    position: absolute; /* Cố định vị trí tương đối với cha */
+    top: 100%; /* Đặt ngay bên dưới input */
+    left: 0;
+    z-index: 1050; /* Đảm bảo nằm trên các phần tử khác */
+    width: 100%; /* Cùng chiều rộng với input-group */
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0 0 5px 5px;
+    padding: 15px;
+    display: none; /* Ban đầu ẩn */
+}
+
+#dropdownFilters.show {
+    display: block; /* Hiển thị khi mở */
+}
+
+#filterContainer {
+    gap: 8px; /* Tạo khoảng cách đều giữa các nút và input */
+}
+
+.btn-custom {
+    margin-right: 5px; /* Giảm khoảng cách giữa các nút */
+}
+
+.date-picker-container {
+    position: relative;
+    width: 100%;
+}
+.date-picker-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #495057;
+    transition: all 0.3s ease;
+}
+.date-picker-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, .5);
+}
+.date-picker-label {
+    position: absolute;
+    top: -8px;
+    left: 15px;
+    background-color: white;
+    padding: 0 5px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: bold;
+}

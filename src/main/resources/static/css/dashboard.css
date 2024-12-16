@@ -1,0 +1,200 @@
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    body{
+            background-color: #F0F3F7;
+        font-family: Arial, sans-serif;
+        
+    }
+    .main-container {
+        min-height: 100vh; /* Đảm bảo bao phủ toàn bộ chiều cao màn hình */
+    }
+    
+
+    .dashboard-content {
+        flex-grow: 1; /* Chiếm không gian còn lại */
+        padding: 20px;
+        background-color: #f5f5f5; /* Thêm màu nền để kiểm tra */
+    }
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .filter-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        display: flex;
+        align-items: center; /* Canh giữa theo chiều dọc */
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .filter-icon {
+        margin-right: 8px;
+        font-size: 20px; /* Kích thước biểu tượng */
+    }
+    
+    .filter-text {
+        font-size: 16px;
+        color: #333;
+        margin-right: auto; /* Đẩy phần văn bản sang trái */
+    }
+    
+    .filter-date {
+        font-size: 12px;
+        color: #888;
+        margin-left: 10px; /* Khoảng cách giữa ngày và văn bản */
+        white-space: nowrap; /* Ngăn văn bản xuống dòng */
+    }
+    .top-cards {
+        display: flex;
+        gap: 40px;
+        margin-bottom: 20px;
+        flex-wrap: wrap; /* Cho phép các card xuống dòng nếu không đủ không gian */
+    }
+    
+    .card {
+        flex: 2 2 200px; /* Thay đổi chiều rộng tối thiểu cho card */
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    
+    .icon1 {
+        background-color: #e6f9f0; /* Màu nền icon */
+        padding: 15px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+    }
+    .info {
+        margin-left: 15px;
+    }
+    .number {
+        font-size: 36px;
+        font-weight: bold;
+        color: #333; /* Màu chữ số */
+    }
+    .description {
+        font-size: 16px;
+        color: #666; /* Màu mô tả */
+    }
+    .growth {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #2c8f4b; /* Màu xanh cho biểu thị tăng trưởng */
+        display: flex;
+        align-items: center;
+    }
+    .growth::before {
+    content: '↑';
+    margin-right: 3px;
+    }
+    .charts-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Khoảng cách giữa các biểu đồ */
+    flex-wrap: wrap; /* Cho phép các biểu đồ quấn lại trên màn hình nhỏ */
+    margin: 20px 0; /* Thêm khoảng cách xung quanh phần này */
+    }
+        
+    .pie-chart, .order-chart {
+    flex: 1; /* Cho phép các biểu đồ phát triển và chiếm không gian bằng nhau */
+    margin: 5px; /* Khoảng cách xung quanh mỗi biểu đồ */
+    min-width: 300px; /* Đặt chiều rộng tối thiểu cho mỗi biểu đồ */
+    background-color: #ffffff;
+    border-radius: 20px;
+    
+    }
+        
+    .pie-chart h4, .order-chart h4 {
+    text-align: center; /* Canh giữa tiêu đề biểu đồ */
+    margin-bottom: 15px; /* Khoảng cách bên dưới tiêu đề */
+    }
+        
+    .pie-chart p {
+    margin-top: 50px;
+    font-size: 20px;
+    color: #333;
+    }
+    .revenue-customer-charts {
+        display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Khoảng cách giữa các biểu đồ */
+    flex-wrap: wrap; /* Cho phép các biểu đồ quấn lại trên màn hình nhỏ */
+    margin: 20px 0; /* Thêm khoảng cách xung quanh phần này */
+    }
+    .revenue-chart,
+    .customer-map-chart {
+    background-color: #fff; /* White background for the cards */
+    border-radius: 20px; /* Rounded corners */
+    margin: 5px;
+    flex: 1; /* Make the cards flexible */
+    }
+    .revenue-chart h4,
+    .customer-map-chart h4 {
+        text-align: center; /* Canh giữa tiêu đề biểu đồ */
+        margin-bottom: 15px; /* Khoảng cách bên dưới tiêu đề */
+    }
+    .revenue-customer-charts canvas {
+        width: 100% !important; /* Make the canvas responsive */
+        height: auto !important; /* Maintain aspect ratio */
+    }
+    .customer-map-chart {
+        display: flex;
+        flex-direction: column; /* Stack elements vertically */
+    }
+    
+    .customer-map-chart h4 {
+        margin-bottom: 15px; /* Space below the heading */
+    }
+    .customer-review {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    
+    .review-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    
+    .review-card {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 40%; /* Điều chỉnh kích thước thẻ */
+    }
+    
+    .review-content {
+        flex: 1;
+    }
+    
+    .product-image {
+        width: 100px;
+        height: auto;
+        margin-left: 15px;
+    }
+    .rating{
+        color: #F7C604;
+    }
