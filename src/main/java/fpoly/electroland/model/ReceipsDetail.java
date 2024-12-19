@@ -33,6 +33,6 @@ public class ReceipsDetail {
 	private Product product;
 
 	@ManyToOne
-	@JoinColumn(name = "idOder", nullable = false)
+	@JoinColumn(name = "idReceips", nullable = false)
 	private Receips receips;
 }

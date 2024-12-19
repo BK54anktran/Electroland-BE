@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 import fpoly.electroland.service.ProductService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
+@CrossOrigin("*")
 public class ProductRest {
 
     @Autowired
@@ -16,7 +18,7 @@ public class ProductRest {
 
     @GetMapping("/product")
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
-        if (id != 0) {
+        if (id == 0) {
             return productService.getProduct();
         }
         return productService.getProduct(id);

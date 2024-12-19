@@ -30,7 +30,7 @@ public class CustomerCoupon {
 	Customer customer;
 
 	@ManyToOne
-	@JoinColumn(name = "idOderCoupon", nullable = true)
+	@JoinColumn(name = "idReceipsCoupon", nullable = true)
 	ReceipsCoupon receipsCoupon;
 
 	@ManyToOne
