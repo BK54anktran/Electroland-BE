@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Receips {
+public class Receipt {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Receips {
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	@Column(nullable = false)
-	private Date receipsDate = new Date();
+	private Date receiptDate = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -44,15 +44,15 @@ public class Receips {
 
 	@ManyToOne
 	@JoinColumn(name = "idStatus", nullable = true)
-	private ReceipsStatus receipsStatus;
+	private ReceiptStatus receiptStatus;
 
 	@ManyToOne
 	@JoinColumn(name = "idPayment", nullable = false)
 	private Payment payment;
 
 	@ManyToOne
-	@JoinColumn(name = "idReceipsCoupon", nullable = true)
-	private ReceipsCoupon ReceipsCoupon;
+	@JoinColumn(name = "idReceiptCoupon", nullable = true)
+	private ReceiptCoupon ReceiptCoupon;
 
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReceipsDetail {
+public class ReceiptDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +33,6 @@ public class ReceipsDetail {
 	private Product product;
 
 	@ManyToOne
-	@JoinColumn(name = "idReceips", nullable = false)
-	private Receips receips;
+	@JoinColumn(name = "idReceipt", nullable = false)
+	private Receipt receipt;
 }
