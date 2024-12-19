@@ -31,7 +31,7 @@ public class CustomerCoupon {
 
 	@ManyToOne
 	@JoinColumn(name = "idOderCoupon", nullable = true)
-	OrderCoupon orderCoupon;
+	ReceipsCoupon receipsCoupon;
 
 	@ManyToOne
 	@JoinColumn(name = "idProductCoupon", nullable = true)

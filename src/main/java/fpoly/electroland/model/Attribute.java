@@ -15,11 +15,10 @@ public class Attribute {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
+	@Column(nullable = false, columnDefinition = "nvarchar(225)")
 	String name;
 
 	Double AttributePrice = 0.0;
-
-	@Column(nullable = false, columnDefinition = "nvarchar(225)")
 
 	@ManyToOne
 	@JoinColumn(name = "idProductAtt", nullable = false)

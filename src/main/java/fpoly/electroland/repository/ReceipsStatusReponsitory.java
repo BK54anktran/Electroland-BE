@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.OrderDetail;
+import fpoly.electroland.model.ReceipsStatus;
 
 @Repository
-public interface OrderDetailReponsitory extends JpaRepository<OrderDetail, Integer> {
+public interface ReceipsStatusReponsitory extends JpaRepository<ReceipsStatus, Integer> {
 
 }

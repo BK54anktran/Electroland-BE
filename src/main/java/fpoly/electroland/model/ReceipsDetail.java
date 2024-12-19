@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDetail {
+public class ReceipsDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +34,5 @@ public class OrderDetail {
 
 	@ManyToOne
 	@JoinColumn(name = "idOder", nullable = false)
-	private Order order;
+	private Receips receips;
 }

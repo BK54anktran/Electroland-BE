@@ -3,12 +3,12 @@ package fpoly.electroland.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fpoly.electroland.repository.OrderDetailReponsitory;
+import fpoly.electroland.repository.ReceipsReponsitory;
 
 @Service
-public class OrderDetailService {
+public class ReceipsService {
 
     @Autowired
-    OrderDetailReponsitory orderDetailReponsitory;
+    ReceipsReponsitory receipsReponsitory;
 
 }

@@ -18,6 +18,7 @@ public class ProductAttribute {
 	@Column(nullable = false, columnDefinition = "nvarchar(225)")
 	String name;
 
+	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
 }

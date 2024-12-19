@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderCoupon {
+public class ReceipsCoupon {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class OrderCoupon {
 	Double maxDiscount;
 
 	@Column(nullable = true)
-	Double minOrderPrice;
+	Double minReceipsPrice;
 
 	@Column(columnDefinition = "nvarchar(225)", nullable = true)
 	String description;
