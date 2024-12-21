@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,4 +34,21 @@ public class Employee {
 
 	@Column(nullable = true)
 	Boolean status = true;
+
+	@OneToMany(mappedBy = "employee")
+	private List<EmployeeAuthority> employeeAuthority;
+
+	@Override
+	public String toString() {
+		return "Employee{" +
+				"id=" + id +
+				", fullName='" + fullName + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", role='" + role + '\'' +
+				", email='" + email + '\'' +
+				", password='" + password + '\'' +
+				", status=" + status +
+				'}';
+	}
+
 }

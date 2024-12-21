@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,4 +42,13 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "idSupplier", nullable = false)
 	Supplier supplier;
+
+	@OneToMany(mappedBy = "product")
+	List<ProductColor> productColors;
+
+	@OneToMany(mappedBy = "product")
+	List<ProductImg> productImgs;
+
+	@OneToMany(mappedBy = "product")
+	List<ProductAttribute> productAttributes;
 }

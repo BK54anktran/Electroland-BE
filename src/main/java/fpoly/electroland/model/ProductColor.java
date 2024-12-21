@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +20,7 @@ public class ProductColor {
 
 	Double colorPrice = 0.0;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;

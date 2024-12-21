@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class ProductImg {
 	@Column(columnDefinition = "varchar(225)", nullable = false)
 	String link;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;

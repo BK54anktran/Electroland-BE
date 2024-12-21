@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class Attribute {
 
 	Double AttributePrice = 0.0;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "idProductAtt", nullable = false)
 	ProductAttribute productAttribute;
