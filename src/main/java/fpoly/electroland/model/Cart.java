@@ -33,4 +33,11 @@ public class Cart {
 	@JoinColumn(name = "idCustomer", nullable = false)
 	Customer customer;
 
+	@Override
+	public String toString() {
+		return "Cart [id=" + id + ", quantity=" + quantity + ", description=" + description + ", status=" + status
+				+ ", product=" + product.getId() + ", customer=" + customer.getId() + "]";
+	}
+
+
 }
