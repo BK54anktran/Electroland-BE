@@ -14,7 +14,7 @@ public class EmployeeService {
     @Autowired
     EmployeeReponsitory employeeReponsitory;
 
-    public Optional<Employee> getUser(String email) {
+    public Optional<Employee> getEmployee(String email) {
         Optional<Employee> employee = employeeReponsitory.findByEmail(email);
         return employee;
     }

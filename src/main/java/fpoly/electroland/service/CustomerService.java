@@ -14,8 +14,22 @@ public class CustomerService {
     @Autowired
     CustomerReponsitory customerReponsitory;
 
+    @Autowired
+    TypeCustomerService typeCustomerService;
+
     public Optional<Customer> getCustomer(String email) {
         return customerReponsitory.findByEmail(email);
+    }
+
+    public Optional<Customer> getCustomer(Integer id) {
+        return customerReponsitory.findById(id);
+    }
+
+    public Customer createCustomer(Customer customer) {
+        customer.setTypeCustomer(typeCustomerService.getTypeCustomer(1));
+        customer.setAvatar("");
+        customer.setStatus(true);
+        return customerReponsitory.save(customer);
     }
 
 }

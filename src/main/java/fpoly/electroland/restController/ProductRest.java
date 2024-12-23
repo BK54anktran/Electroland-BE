@@ -20,6 +20,7 @@ public class ProductRest {
 
     @GetMapping("/product")
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
+        userService.getUser();
         if (id == 0) {
             return productService.getProduct();
         }

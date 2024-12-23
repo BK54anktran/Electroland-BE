@@ -30,7 +30,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> Endpoint = Set.of("/login");
+        Set<String> Endpoint = Set.of("/login", "/product");
         jwtRequestFilter.setEndpoints(Endpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login").permitAll() // Mở quyền truy cập cho API đăng nhập
                             .requestMatchers("/admin/**").hasAnyAuthority("Admin") // Quyền hạn khác
-                            .requestMatchers("/product").authenticated()
                             .anyRequest().permitAll(); // Yêu cầu xác thực với các request khác
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

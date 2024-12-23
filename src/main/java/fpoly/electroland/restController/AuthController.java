@@ -1,43 +1,47 @@
 package fpoly.electroland.restController;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.User;
-import fpoly.electroland.util.JwtUtil;
+import fpoly.electroland.service.CustomerService;
+import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.UserService;
 
 @RestController
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    UserService userService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    CustomerService customerService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @PostMapping("admin/login")
-    public String authenticateAdmin(@RequestBody User user) throws AuthenticationException {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        return jwtUtil.generateToken(user.getUsername());
+    public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
+        return employeeService.getEmployee(user.getEmail()).isPresent()
+                ? userService.authentication_getData(user.getEmail(), user.getPassword())
+                : "Not Found";
     }
 
     @PostMapping("/login")
-    public Map<String, String> authenticate(@RequestBody User user) throws AuthenticationException {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        User user2 = (User) authentication.getPrincipal();
-        Map<String, String> user_Login = new HashMap<>();
-        user_Login.put("token", jwtUtil.generateToken(user.getUsername()));
-        user_Login.put("userName", user2.getName());
-        System.out.println(user2.getName());
-        return user_Login;
+    public Object authenticate(@RequestBody User user) throws AuthenticationException {
+        return customerService.getCustomer(user.getEmail()).isPresent()
+                ? userService.authentication_getData(user.getEmail(), user.getPassword())
+                : "Not Found";
+    }
+
+    @PostMapping("/register")
+    public Object register(@RequestBody Customer customer) throws AuthenticationException {
+        if (!customerService.getCustomer(customer.getEmail()).isPresent()) {
+            customerService.createCustomer(customer);
+            return userService.authentication_getData(customer.getEmail(), customer.getPassword());
+        }
+        return "Exist";
     }
 }

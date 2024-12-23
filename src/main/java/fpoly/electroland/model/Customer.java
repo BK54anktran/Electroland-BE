@@ -3,6 +3,7 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import fpoly.electroland.service.TypeCustomerService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +21,20 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
+
+	public Customer(String fullName,
+			Date dateOfBirth,
+			String phoneNumber,
+			Boolean gender,
+			String email,
+			String password) {
+		this.fullName = fullName;
+		this.dateOfBirth = dateOfBirth;
+		this.phoneNumber = phoneNumber;
+		this.gender = gender;
+		this.email = email;
+		this.password = password;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

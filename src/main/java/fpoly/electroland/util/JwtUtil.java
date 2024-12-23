@@ -11,12 +11,14 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private static String SECRET_KEY;
+    private static String SECRET_KEY = "YfEFxZSwggJkuYXcd6+2qLJpvoQo6Th2kvnScSx1b4U=";
 
-    static {
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Tạo khóa bảo mật đủ mạnh
-        SECRET_KEY = Encoders.BASE64.encode(key.getEncoded());
-    }
+    // static {
+    // Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Tạo khóa bảo mật đủ
+    // mạnh
+    // SECRET_KEY = Encoders.BASE64.encode(key.getEncoded());
+    // System.out.println(SECRET_KEY);
+    // }
 
     @SuppressWarnings("deprecation")
     public String generateToken(String username) {
@@ -30,11 +32,16 @@ public class JwtUtil {
 
     @SuppressWarnings("deprecation")
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            throw new JwtException("signature does not match");
+        }
+
     }
 
     public boolean validateToken(String token, String username) {
@@ -44,11 +51,15 @@ public class JwtUtil {
 
     @SuppressWarnings("deprecation")
     private boolean isTokenExpired(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration()
-                .before(new Date());
+        try {
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration()
+                    .before(new Date());
+        } catch (JwtException e) {
+            throw new JwtException("Token expired");
+        }
     }
 }

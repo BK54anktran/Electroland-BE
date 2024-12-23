@@ -45,8 +45,8 @@ public class UserDetailsService_Custom implements UserDetailsService {
                 .getRequest();
         String requestUrl = request.getRequestURL().toString();
 
-        if (requestUrl.contains("admin")) {
-            Optional<Employee> userInfo = employeeService.getUser(email);
+        if (requestUrl.startsWith("/admin")) {
+            Optional<Employee> userInfo = employeeService.getEmployee(email);
             if (userInfo.isPresent()) {
                 List<GrantedAuthority> authorities = userInfo.get().getEmployeeAuthority().stream()
                         .map(role -> new SimpleGrantedAuthority(role.getAuthority().getName())) // Chuyển các

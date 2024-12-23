@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (JwtException e) {
+                throw e;
+            }
         }
 
         // Xác thực nếu username không null và chưa được xác thực trước đó
