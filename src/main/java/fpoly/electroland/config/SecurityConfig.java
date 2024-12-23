@@ -14,8 +14,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import fpoly.electroland.util.JwtRequestFilter;
-
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import java.util.Set;
 
 @Configuration
 public class SecurityConfig {
@@ -28,19 +29,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
+        Set<String> Endpoint = Set.of("/login");
+        jwtRequestFilter.setEndpoints(Endpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login").permitAll() // Mở quyền truy cập cho API đăng nhập
                             .requestMatchers("/admin/**").hasAnyAuthority("Admin") // Quyền hạn khác
-                            .requestMatchers("/product").permitAll()
+                            .requestMatchers("/product").authenticated()
                             .anyRequest().permitAll(); // Yêu cầu xác thực với các request khác
                 })
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -58,6 +59,7 @@ public class SecurityConfig {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);
+
         return new CorsFilter(source);
     }
 
