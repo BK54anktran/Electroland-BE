@@ -27,4 +27,12 @@ public class CartProductAttribute {
     @ManyToOne
     @JoinColumn(name = "idAttribute")
     Attribute attribute;
+
+    @Override
+    public String toString() {
+        return "CartProductAttribute [id=" + id + ", cart=" + cart.id + ", productColor=" + productColor.id + ", attribute="
+                + attribute.id + "]";
+    }
+
+    
 }

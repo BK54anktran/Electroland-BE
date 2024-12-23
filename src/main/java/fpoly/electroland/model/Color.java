@@ -17,4 +17,5 @@ public class Color {
 
 	@Column(columnDefinition = "nvarchar(225)", nullable = false)
 	String nameColor;
+	
 }

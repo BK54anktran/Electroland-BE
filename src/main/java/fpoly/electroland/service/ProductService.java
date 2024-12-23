@@ -21,10 +21,7 @@ public class ProductService {
 
     public Product getProduct(int id) {
         Optional<Product> product = productReponsitory.findById(id);
-        if (product.isPresent()) {
-            return product.get();
-        }
-        return null;
+        return product.get() !=null ? product.get():null;
     }
 
 }

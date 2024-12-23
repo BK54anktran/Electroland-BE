@@ -2,15 +2,29 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fpoly.electroland.model.Attribute;
 import fpoly.electroland.model.Cart;
+import fpoly.electroland.model.CartProductAttribute;
+import fpoly.electroland.model.Color;
 import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.Product;
+import fpoly.electroland.model.ProductColor;
 import fpoly.electroland.model.User;
+import fpoly.electroland.repository.ProductColorReponsitory;
+import fpoly.electroland.service.AttributeService;
+import fpoly.electroland.service.CartProductAttributeService;
 import fpoly.electroland.service.CartService;
+import fpoly.electroland.service.ColorService;
 import fpoly.electroland.service.CustomerService;
+import fpoly.electroland.service.ProductColorService;
 import fpoly.electroland.service.ProductService;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +51,18 @@ public class ProductRest {
     @Autowired
     CustomerService customerService;
 
+    @Autowired
+    ColorService colorService;
+
+    @Autowired
+    AttributeService attributeService;
+
+    @Autowired
+    CartProductAttributeService cartProductAttributeService;
+
+    @Autowired
+    ProductColorService productColorService;
+
     @GetMapping("/product")
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,41 +75,70 @@ public class ProductRest {
     }
 
     @PostMapping("/cart")
-    public String postMethodName(@RequestBody String entity) {
+    public String postToCart(@RequestBody Object entity) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        try {
-            // Chuyển chuỗi JSON thành Map
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> cartData = objectMapper.readValue(entity, Map.class);
 
-            // In ra từng giá trị trong Map
-            Integer productId = (Integer) cartData.get("productId");
-            Map<String, String> values = (Map<String, String>) cartData.get("values");
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.valueToTree(entity);
 
-            String description = values.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())
-                    .collect(Collectors.joining(", "));
+        String descriptoin = "";
+        Integer productId = jsonNode.get("id").asInt();
 
-            Optional<Customer> cs = customerService.findCustomerById(user.getId());
-            Cart cart = new Cart();
-            if (cs.isPresent()) {
-                cart.setProduct(productService.getProduct(productId));
-                cart.setDescription(description);
-                cart.setQuantity(1);
-                cart.setStatus(true);
-                cart.setCustomer(cs.get());
-                cartService.createCart(cart);
+        JsonNode valuesNode = jsonNode.get("values");
+        Iterator<Map.Entry<String, JsonNode>> fields = valuesNode.fields();
+
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String key = field.getKey();
+            int value = field.getValue().asInt();
+            if (key.equals("color")) {
+                
+                descriptoin += "Màu: " + colorService.getColorById(value).get().getNameColor();
+            } else {
+                
+                descriptoin += ", " + key + ": " + attributeService.getAttributeById(value).getName();
             }
-           
-            // System.out.println(user.toString());
-            // Xử lý thêm nếu cần
-
-            return "Dữ liệu nhận được: " + cartData;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Lỗi khi xử lý dữ liệu!";
         }
+
+        Product product = productService.getProduct(productId);
+
+        Optional<Customer> cs = customerService.findCustomerById(user.getId());
+        if (cs.isPresent()) {
+            Optional<Cart> cart = cartService.getCartByProductAndDesAndUser(product, descriptoin, cs.get());
+            if(cart.isPresent()){
+                cart.get().setQuantity(cart.get().getQuantity() + 1);
+                cartService.updateCart(cart.get());
+            } else {
+				Cart newCart = new Cart(0, 1, descriptoin, true, product, cs.get());
+				newCart = cartService.createCart(newCart);
+                Iterator<Map.Entry<String, JsonNode>> values = valuesNode.fields();
+                while (values.hasNext()) {
+                    Map.Entry<String, JsonNode> value = values.next();
+                    String key = value.getKey();
+                    int valueAtt = value.getValue().asInt();
+                    System.out.println("Helllo !!!!!!");
+                    if (key.equals("color")) {
+                        CartProductAttribute cartPA = new CartProductAttribute();
+						cartPA.setCart(newCart);
+						cartPA.setProductColor(productColorService.getProductColorById(valueAtt)); 
+						cartProductAttributeService.creatCartPA(cartPA);
+                        
+                    } else {
+                        Attribute attribute = attributeService.getAttributeById(valueAtt);
+                        CartProductAttribute cartPA = new CartProductAttribute();
+						cartPA.setCart(newCart);
+						cartPA.setAttribute(attribute);
+						cartProductAttributeService.creatCartPA(cartPA);
+                        
+                    }
+                }
+				
+			}
+        }
+
+        return "String";
     }
 
 }

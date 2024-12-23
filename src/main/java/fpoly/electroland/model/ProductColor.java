@@ -28,4 +28,12 @@ public class ProductColor {
 	@ManyToOne
 	@JoinColumn(name = "idColor", nullable = false)
 	Color color;
+
+	@Override
+	public String toString() {
+		return "ProductColor [id=" + id + ", colorPrice=" + colorPrice + ", product=" + product.id + ", color=" + color.id
+				+ "]";
+	}
+
+	
 }
