@@ -21,6 +21,7 @@ import java.util.Set;
 @Configuration
 public class SecurityConfig {
 
+    @SuppressWarnings("unused")
     private final UserDetailsService userDetailsService;
 
     public SecurityConfig(UserDetailsService userDetailsService) {
