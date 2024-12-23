@@ -17,4 +17,8 @@ public class CustomerService {
     public Optional<Customer> findCustomerById(Integer id){
         return customerReponsitory.findById(id);
     }
+    public Optional<Customer> getCustomer(String email) {
+        return customerReponsitory.findByEmail(email);
+    }
+
 }

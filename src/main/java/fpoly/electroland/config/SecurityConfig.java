@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/login").permitAll() // Mở quyền truy cập cho API đăng nhập
                             .requestMatchers("/admin/**").hasAnyAuthority("Admin") // Quyền hạn khác
-                            .requestMatchers("/product").hasAnyAuthority("Admin")
+                            .requestMatchers("/product").permitAll()
                             .anyRequest().permitAll(); // Yêu cầu xác thực với các request khác
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

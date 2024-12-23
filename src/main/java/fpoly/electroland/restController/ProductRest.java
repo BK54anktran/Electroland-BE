@@ -2,19 +2,16 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fpoly.electroland.model.Attribute;
 import fpoly.electroland.model.Cart;
 import fpoly.electroland.model.CartProductAttribute;
-import fpoly.electroland.model.Color;
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Product;
-import fpoly.electroland.model.ProductColor;
 import fpoly.electroland.model.User;
-import fpoly.electroland.repository.ProductColorReponsitory;
 import fpoly.electroland.service.AttributeService;
 import fpoly.electroland.service.CartProductAttributeService;
 import fpoly.electroland.service.CartService;
@@ -23,23 +20,18 @@ import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.ProductColorService;
 import fpoly.electroland.service.ProductService;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@CrossOrigin("*")
 public class ProductRest {
 
     @Autowired
