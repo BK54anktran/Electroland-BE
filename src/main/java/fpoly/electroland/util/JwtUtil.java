@@ -18,6 +18,7 @@ public class JwtUtil {
         SECRET_KEY = Encoders.BASE64.encode(key.getEncoded());
     }
 
+    @SuppressWarnings("deprecation")
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -27,6 +28,7 @@ public class JwtUtil {
                 .compact();
     }
 
+    @SuppressWarnings("deprecation")
     public String extractUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
@@ -40,6 +42,7 @@ public class JwtUtil {
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
+    @SuppressWarnings("deprecation")
     private boolean isTokenExpired(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
