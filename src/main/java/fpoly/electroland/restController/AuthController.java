@@ -1,6 +1,9 @@
 package fpoly.electroland.restController;
 
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,17 +34,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public Object authenticate(@RequestBody User user) throws AuthenticationException {
-        return customerService.getCustomer(user.getEmail()).isPresent()
-                ? userService.authentication_getData(user.getEmail(), user.getPassword())
-                : "Not Found";
+        if (!customerService.getCustomer(user.getEmail()).isPresent())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản không tồn tại");
+        return userService.authentication_getData(user.getEmail(), user.getPassword());
     }
 
     @PostMapping("/register")
-    public Object register(@RequestBody Customer customer) throws AuthenticationException {
-        if (!customerService.getCustomer(customer.getEmail()).isPresent()) {
-            customerService.createCustomer(customer);
-            return userService.authentication_getData(customer.getEmail(), customer.getPassword());
+    public Object register(@RequestBody Customer user) throws AuthenticationException {
+        if (customerService.getCustomer(user.getEmail()).isPresent())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tài khoản đã tồn tại");
+        else {
+            customerService.createCustomer(user);
+            return userService.authentication_getData(user.getEmail(), user.getPassword());
         }
-        return "Exist";
     }
 }
