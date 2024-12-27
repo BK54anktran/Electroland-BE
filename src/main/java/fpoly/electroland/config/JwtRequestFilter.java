@@ -1,4 +1,4 @@
-package fpoly.electroland.util;
+package fpoly.electroland.config;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import fpoly.electroland.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

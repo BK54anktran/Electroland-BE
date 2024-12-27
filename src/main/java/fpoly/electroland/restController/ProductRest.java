@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +23,9 @@ public class ProductRest {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         userService.getUser();
         if (id == 0) {
-            return productService.getProduct();
+            return ResponseEntityUtil.ok(productService.getProduct());
         }
-        return productService.getProduct(id);
+        return ResponseEntityUtil.ok(productService.getProduct(id));
     }
 
 }

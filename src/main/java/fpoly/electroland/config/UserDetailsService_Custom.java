@@ -1,4 +1,4 @@
-package fpoly.electroland.service;
+package fpoly.electroland.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.User;
+import fpoly.electroland.service.CustomerService;
+import fpoly.electroland.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
