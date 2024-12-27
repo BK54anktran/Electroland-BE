@@ -30,15 +30,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> Endpoint = Set.of("/login", "/product", "/category" , "/supplier");
-        jwtRequestFilter.setEndpoints(Endpoint);
+        Set<String> permitAllEndpoint = Set.of("/login", "/product" ,"/supplier", "/category");
+        Set<String> AdminEndpoint = Set.of("/admin/**");
+        jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login").permitAll() // Mở quyền truy cập cho API đăng nhập
-                            .requestMatchers("/admin/**").hasAnyAuthority("Admin") // Quyền hạn khác
-                            .anyRequest().permitAll(); // Yêu cầu xác thực với các request khác
+                    auth.requestMatchers(AdminEndpoint.toArray(new String[0])).hasAnyAuthority("Admin")
+                            .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
+                            .anyRequest().hasAuthority("Customer");
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
@@ -59,7 +60,6 @@ public class SecurityConfig {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);
-
         return new CorsFilter(source);
     }
 
