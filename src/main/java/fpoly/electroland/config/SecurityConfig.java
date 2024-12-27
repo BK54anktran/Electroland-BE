@@ -30,7 +30,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> Endpoint = Set.of("/login", "/product");
+        Set<String> Endpoint = Set.of("/login", "/product", "/category" , "/supplier");
         jwtRequestFilter.setEndpoints(Endpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
