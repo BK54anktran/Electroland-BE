@@ -13,7 +13,7 @@ COPY .mvn/ .mvn/
 # Leverage a cache mount to /root/.m2 so that subsequent builds don't have to
 # re-download packages.
 RUN --mount=type=bind,source=pom.xml,target=pom.xml \
-    --mount=type=cache,id=maven-cache,target=/root/.m2 ./mvnw dependency:go-offline -DskipTests
+    --mount=type=cache,id=maven-cache-key,target=/root/.m2 ./mvnw dependency:go-offline -DskipTests
 
 ################################################################################
 
@@ -24,7 +24,7 @@ WORKDIR /build
 
 COPY ./src src/
 RUN --mount=type=bind,source=pom.xml,target=pom.xml \
-    --mount=type=cache,id=maven-cache,target=/root/.m2 \
+    --mount=type=cache,id=maven-cache-key,target=/root/.m2 \
     ./mvnw package -DskipTests && \
     mv target/$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)-$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout).jar target/app.jar
 
@@ -57,7 +57,7 @@ EXPOSE 8080
 # syntax=docker/dockerfile:1.0.0-experimental
 FROM openjdk:11-jre-slim
 
-RUN --mount=type=cache,id=maven-cache,target=/root/.m2 \
+RUN --mount=type=cache,id=maven-cache-key,target=/root/.m2 \
     mkdir -p /root/.m2 \
     && curl -sSL https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.8.4/apache-maven-3.8.4-bin.tar.gz | tar -xz -C /root/.m2
 
