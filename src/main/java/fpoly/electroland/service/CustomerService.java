@@ -1,5 +1,6 @@
 package fpoly.electroland.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class CustomerService {
         customer.setAvatar("");
         customer.setStatus(true);
         return customerReponsitory.save(customer);
+    }
+    public List<Customer> getAll(){
+        return customerReponsitory.findAll();
     }
 
 }
