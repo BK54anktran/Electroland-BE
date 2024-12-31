@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.User;
 import fpoly.electroland.util.JwtUtil;
-import io.jsonwebtoken.JwtException;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 @Service
 public class UserService {
@@ -41,12 +40,12 @@ public class UserService {
             this.authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mật khẩu không chính xác");
+            return ResponseEntityUtil.unauthorizedError("Mật khẩu không chính xác");
         }
         User user = (User) authentication.getPrincipal();
         Map<String, String> data = new HashMap<>();
         data.put("token", jwtUtil.generateToken(user.getEmail()));
         data.put("userName", user.getName());
-        return data;
+        return ResponseEntity.ok(data);
     }
 }

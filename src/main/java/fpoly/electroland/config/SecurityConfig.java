@@ -13,7 +13,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import fpoly.electroland.util.JwtRequestFilter;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Set;
@@ -57,6 +56,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // Nếu sử dụng cookie hoặc xác thực
         config.addAllowedOrigin("http://localhost:3000"); // URL React app
+        config.addAllowedOrigin("https://bk54anktran.web.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);
