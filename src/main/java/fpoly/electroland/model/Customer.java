@@ -3,7 +3,6 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import fpoly.electroland.service.TypeCustomerService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
