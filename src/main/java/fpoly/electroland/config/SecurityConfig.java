@@ -29,8 +29,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> permitAllEndpoint = Set.of("/login", "/product", "/register", "/customer");
-        Set<String> AdminEndpoint = Set.of("/admin/**");
+        Set<String> permitAllEndpoint = Set.of("/login", "/product", "/register", "/admin/customer");
+        Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
