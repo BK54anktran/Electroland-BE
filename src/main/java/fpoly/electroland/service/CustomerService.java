@@ -25,7 +25,25 @@ public class CustomerService {
     public Optional<Customer> getCustomer(Integer id) {
         return customerReponsitory.findById(id);
     }
-
+    public Customer updateCustomer(Integer id, Customer updatedCustomer) {
+        Optional<Customer> customerOptional = customerReponsitory.findById(id);
+        if (customerOptional.isPresent()) {
+            Customer existingCustomer = customerOptional.get();
+            // Cập nhật thông tin khách hàng
+            existingCustomer.setFullName(updatedCustomer.getFullName());
+            existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+            existingCustomer.setDateOfBirth(updatedCustomer.getDateOfBirth());
+            existingCustomer.setGender(updatedCustomer.getGender());
+            existingCustomer.setEmail(updatedCustomer.getEmail());
+            existingCustomer.setPassword(updatedCustomer.getPassword());
+            existingCustomer.setStatus(updatedCustomer.getStatus());
+            existingCustomer.setTypeCustomer(updatedCustomer.getTypeCustomer());
+            return customerReponsitory.save(existingCustomer);
+        } else {
+            throw new RuntimeException("Customer not found with id " + id);  // Ném ngoại lệ nếu không tìm thấy khách hàng
+        }
+    }
+    
     public Customer createCustomer(Customer customer) {
         customer.setTypeCustomer(typeCustomerService.getTypeCustomer(1));
         customer.setAvatar("");
