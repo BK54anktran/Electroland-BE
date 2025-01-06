@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
-                "/employees/update/**", "/register", "/admin/customer");
+                "/employees/update/**", "/register", "/admin/customer", "category");
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(AdminEndpoint.toArray(new String[0])).hasAnyAuthority("Admin")
                             .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
-                            .anyRequest().hasAuthority("Customer");
+                            .anyRequest().permitAll();
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
