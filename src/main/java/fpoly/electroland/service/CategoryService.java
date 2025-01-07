@@ -10,5 +10,4 @@ public class CategoryService {
 
     @Autowired
     CategoryReponsitory categoryReponsitory;
-
 }

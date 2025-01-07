@@ -1,10 +1,12 @@
 package fpoly.electroland.restController;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.User;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.EmployeeService;
@@ -23,10 +25,10 @@ public class AuthController {
     @Autowired
     EmployeeService employeeService;
 
-    @PostMapping("admin/login")
-    public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
-        return employeeService.getEmployee(user.getEmail()).isPresent()
-                ? userService.authentication_getData(user.getEmail(), user.getPassword())
+    @PostMapping("/admin/login")
+    public Object authenticateAdmin(@RequestBody Employee employee) throws AuthenticationException {
+        return employeeService.getEmployee(employee.getEmail()).isPresent()
+                ? employeeService.authentication_getData(employee.getEmail(), employee.getPassword())
                 : "Not Found";
     }
 
