@@ -1,12 +1,10 @@
 package fpoly.electroland.restController;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import fpoly.electroland.model.Customer;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.User;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.EmployeeService;

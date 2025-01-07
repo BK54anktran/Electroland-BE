@@ -2,18 +2,13 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import fpoly.electroland.model.Category;
 import fpoly.electroland.model.Product;
-import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.CategoryReponsitory;
 import fpoly.electroland.repository.ProductReponsitory;
 import fpoly.electroland.repository.SupplierReponsitory;
-import fpoly.electroland.service.CategoryService;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
-
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-public class ProductRest {
+public class ProductController {
 
     @Autowired
     ProductService productService;
@@ -43,11 +38,6 @@ public class ProductRest {
 
     @Autowired
     SupplierReponsitory supplierReponsitory;
-
-    @GetMapping("/supplier")
-    public List<Supplier> getListSuppliers() {
-        return supplierReponsitory.findAll();
-    }
 
     @GetMapping("/product")
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
