@@ -29,8 +29,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
-                "/employees/update/**", "/register", "/admin/customer", "category");
+        // Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees",
+        // "/employees/save",
+        // "/employees/update/**", "/register", "/admin/customer", "category");
+        // Set<String> permitAllEndpoint = Set.of("/login", "/employees",
+        // "/employees/save",
+        // "/employees/update/**", "/register", "/admin/customer", "/category",
+        // "/supplier",
+        // "/product", "/product/save", "/product/update/**",
+        // "/admin/login");
+
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
@@ -38,7 +46,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(AdminEndpoint.toArray(new String[0])).hasAnyAuthority("Admin")
-                            .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
+                            // .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
                             .anyRequest().permitAll();
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
