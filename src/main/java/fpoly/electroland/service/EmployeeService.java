@@ -1,19 +1,37 @@
 package fpoly.electroland.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import fpoly.electroland.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.repository.EmployeeReponsitory;
+import fpoly.electroland.util.JwtUtil;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 @Service
 public class EmployeeService {
 
+    private final JwtUtil jwtUtil;
+    private final EmployeeReponsitory employeeReponsitory;
+    private final AuthenticationManager authenticationManager;
+
     @Autowired
-    EmployeeReponsitory employeeReponsitory;
+    public EmployeeService(JwtUtil jwtUtil, EmployeeReponsitory employeeReponsitory, @Lazy AuthenticationManager authenticationManager) {
+        this.jwtUtil = jwtUtil;
+        this.employeeReponsitory = employeeReponsitory;
+        this.authenticationManager = authenticationManager;
+    }
 
     public List<Employee> getAll(){
         return employeeReponsitory.findAll();
@@ -50,6 +68,27 @@ public class EmployeeService {
             return employeeReponsitory.save(existingEmployee);
         } else {
             throw new RuntimeException("Employee not found with id: " + id);
+        }
+    }
+
+    public Object authentication_getData(String email, String password) {
+        try {
+            // Sử dụng biến cục bộ thay vì thuộc tính toàn cục
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            User user = (User) authentication.getPrincipal();
+
+            Employee employee = new Employee();
+            employee.setEmail(user.getEmail());
+            employee.setFullName(user.getName());
+
+            Map<String, String> data = new HashMap<>();
+            data.put("token", jwtUtil.generateToken(employee.getEmail()));
+            data.put("userName", employee.getFullName());
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntityUtil.unauthorizedError("Mật khẩu không chính xác");
         }
     }
 }

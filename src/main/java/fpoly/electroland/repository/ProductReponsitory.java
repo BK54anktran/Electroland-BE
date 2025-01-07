@@ -7,5 +7,4 @@ import fpoly.electroland.model.Product;
 
 @Repository
 public interface ProductReponsitory extends JpaRepository<Product, Integer> {
-
 }
