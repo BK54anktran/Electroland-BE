@@ -10,7 +10,6 @@ import fpoly.electroland.repository.CategoryReponsitory;
 
 @Service
 public class CategoryService {
-
     @Autowired
     CategoryReponsitory categoryReponsitory;
 
