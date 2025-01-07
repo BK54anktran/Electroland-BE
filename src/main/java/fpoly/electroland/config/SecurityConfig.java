@@ -40,7 +40,7 @@ public class SecurityConfig {
         // "/admin/login");
 
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
-        jwtRequestFilter.setEndpoints(permitAllEndpoint);
+        // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
