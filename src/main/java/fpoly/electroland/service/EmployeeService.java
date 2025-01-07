@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import fpoly.electroland.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -75,13 +76,18 @@ public class EmployeeService {
             // Sử dụng biến cục bộ thay vì thuộc tính toàn cục
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
-            Employee employee = (Employee) authentication.getPrincipal();
-            
+            User user = (User) authentication.getPrincipal();
+
+            Employee employee = new Employee();
+            employee.setEmail(user.getEmail());
+            employee.setFullName(user.getName());
+
             Map<String, String> data = new HashMap<>();
             data.put("token", jwtUtil.generateToken(employee.getEmail()));
             data.put("userName", employee.getFullName());
             return ResponseEntity.ok(data);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntityUtil.unauthorizedError("Mật khẩu không chính xác");
         }
     }
