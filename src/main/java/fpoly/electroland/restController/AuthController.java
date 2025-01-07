@@ -25,9 +25,9 @@ public class AuthController {
 
     @PostMapping("admin/login")
     public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
-        return employeeService.getEmployee(user.getEmail()).isPresent()
-                ? userService.authentication_getData(user.getEmail(), user.getPassword())
-                : "Not Found";
+        if (!employeeService.getEmployee(user.getEmail()).isPresent())
+            return ResponseEntityUtil.unauthorizedError("Tài khoản không tồn tại");
+        return userService.authentication_getData(user.getEmail(), user.getPassword());
     }
 
     @PostMapping("/login")

@@ -92,12 +92,6 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<!-- Cloudinary -->
-		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http44</artifactId>
-			<version>1.29.0</version>
-		</dependency>
 		<!-- Validation API -->
 		<dependency>
 			<groupId>javax.validation</groupId>
