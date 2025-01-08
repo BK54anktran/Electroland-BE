@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.UserService;
 
 @RestController
 public class EmployeeController {
+     @Autowired
+    UserService userService;
     @Autowired
     EmployeeService employeeService;
 
@@ -30,7 +33,8 @@ public class EmployeeController {
     // API: Thêm mới nhân viên
     @PostMapping("/employees/save")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        Employee createdEmployee = employeeService.createEmployee(employee);
+        // Integer userId = userService.getUser().getId();
+        Employee createdEmployee = employeeService.createEmployee(employee,1);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
     }
 
