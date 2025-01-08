@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.repository.EmployeeRepository;
 
+
 @Service
 public class EmployeeService {
 
@@ -32,6 +33,7 @@ public class EmployeeService {
     public void deleteEmployee(Long id) {
         if (employeeRepository.existsById(id)) { // Kiểm tra xem ID có tồn tại không
             employeeRepository.deleteById(id); // Xóa nhân viên theo ID
+
         } else {
             throw new RuntimeException("Nhân viên với ID " + id + " không tồn tại!");
         }
