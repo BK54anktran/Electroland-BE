@@ -3,9 +3,6 @@ package fpoly.electroland.restController;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.model.Product;
-import fpoly.electroland.repository.CategoryReponsitory;
-import fpoly.electroland.repository.ProductReponsitory;
-import fpoly.electroland.repository.SupplierReponsitory;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
@@ -30,15 +27,6 @@ public class ProductController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    ProductReponsitory productReponsitory;
-
-    @Autowired
-    CategoryReponsitory categoryReponsitory;
-
-    @Autowired
-    SupplierReponsitory supplierReponsitory;
-
     @GetMapping("/product")
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         userService.getUser();
@@ -50,7 +38,7 @@ public class ProductController {
 
     @PostMapping("/product/save")
     public Object saveMethodName(@RequestBody Product product) {
-        return productReponsitory.save(product);
+        return productService.saveProduct(product);
     }
 
     @PutMapping("/product/update/{id}")

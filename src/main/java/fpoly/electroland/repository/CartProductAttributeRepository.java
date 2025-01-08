@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import fpoly.electroland.model.CartProductAttribute;
 
 @Repository
-public interface CartProductAttributeReponsitory extends JpaRepository<CartProductAttribute, Integer> {
+public interface CartProductAttributeRepository extends JpaRepository<CartProductAttribute, Integer> {
 
 }

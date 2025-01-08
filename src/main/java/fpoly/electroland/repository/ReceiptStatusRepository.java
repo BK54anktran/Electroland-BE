@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import fpoly.electroland.model.ReceiptStatus;
 
 @Repository
-public interface ReceiptStatusReponsitory extends JpaRepository<ReceiptStatus, Integer> {
+public interface ReceiptStatusRepository extends JpaRepository<ReceiptStatus, Integer> {
 
 }

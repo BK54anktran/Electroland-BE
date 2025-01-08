@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.model.ProductImg;
 
 @Repository
-public interface ReceiptDetailReponsitory extends JpaRepository<ReceiptDetail, Integer> {
+public interface ProductImgRepository extends JpaRepository<ProductImg, Integer> {
 
 }

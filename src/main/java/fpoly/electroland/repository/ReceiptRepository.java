@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.PaymentType;
+import fpoly.electroland.model.Receipt;
 
 @Repository
-public interface PaymentTypeReponsitory extends JpaRepository<PaymentType, Integer> {
+public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
 
 }
