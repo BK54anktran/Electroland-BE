@@ -10,40 +10,40 @@ import fpoly.electroland.model.Category;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.Supplier;
-import fpoly.electroland.repository.CategoryReponsitory;
-import fpoly.electroland.repository.ProductReponsitory;
-import fpoly.electroland.repository.SupplierReponsitory;
+import fpoly.electroland.repository.CategoryRepository;
+import fpoly.electroland.repository.ProductRepository;
+import fpoly.electroland.repository.SupplierRepository;
 
 @Service
 public class ProductService {
 
     @Autowired
-    ProductReponsitory productReponsitory;
+    ProductRepository productRepository;
 
     @Autowired
-    CategoryReponsitory categoryReponsitory;
+    CategoryRepository categoryRepository;
 
     @Autowired
-    SupplierReponsitory supplierReponsitory;
+    SupplierRepository supplierRepository;
 
     public List<Product> getProduct() {
-        return productReponsitory.findAll();
+        return productRepository.findAll();
     }
 
     public Product getProduct(int id) {
-        Optional<Product> product = productReponsitory.findById(id);
+        Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             return product.get();
         }
         return null;
     }
 
-    public void saveProduct(Product product){
-        productReponsitory.save(product);
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
 
     public Product updateProduct(Integer id, Product product) {
-        Optional<Product> optionalProduct = productReponsitory.findById(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product existingProduct = optionalProduct.get();
             existingProduct.setAvatar(product.getAvatar());
@@ -52,24 +52,24 @@ public class ProductService {
             existingProduct.setPriceDiscount(product.getPriceDiscount());
             existingProduct.setStatus(product.getStatus());
             existingProduct.setDescription(product.getDescription());
-            
+
             if (product.getCategory() != null) {
-                Category category = categoryReponsitory.findById(product.getCategory().getId()).orElse(null);
+                Category category = categoryRepository.findById(product.getCategory().getId()).orElse(null);
                 existingProduct.setCategory(category);
             }
 
             if (product.getSupplier() != null) {
-                Supplier supplier = supplierReponsitory.findById(product.getSupplier().getId()).orElse(null);
+                Supplier supplier = supplierRepository.findById(product.getSupplier().getId()).orElse(null);
                 existingProduct.setSupplier(supplier);
             }
 
-            return productReponsitory.save(existingProduct);
+            return productRepository.save(existingProduct);
         } else {
             throw new RuntimeException("Product not found with id: " + id);
         }
     }
 
-    public void deleteProduct(int id){
-        productReponsitory.deleteById(id);
+    public void deleteProduct(int id) {
+        productRepository.deleteById(id);
     }
 }

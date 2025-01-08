@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.Action;
+import fpoly.electroland.model.Supplier;
 
 @Repository
-public interface ActionReponsitory extends JpaRepository<Action, Integer> {
+public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
 }
