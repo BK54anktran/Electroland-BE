@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.model.Employee;
@@ -19,6 +20,7 @@ import fpoly.electroland.service.EmployeeService;
 import fpoly.electroland.service.UserService;
 
 @RestController
+@RequestMapping("/admin")
 public class EmployeeController {
      @Autowired
     UserService userService;
@@ -33,8 +35,8 @@ public class EmployeeController {
     // API: Thêm mới nhân viên
     @PostMapping("/employees/save")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        // Integer userId = userService.getUser().getId();
-        Employee createdEmployee = employeeService.createEmployee(employee,1);
+        Integer userId = userService.getUser().getId();
+        Employee createdEmployee = employeeService.createEmployee(employee, userId);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
     }
 

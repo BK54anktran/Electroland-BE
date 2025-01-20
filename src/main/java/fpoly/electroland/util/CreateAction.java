@@ -5,10 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fpoly.electroland.model.Action;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.repository.ActionRepository;
+import fpoly.electroland.service.ActionService;
 
 public class CreateAction{
     @Autowired
-    ActionRepository actionRepository;
+    ActionService actionService;
     public void createAction(Object object,String tableName,String actionName, int ObjectID,String oldValue,String newValue,
     Employee creatorEmployee){ {
         // Tạo bản ghi Action
@@ -21,7 +22,7 @@ public class CreateAction{
         action.setEmployee(creatorEmployee); // Gắn nhân viên tạo vào Action
     
         // Lưu Action vào cơ sở dữ liệu
-        actionRepository.save(action);
+        actionService.saveAction(action);
         System.out.println("Action created" + action.toString());
     }
 }
