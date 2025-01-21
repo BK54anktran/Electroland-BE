@@ -16,57 +16,68 @@ import fpoly.electroland.util.CreateAction;
 
 @Service
 public class EmployeeService {
-
-    // @Autowired
-    // UserService userService;
     @Autowired
     EmployeeRepository employeeRepository;
+
     @Autowired
     ActionRepository actionRepository;
 
+    @Autowired
+    CreateAction createAction; // Sử dụng dependency injection
+
+    // Lấy tất cả nhân viên
     public List<Employee> getAll() {
         return employeeRepository.findAll();
     }
 
+    // Lấy nhân viên theo email
     public Optional<Employee> getEmployee(String email) {
-        Optional<Employee> employee = employeeRepository.findByEmail(email);
-        return employee;
+        return employeeRepository.findByEmail(email);
     }
 
-    public Employee createEmployee(Employee employee,int userId) {
-
+    // Thêm nhân viên mới
+    public Employee createEmployee(Employee employee, int userId) {
         // Lưu nhân viên mới vào cơ sở dữ liệu
         Employee savedEmployee = employeeRepository.save(employee);
-    
-        // Lấy nhân viên hiện tại từ UserService
+
+        // Lấy nhân viên thực hiện hành động
         Employee creatorEmployee = employeeRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        CreateAction createAction = new CreateAction();
-        createAction.createAction(savedEmployee, "Employee", "CREATE", savedEmployee.getId(), null, "MinhNgoc", creatorEmployee);
+
+        // Ghi hành động vào bảng Action
+        createAction.createAction("Employee", "CREATE", savedEmployee.getId(), null,
+                savedEmployee.toString(), creatorEmployee);
+
         return savedEmployee;
     }
 
-    public void deleteEmployee(Long id) {
-        if (employeeRepository.existsById(id)) { // Kiểm tra xem ID có tồn tại không
-            employeeRepository.deleteById(id); // Xóa nhân viên theo ID
-
-        } else {
-            throw new RuntimeException("Nhân viên với ID " + id + " không tồn tại!");
-        }
-    }
-
     // Sửa nhân viên
-    public Employee updateEmployee(Long id, Employee updatedEmployee) {
+    public Employee updateEmployee(Long id, Employee updatedEmployee, int userId) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         if (optionalEmployee.isPresent()) {
             Employee existingEmployee = optionalEmployee.get();
+
+            // Lưu giá trị cũ để ghi vào Action
+            String oldValue = existingEmployee.toString();
+
+            // Cập nhật thông tin nhân viên
             existingEmployee.setFullName(updatedEmployee.getFullName());
             existingEmployee.setEmail(updatedEmployee.getEmail());
             existingEmployee.setPhoneNumber(updatedEmployee.getPhoneNumber());
             existingEmployee.setRole(updatedEmployee.getRole());
             existingEmployee.setStatus(updatedEmployee.getStatus());
-            return employeeRepository.save(existingEmployee);
+
+            Employee savedEmployee = employeeRepository.save(existingEmployee);
+
+            // Lấy nhân viên thực hiện hành động
+            Employee creatorEmployee = employeeRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Ghi hành động vào bảng Action
+            createAction.createAction("Employee", "UPDATE", savedEmployee.getId(), oldValue,
+                    savedEmployee.toString(), creatorEmployee);
+
+            return savedEmployee;
         } else {
             throw new RuntimeException("Employee not found with id: " + id);
         }

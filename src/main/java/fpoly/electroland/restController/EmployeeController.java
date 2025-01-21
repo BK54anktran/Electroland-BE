@@ -36,7 +36,7 @@ public class EmployeeController {
     @PostMapping("/employees/save")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         Integer userId = userService.getUser().getId();
-        Employee createdEmployee = employeeService.createEmployee(employee, userId);
+        Employee createdEmployee = employeeService.createEmployee(employee, 1);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
     }
 
@@ -51,17 +51,6 @@ public class EmployeeController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi khi cập nhật nhân viên: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/employees/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
-        try {
-            employeeService.deleteEmployee(id);
-            return ResponseEntity.ok("Đã xóa thành công nhân viên với ID: " + id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi khi xóa nhân viên: " + e.getMessage());
         }
     }
 
