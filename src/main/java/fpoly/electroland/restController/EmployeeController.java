@@ -36,14 +36,15 @@ public class EmployeeController {
     @PostMapping("/employees/save")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
         Integer userId = userService.getUser().getId();
-        Employee createdEmployee = employeeService.createEmployee(employee, 1);
+        Employee createdEmployee = employeeService.createEmployee(employee, userId);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
     }
 
     @PutMapping("/employees/update/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         try {
-            Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+            Integer userId = userService.getUser().getId();
+            Employee updatedEmployee = employeeService.updateEmployee(id, employee, userId);
             return ResponseEntity.ok(updatedEmployee);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy nhân viên với ID: " + id);
