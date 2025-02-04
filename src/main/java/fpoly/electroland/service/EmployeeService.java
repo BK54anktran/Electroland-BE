@@ -82,4 +82,8 @@ public class EmployeeService {
             throw new RuntimeException("Employee not found with id: " + id);
         }
     }
+    public List<Employee> searchEmployees(String key) {
+        // Tìm kiếm nhân viên có fullName hoặc email chứa key
+        return employeeRepository.findByFullNameContainingOrEmailContainingOrPhoneNumberContaining(key, key,key);
+    }
 }
