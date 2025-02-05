@@ -25,19 +25,12 @@ public class CustomerService {
     public Optional<Customer> getCustomer(Integer id) {
         return customerReponsitory.findById(id);
     }
-    public Customer updateCustomer(Integer id, Customer updatedCustomer) {
+    public Customer updateCustomer(Integer id, boolean status) {
         Optional<Customer> customerOptional = customerReponsitory.findById(id);
         if (customerOptional.isPresent()) {
             Customer existingCustomer = customerOptional.get();
-            // Cập nhật thông tin khách hàng
-            existingCustomer.setFullName(updatedCustomer.getFullName());
-            existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
-            existingCustomer.setDateOfBirth(updatedCustomer.getDateOfBirth());
-            existingCustomer.setGender(updatedCustomer.getGender());
-            existingCustomer.setEmail(updatedCustomer.getEmail());
-            existingCustomer.setPassword(updatedCustomer.getPassword());
-            existingCustomer.setStatus(updatedCustomer.getStatus());
-            existingCustomer.setTypeCustomer(updatedCustomer.getTypeCustomer());
+            // Cập nhật thông tin khách hàng;
+            existingCustomer.setStatus(status);
             return customerReponsitory.save(existingCustomer);
         } else {
             throw new RuntimeException("Customer not found with id " + id);  // Ném ngoại lệ nếu không tìm thấy khách hàng
@@ -52,6 +45,20 @@ public class CustomerService {
     }
     public List<Customer> getAll(){
         return customerReponsitory.findAll();
+    }
+      // Tìm kiếm khách hàng theo từ khóa
+      public List<Customer> searchCustomers(String keyword) {
+        return customerReponsitory.searchByKeyword(keyword);
+    }
+
+    // Lọc khách hàng theo trạng thái
+    public List<Customer> filterCustomersByStatus(boolean status) {
+        return customerReponsitory.findByStatus(status);
+    }
+
+    // Kết hợp tìm kiếm và lọc
+    public List<Customer> searchAndFilterCustomers(String keyword, boolean status) {
+        return customerReponsitory.searchAndFilter(keyword, status);
     }
 
 }
