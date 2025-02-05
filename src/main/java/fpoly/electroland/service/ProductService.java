@@ -1,18 +1,28 @@
 package fpoly.electroland.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
+import fpoly.electroland.model.Color;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
+import fpoly.electroland.model.ProductAttribute;
 import fpoly.electroland.model.Supplier;
+import fpoly.electroland.repository.AttributeRepository;
 import fpoly.electroland.repository.CategoryRepository;
+import fpoly.electroland.repository.ColorRepository;
+import fpoly.electroland.repository.ProductAttributeRepository;
+import fpoly.electroland.repository.ProductColorRepository;
+import fpoly.electroland.repository.ProductImgRepository;
 import fpoly.electroland.repository.ProductRepository;
 import fpoly.electroland.repository.SupplierRepository;
+import jakarta.persistence.criteria.JoinType;
 
 @Service
 public class ProductService {
@@ -25,6 +35,21 @@ public class ProductService {
 
     @Autowired
     SupplierRepository supplierRepository;
+
+    @Autowired
+    ColorRepository colorRepository;
+
+    @Autowired
+    ProductColorRepository productColorRepository;
+
+    @Autowired
+    ProductImgRepository productImgRepository;
+
+    @Autowired
+    AttributeRepository attributeRepository;
+
+    @Autowired
+    ProductAttributeRepositosry productAttributeRepository;
 
     public List<Product> getProduct() {
         return productRepository.findAll();
@@ -39,9 +64,107 @@ public class ProductService {
     }
 
     public Product saveProduct(Product product) {
-        return productRepository.save(product);
+        // Kiểm tra và gán Category nếu tồn tại
+        assignCategory(product);
+    
+        // Kiểm tra và gán Supplier nếu tồn tại
+        assignSupplier(product);
+    
+        // Lưu sản phẩm chính
+        Product savedProduct = productRepository.save(product);
+    
+        // Lưu các ProductColor nếu tồn tại
+        saveProductColors(product, savedProduct);
+    
+        // Lưu các ProductImg nếu tồn tại
+        saveProductImages(product, savedProduct);
+    
+        // Lưu các ProductAttribute và Attributes con nếu tồn tại
+        saveProductAttributes(product, savedProduct);
+    
+        return savedProduct;
     }
-
+    
+    private void assignCategory(Product product) {
+        if (product.getCategory() != null) {
+            Category category = categoryRepository.findById(product.getCategory().getId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + product.getCategory().getId()));
+            product.setCategory(category);
+        }
+    }
+    
+    private void assignSupplier(Product product) {
+        if (product.getSupplier() != null) {
+            Supplier supplier = supplierRepository.findById(product.getSupplier().getId())
+                    .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + product.getSupplier().getId()));
+            product.setSupplier(supplier);
+        }
+    }
+    
+    private void saveProductColors(Product product, Product savedProduct) {
+        if (product.getProductColors() != null && !product.getProductColors().isEmpty()) {
+            product.getProductColors().forEach(productColor -> {
+                if (productColor.getColor() != null) {
+                    Color color = colorRepository.findById(productColor.getColor().getId())
+                            .orElseThrow(() -> new RuntimeException("Color not found with id: " + productColor.getColor().getId()));
+                    productColor.setColor(color);
+                    productColor.setProduct(savedProduct);
+                    productColorRepository.save(productColor);
+                }
+            });
+        }
+    }
+    
+    private void saveProductImages(Product product, Product savedProduct) {
+        if (product.getProductImgs() != null && !product.getProductImgs().isEmpty()) {
+            product.getProductImgs().forEach(productImg -> {
+                if (productImg.getLink() != null) {
+                    productImg.setProduct(savedProduct);
+                    productImgRepository.save(productImg);
+                }
+            });
+        }
+    }
+    
+    private void saveProductAttributes(Product product, Product savedProduct) {
+        if (product.getProductAttributes() != null && !product.getProductAttributes().isEmpty()) {
+            product.getProductAttributes().forEach(productAttribute -> {
+                if (productAttribute.getName() != null) {
+                    // Kiểm tra xem ProductAttribute đã tồn tại chưa
+                    Optional<ProductAttribute> existingAttribute = productAttributeRepository.findByNameAndProductId(productAttribute.getName(), savedProduct.getId());
+    
+                    ProductAttribute savedProductAttribute;
+                    if (existingAttribute.isPresent()) {
+                        // Nếu tồn tại, lấy ra đối tượng đã có
+                        savedProductAttribute = existingAttribute.get();
+                    } else {
+                        // Nếu không tồn tại, tạo mới
+                        productAttribute.setProduct(savedProduct);
+                        savedProductAttribute = productAttributeRepository.save(productAttribute);
+                    }
+    
+                    // Xử lý các attributes con
+                    if (productAttribute.getAttributes() != null && !productAttribute.getAttributes().isEmpty()) {
+                        productAttribute.getAttributes().forEach(attribute -> {
+                            if (attribute.getName() != null) {
+                                // Kiểm tra xem attribute con đã tồn tại trong savedProductAttribute chưa
+                                boolean exists = savedProductAttribute.getAttributes().stream()
+                                        .anyMatch(existingAttr -> existingAttr.getName().equals(attribute.getName()));
+    
+                                if (!exists) {
+                                    // Nếu chưa tồn tại, thêm mới
+                                    attribute.setProductAttribute(savedProductAttribute);
+                                    attributeRepository.save(attribute);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+    
+    
     public Product updateProduct(Integer id, Product product) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
@@ -69,7 +192,32 @@ public class ProductService {
         }
     }
 
-    public void deleteProduct(int id) {
-        productRepository.deleteById(id);
+    public List<Product> searchProducts(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return productRepository.findProduct(keyword);
     }
+
+    public List<Product> sortProducts(String criteria, String order) {
+        if ("price".equalsIgnoreCase(criteria)) {
+            if ("asc".equalsIgnoreCase(order)) {
+                return productRepository.sortByPriceAsc();
+            } else if ("desc".equalsIgnoreCase(order)) {
+                return productRepository.sortByPriceDesc();
+            } else {
+                throw new IllegalArgumentException("Invalid sorting order: " + order);
+            }
+        } else if ("name".equalsIgnoreCase(criteria)) {
+            if ("asc".equalsIgnoreCase(order)) {
+                return productRepository.sortByNameAsc();
+            } else if ("desc".equalsIgnoreCase(order)) {
+                return productRepository.sortByNameDesc();
+            } else {
+                throw new IllegalArgumentException("Invalid sorting order: " + order);
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
+        }
+    }    
 }
