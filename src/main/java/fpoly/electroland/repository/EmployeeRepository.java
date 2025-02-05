@@ -14,7 +14,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     Optional<Employee> findById(Long id);
 
-    void deleteById(Long id);
-
     Boolean existsById(Long id);
+
+    List<Employee> findByFullNameOrEmail(String key, String key2);
+
+    // Tìm kiếm nhân viên theo tên hoặc email hoặc số điện thoại
+    List<Employee> findByFullNameContainingOrEmailContainingOrPhoneNumberContaining(String key, String key2, String key3);
+
 }
+
+
