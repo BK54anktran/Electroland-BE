@@ -5,18 +5,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Review;
-import fpoly.electroland.repository.ReviewReponsitory;
+
+import fpoly.electroland.repository.ReviewRepository;
 
 @Service
 public class ReviewService {
 
     @Autowired
-    ReviewReponsitory reviewReponsitory;
+    ReviewRepository reviewRepository;
 
        public List<Review> getAll(){
-        return reviewReponsitory.findAll();
+        return reviewRepository.findAll();
    }
-
+    
+    public List<Review> getReviewsByproductId(int productId) {
+        return reviewRepository.getReviewsByProductId(productId);
+    }
 }

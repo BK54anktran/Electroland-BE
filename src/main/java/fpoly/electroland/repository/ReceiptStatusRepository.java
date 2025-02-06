@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.Cart;
+import fpoly.electroland.model.ReceiptStatus;
 
 @Repository
-public interface CartReponsitory extends JpaRepository<Cart, Integer> {
+public interface ReceiptStatusRepository extends JpaRepository<ReceiptStatus, Integer> {
 
 }

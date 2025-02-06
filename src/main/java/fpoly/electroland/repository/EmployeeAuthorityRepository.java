@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.Authority;
+import fpoly.electroland.model.EmployeeAuthority;
 
 @Repository
-public interface AuthorityReponsitory extends JpaRepository<Authority, Integer> {
+public interface EmployeeAuthorityRepository extends JpaRepository<EmployeeAuthority, Integer> {
 
 }

@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.Category;
+import fpoly.electroland.model.Attribute;
 
 @Repository
-public interface CategoryReponsitory extends JpaRepository<Category, Integer> {
+public interface AttributeRepository extends JpaRepository<Attribute, Integer> {
 
 }

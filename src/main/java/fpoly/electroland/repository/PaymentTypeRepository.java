@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.Color;
+import fpoly.electroland.model.PaymentType;
 
 @Repository
-public interface ColorReponsitory extends JpaRepository<Color, Integer> {
+public interface PaymentTypeRepository extends JpaRepository<PaymentType, Integer> {
 
 }

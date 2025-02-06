@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import fpoly.electroland.model.TypeCustomer;
 
 @Repository
-public interface TypeCustomerReponsitory extends JpaRepository<TypeCustomer, Integer> {
+public interface TypeCustomerRepository extends JpaRepository<TypeCustomer, Integer> {
 
 }

@@ -45,7 +45,7 @@ public class UserDetailsService_Custom implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest();
-        String requestUrl = request.getRequestURL().toString();
+        String requestUrl = request.getRequestURI();
 
         if (requestUrl.startsWith("/admin")) {
             Optional<Employee> userInfo = employeeService.getEmployee(email);

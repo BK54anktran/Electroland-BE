@@ -32,14 +32,14 @@ public class SecurityConfig {
         Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
                 "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review");
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
-        jwtRequestFilter.setEndpoints(permitAllEndpoint);
+        // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(AdminEndpoint.toArray(new String[0])).hasAnyAuthority("Admin")
-                            .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
-                            .anyRequest().hasAuthority("Customer");
+                            // .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
+                            .anyRequest().permitAll();
                 })
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

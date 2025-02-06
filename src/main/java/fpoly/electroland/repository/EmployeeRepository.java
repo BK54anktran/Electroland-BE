@@ -7,12 +7,14 @@ import fpoly.electroland.model.Employee;
 import java.util.Optional;
 import java.util.List;
 
-
 @Repository
-public interface EmployeeReponsitory extends JpaRepository<Employee, Integer> {
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     Optional<Employee> findByEmail(String email);
+
     Optional<Employee> findById(Long id);
-    void deleteById(Long id) ;
+
+    void deleteById(Long id);
+
     Boolean existsById(Long id);
 }

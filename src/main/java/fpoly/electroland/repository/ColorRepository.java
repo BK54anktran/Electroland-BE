@@ -3,9 +3,9 @@ package fpoly.electroland.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fpoly.electroland.model.ProductAttribute;
+import fpoly.electroland.model.Color;
 
 @Repository
-public interface ProductAttributeReponsitory extends JpaRepository<ProductAttribute, Integer> {
+public interface ColorRepository extends JpaRepository<Color, Integer> {
 
 }
