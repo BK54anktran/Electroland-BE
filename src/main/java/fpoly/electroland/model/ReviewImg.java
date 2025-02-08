@@ -24,8 +24,8 @@ public class ReviewImg {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR(225)")
-	private String nameIMD;
+    @Column(columnDefinition = "NVARCHAR(225)")
+	private String nameIMG;
     
     @ManyToOne
 	@JoinColumn(name = "idReview")
