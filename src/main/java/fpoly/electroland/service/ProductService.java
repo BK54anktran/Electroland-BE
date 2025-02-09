@@ -38,6 +38,14 @@ public class ProductService {
         return null;
     }
 
+    public List<Product> getProductSupplier(int id) {
+        List<Product> products = productRepository.findBySupplier(supplierRepository.findById(id).get());
+        if (products.size() > 0) {
+            return products;
+        }
+        return null;
+    }
+
     public Product saveProduct(Product product) {
         return productRepository.save(product);
     }

@@ -55,7 +55,7 @@ public class UserDetailsService_Custom implements UserDetailsService {
                         .collect(Collectors.toList());
                 return new User(userInfo.get().getId(), userInfo.get().getFullName(),
                         userInfo.get().getEmail(),
-                        passwordEncoder().encode(userInfo.get().getPassword()),
+                        passwordEncoder().encode(userInfo.get().getPassword()), "EMPLOYEE",
                         authorities);
             }
             throw new UsernameNotFoundException(email);
@@ -67,7 +67,7 @@ public class UserDetailsService_Custom implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority("Customer"));
             return new User(customer.get().getId(), customer.get().getFullName(),
                     customer.get().getEmail(),
-                    passwordEncoder().encode(customer.get().getPassword()), authorities);
+                    passwordEncoder().encode(customer.get().getPassword()), "CUSTOMER", authorities);
         }
         throw new UsernameNotFoundException(email);
     }
