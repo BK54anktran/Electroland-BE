@@ -1,5 +1,8 @@
 package fpoly.electroland.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +35,18 @@ public class ReceiptService {
 // Sửa phương thức getReceiptDetailsByReceiptId để nhận tham số kiểu Long
 public List<ReceiptDetail> getReceiptDetailsByReceiptId(Long receiptId) {
     return receiptDetailRepository.findByReceiptId(receiptId);
+}
+
+
+ public List<Receipt> getReceiptsByDateRange(LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(LocalTime.MAX) : null;
+
+        return receiptRepository.findByDateRange(startDateTime, endDateTime);
+    }
+
+public List<Receipt> searchReceipts(String searchKey) {
+    return receiptRepository.searchReceipts(searchKey);
 }
 
 
