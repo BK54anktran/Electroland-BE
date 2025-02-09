@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.CategoryRepository;
