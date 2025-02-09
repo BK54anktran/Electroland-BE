@@ -60,20 +60,6 @@ public class JwtUtil {
 
     public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean isTokenExpired(String token) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getExpiration()
-                    .before(new Date());
-        } catch (JwtException e) {
-            throw new JwtException("Token expired");
-        }
+        return (extractedUsername.equals(username));
     }
 }
