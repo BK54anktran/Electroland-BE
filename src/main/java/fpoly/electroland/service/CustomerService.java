@@ -46,12 +46,12 @@ public class CustomerService {
         }
     }
     public Customer updateCustomer(Integer id, boolean status) {
-        Optional<Customer> customerOptional = customerReponsitory.findById(id);
+        Optional<Customer> customerOptional = customerRepository.findById(id);
         if (customerOptional.isPresent()) {
             Customer existingCustomer = customerOptional.get();
             // Cập nhật thông tin khách hàng;
             existingCustomer.setStatus(status);
-            return customerReponsitory.save(existingCustomer);
+            return customerRepository.save(existingCustomer);
         } else {
             throw new RuntimeException("Customer not found with id " + id);  // Ném ngoại lệ nếu không tìm thấy khách hàng
         }
@@ -69,17 +69,17 @@ public class CustomerService {
     }
       // Tìm kiếm khách hàng theo từ khóa
       public List<Customer> searchCustomers(String keyword) {
-        return customerReponsitory.searchByKeyword(keyword);
+        return customerRepository.searchByKeyword(keyword);
     }
 
     // Lọc khách hàng theo trạng thái
     public List<Customer> filterCustomersByStatus(boolean status) {
-        return customerReponsitory.findByStatus(status);
+        return customerRepository.findByStatus(status);
     }
 
     // Kết hợp tìm kiếm và lọc
     public List<Customer> searchAndFilterCustomers(String keyword, boolean status) {
-        return customerReponsitory.searchAndFilter(keyword, status);
+        return customerRepository.searchAndFilter(keyword, status);
     }
 
 }

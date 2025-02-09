@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
-                "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review");
+                "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review","/admin/review/**","admin/review/sreachs/**");
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http

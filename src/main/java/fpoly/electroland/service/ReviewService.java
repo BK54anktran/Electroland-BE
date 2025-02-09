@@ -22,4 +22,13 @@ public class ReviewService {
     public List<Review> getReviewsByproductId(int productId) {
         return reviewRepository.getReviewsByProductId(productId);
     }
+    public void deleteReview(int reviewId) {
+        reviewRepository.deleteById(reviewId);
+    }
+
+    public List<Review> searchReviews(int productId, int point, Boolean status, String keyword) {
+        return reviewRepository.searchReviews(productId, point, status, keyword);
+    }
+    
+    
 }
