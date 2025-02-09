@@ -44,7 +44,7 @@ public class UserService {
         }
         User user = (User) authentication.getPrincipal();
         Map<String, String> data = new HashMap<>();
-        data.put("token", jwtUtil.generateToken(user.getEmail()));
+        data.put("token", jwtUtil.generateToken(user.getEmail(), user.getRole()));
         data.put("userName", user.getName());
         return ResponseEntity.ok(data);
     }

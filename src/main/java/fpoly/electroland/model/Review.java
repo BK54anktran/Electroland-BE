@@ -1,6 +1,8 @@
 package fpoly.electroland.model;
 
 import java.util.Date;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,8 +30,10 @@ public class Review {
 	@Column(nullable = false)
 	private Date date = new Date();
 
-	@Column(nullable = true, columnDefinition = "VARCHAR(225)")
-	private String img;
+	private Boolean status = true;
+
+	@OneToMany(mappedBy = "review")
+    private List<ReviewImg> imgs;
 
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)

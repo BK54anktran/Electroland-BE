@@ -7,6 +7,11 @@ import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +39,19 @@ public class ProductController {
             return ResponseEntityUtil.ok(productService.getProduct());
         }
         return ResponseEntityUtil.ok(productService.getProduct(id));
+    }
+
+    @PostMapping("/product/search")
+    public Object getProductsSearch(@RequestBody String body) {
+        userService.getUser();
+        JSONObject jsonObject = new JSONObject(body);
+        if (jsonObject.get("brands") != null) {
+            // JSONArray brands = new JSONArray(jsonObject.get("brands"));
+            System.out.println(jsonObject.get("brands").getClass().getName());
+            // return
+            // ResponseEntityUtil.ok(productService.getProductSupplier(brands.getInt(0)));
+        }
+        return ResponseEntityUtil.ok(productService.getProduct());
     }
 
     @PostMapping("/product/save")

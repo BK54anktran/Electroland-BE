@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.CategoryRepository;
@@ -34,6 +33,14 @@ public class ProductService {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             return product.get();
+        }
+        return null;
+    }
+
+    public List<Product> getProductSupplier(int id) {
+        List<Product> products = productRepository.findBySupplier(supplierRepository.findById(id).get());
+        if (products.size() > 0) {
+            return products;
         }
         return null;
     }
