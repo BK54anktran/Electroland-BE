@@ -6,6 +6,8 @@ import fpoly.electroland.model.Product;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -40,10 +42,6 @@ public class ProductController {
             @RequestParam(name = "minPrice", required = false, defaultValue = "0") int minPrice,
             @RequestParam(name = "maxPrice", required = false, defaultValue = "0") int maxPrice,
             @RequestParam(name = "supplier", required = false) List<Integer> supplier) {
-
-        userService.getUser();
-        System.out.println(key);
-
         Sort sort = Sort.unsorted();
         if ("asc".equalsIgnoreCase(sortOrder)) {
             sort = Sort.by("price").ascending();
@@ -97,20 +95,11 @@ public class ProductController {
             return ResponseEntityUtil.ok(productService.getProductByFillter(supplier, sort));
         }
 
-        return ResponseEntityUtil.ok(productService.getProduct(sort));
-    }
-
-    @PostMapping("/product/search")
-    public Object getProductsSearch(@RequestBody String body) {
-        userService.getUser();
-        JSONObject jsonObject = new JSONObject(body);
-        if (jsonObject.get("supplier") != null) {
-            // JSONArray brands = new JSONArray(jsonObject.get("brands"));
-            System.out.println(jsonObject.get("supplier").getClass().getName());
-            // return
-            // ResponseEntityUtil.ok(productService.getProductSupplier(brands.getInt(0)));
+        if (!key.isEmpty()) {
+            return ResponseEntityUtil.ok(productService.getProductByKey(key, sort));
         }
-        return ResponseEntityUtil.ok(productService.getProduct());
+
+        return ResponseEntityUtil.ok(productService.getProduct(sort));
     }
 
     @PostMapping("/product/search")
