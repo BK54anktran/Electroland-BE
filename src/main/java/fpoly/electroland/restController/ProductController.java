@@ -6,13 +6,14 @@ import fpoly.electroland.model.Product;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,12 +34,72 @@ public class ProductController {
     UserService userService;
 
     @GetMapping("/product")
-    public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
-        userService.getUser();
-        if (id == 0) {
-            return ResponseEntityUtil.ok(productService.getProduct());
+    public Object getMethodName(
+            @RequestParam(name = "id", required = false, defaultValue = "0") int id,
+            @RequestParam(name = "key", required = false, defaultValue = "") String key,
+            @RequestParam(name = "sortOrder", required = false, defaultValue = "") String sortOrder,
+            @RequestParam(name = "category", required = false, defaultValue = "0") int category,
+            @RequestParam(name = "minPrice", required = false, defaultValue = "0") int minPrice,
+            @RequestParam(name = "maxPrice", required = false, defaultValue = "0") int maxPrice,
+            @RequestParam(name = "supplier", required = false) List<Integer> supplier) {
+        Sort sort = Sort.unsorted();
+        if ("asc".equalsIgnoreCase(sortOrder)) {
+            sort = Sort.by("price").ascending();
+        } else if ("desc".equalsIgnoreCase(sortOrder)) {
+            sort = Sort.by("price").descending();
         }
-        return ResponseEntityUtil.ok(productService.getProduct(id));
+
+        boolean hasPriceFilter = minPrice > 0 || maxPrice > 0;
+        boolean hasSupplierFilter = supplier != null && !supplier.isEmpty();
+
+        if (id != 0) {
+            return ResponseEntityUtil.ok(productService.getProduct(id));
+        }
+
+        if (!key.isEmpty() && category != 0 && hasPriceFilter && hasSupplierFilter) {
+            return ResponseEntityUtil
+                    .ok(productService.getProductByFillter(key, category, minPrice, maxPrice, supplier, sort));
+        }
+
+        if (!key.isEmpty() && category != 0 && hasSupplierFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(key, category, supplier, sort));
+        }
+
+        if (!key.isEmpty() && hasPriceFilter && hasSupplierFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(key, minPrice, maxPrice, supplier, sort));
+        }
+
+        if (!key.isEmpty() && hasSupplierFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(key, supplier, sort));
+        }
+
+        if (!key.isEmpty() && hasPriceFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(key, minPrice, maxPrice, sort));
+        }
+
+        if (category != 0 && hasPriceFilter && hasSupplierFilter) {
+            return ResponseEntityUtil
+                    .ok(productService.getProductByFillter(category, minPrice, maxPrice, supplier, sort));
+        }
+
+        if (category != 0 && hasSupplierFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(category, supplier, sort));
+        }
+
+        if (hasPriceFilter && hasSupplierFilter) {
+            return ResponseEntityUtil
+                    .ok(productService.getProductByFillter(minPrice, maxPrice, supplier, sort));
+        }
+
+        if (hasSupplierFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(supplier, sort));
+        }
+
+        if (!key.isEmpty()) {
+            return ResponseEntityUtil.ok(productService.getProductByKey(key, sort));
+        }
+
+        return ResponseEntityUtil.ok(productService.getProduct(sort));
     }
 
     @PostMapping("/product/search")

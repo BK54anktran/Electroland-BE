@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
@@ -27,6 +28,150 @@ public class ProductService {
 
     public List<Product> getProduct() {
         return productRepository.findAll();
+    }
+
+    public List<Product> getProduct(Sort sort) {
+        return productRepository.findAll(sort);
+    }
+
+    public List<Product> getProductByCategory(int idCategory) {
+        return productRepository.findByCategoryId(idCategory);
+    }
+
+    public List<Product> getProductByCategory(int idCategory, Sort sort) {
+        return productRepository.findByCategoryId(idCategory, sort);
+    }
+
+    public List<Product> getProductByPrice(int minPrice, int maxPrice) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice);
+    }
+
+    public List<Product> getProductByPrice(int minPrice, int maxPrice, Sort sort) {
+        return productRepository.findByPriceBetween(minPrice, maxPrice, sort);
+    }
+
+    public Object getProductByKey(String key) {
+        List<Product> products = productRepository.findByNameContaining(key);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll();
+    }
+
+    public Object getProductByKey(String key, Sort sort) {
+        List<Product> products = productRepository.findByNameContaining(key, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByKey(String key, int category, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndCategoryId(key, category, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, int minPrice, int maxPrice, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndPriceBetween(key, minPrice, maxPrice, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, int category, int minPrice, int maxPrice, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndCategoryIdAndPriceBetween(key, category,
+                minPrice, maxPrice, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(int category, int minPrice, int maxPrice, Sort sort) {
+        List<Product> products = productRepository.findByCategoryIdAndPriceBetween(category,
+                minPrice, maxPrice, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, int category, int minPrice, int maxPrice, List<Integer> supplier,
+            Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndCategoryIdAndPriceBetweenAndSupplierIdIn(key,
+                category, minPrice, maxPrice, supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, int category, List<Integer> supplier, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndCategoryIdAndSupplierIdIn(key, category,
+                supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, int minPrice, int maxPrice, List<Integer> supplier, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndPriceBetweenAndSupplierIdIn(key, minPrice,
+                maxPrice, supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(String key, List<Integer> supplier, Sort sort) {
+        List<Product> products = productRepository.findByNameContainingAndSupplierIdIn(key, supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(int category, int minPrice, int maxPrice, List<Integer> supplier, Sort sort) {
+        List<Supplier> suppliers = supplierRepository.findAllById(supplier);
+        List<Product> products = productRepository.findByCategoryIdAndPriceBetweenAndSupplierIn(category, minPrice,
+                maxPrice, suppliers, sort);
+        System.out.println(products.size());
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(int category, List<Integer> supplier, Sort sort) {
+        List<Product> products = productRepository.findByCategoryIdAndSupplierIdIn(category, supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(int minPrice, int maxPrice, List<Integer> supplier, Sort sort) {
+        List<Supplier> suppliers = supplierRepository.findAllById(supplier);
+        List<Product> products = productRepository.findByPriceBetweenAndSupplierIn(minPrice,
+                maxPrice, suppliers, sort);
+        System.out.println(products.size());
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
+    public Object getProductByFillter(List<Integer> supplier, Sort sort) {
+        List<Product> products = productRepository.findBySupplierIdIn(supplier, sort);
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
     }
 
     public Product getProduct(int id) {
@@ -79,4 +224,5 @@ public class ProductService {
     public void deleteProduct(int id) {
         productRepository.deleteById(id);
     }
+
 }
