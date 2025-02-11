@@ -99,6 +99,10 @@ public class ProductController {
             return ResponseEntityUtil.ok(productService.getProductByKey(key, sort));
         }
 
+        if (category != 0) {
+            return ResponseEntityUtil.ok(productService.getProductByCategory(category, sort));
+        }
+
         return ResponseEntityUtil.ok(productService.getProduct(sort));
     }
 
