@@ -86,13 +86,20 @@ public class ProductController {
             return ResponseEntityUtil.ok(productService.getProductByFillter(category, supplier, sort));
         }
 
+        if (category != 0 && hasPriceFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByFillter(category, minPrice, maxPrice, sort));
+        }
+
         if (hasPriceFilter && hasSupplierFilter) {
-            return ResponseEntityUtil
-                    .ok(productService.getProductByFillter(minPrice, maxPrice, supplier, sort));
+            return ResponseEntityUtil.ok(productService.getProductByFillter(minPrice, maxPrice, supplier, sort));
         }
 
         if (hasSupplierFilter) {
             return ResponseEntityUtil.ok(productService.getProductByFillter(supplier, sort));
+        }
+
+        if (hasPriceFilter) {
+            return ResponseEntityUtil.ok(productService.getProductByPrice(minPrice, maxPrice, sort));
         }
 
         if (!key.isEmpty()) {
