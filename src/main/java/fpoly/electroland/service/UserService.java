@@ -31,7 +31,7 @@ public class UserService {
         this.authentication = this.authentication instanceof User
                 ? this.authentication
                 : SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getPrincipal().toString());
+        System.out.println("Author: "+authentication.getPrincipal().toString());
         return this.authentication.getPrincipal() instanceof User ? (User) authentication.getPrincipal() : null;
     }
 
