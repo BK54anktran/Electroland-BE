@@ -29,6 +29,14 @@ public class ReviewService {
     public List<Review> searchReviews(int productId, int point, Boolean status, String keyword) {
         return reviewRepository.searchReviews(productId, point, status, keyword);
     }
+    public Review getReviewById(int id) {
+        return reviewRepository.findById(id).orElse(null);
+    }
+    
+    public void saveReview(Review review) {
+        reviewRepository.save(review);
+    }
+    
     
     
 }
