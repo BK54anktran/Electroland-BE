@@ -25,7 +25,7 @@ public class ReviewImg {
 	private int id;
 
     @Column(nullable = false, columnDefinition = "NVARCHAR(225)")
-	private String nameIMD;
+	private String nameIMG;
     
     @ManyToOne
 	@JoinColumn(name = "idReview")
