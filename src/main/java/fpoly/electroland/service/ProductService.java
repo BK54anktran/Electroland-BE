@@ -49,7 +49,7 @@ public class ProductService {
     AttributeRepository attributeRepository;
 
     @Autowired
-    ProductAttributeRepositosry productAttributeRepository;
+    ProductAttributeRepository productAttributeRepository;
 
     public List<Product> getProduct() {
         return productRepository.findAll();

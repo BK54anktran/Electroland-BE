@@ -54,4 +54,12 @@ public class EmployeeService {
             throw new RuntimeException("Employee not found with id: " + id);
         }
     }
+
+    public Optional<Employee> getEmployeeByEmail(String email) {
+        return employeeRepository.findByEmail(email);
+    }
+
+    public Employee save(Employee employee) {
+        return employeeRepository.save(employee);
+    }
 }
