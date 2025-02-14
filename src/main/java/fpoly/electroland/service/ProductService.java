@@ -1,9 +1,11 @@
 package fpoly.electroland.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
@@ -27,6 +29,53 @@ public class ProductService {
 
     public List<Product> getProduct() {
         return productRepository.findAll();
+    }
+
+    public Object getProductByFilter(String key, int category, int minPrice, int maxPrice,
+            List<Integer> supplier,
+            Sort sort) {
+        List<Product> products = new ArrayList<>();
+        if (key != null) {
+            if (category != 0) {
+                if (supplier == null || supplier.size() > 0) {
+                    products = productRepository.findByNameContainingAndCategoryIdAndPriceBetweenAndSupplierIdIn(key,
+                            category,
+                            minPrice, maxPrice, supplier, sort);
+                } else {
+                    products = productRepository.findByNameContainingAndCategoryIdAndPriceBetween(key, category,
+                            minPrice,
+                            maxPrice, sort);
+                }
+            } else {
+                if (supplier == null || supplier.size() > 0) {
+                    products = productRepository.findByNameContainingAndPriceBetweenAndSupplierIdIn(key, minPrice,
+                            maxPrice,
+                            supplier, sort);
+                } else {
+                    products = productRepository.findByNameContainingAndPriceBetween(key, minPrice, maxPrice, sort);
+                }
+            }
+        } else {
+            if (category != 0) {
+                if (supplier == null || supplier.size() > 0) {
+                    products = productRepository.findByCategoryIdAndPriceBetweenAndSupplierIdIn(category, minPrice,
+                            maxPrice,
+                            supplier, sort);
+                } else {
+                    products = productRepository.findByCategoryIdAndPriceBetween(category, minPrice, maxPrice, sort);
+                }
+            } else {
+                if (supplier == null || supplier.size() > 0) {
+                    products = productRepository.findByPriceBetweenAndSupplierIdIn(minPrice, maxPrice, supplier, sort);
+                } else {
+                    products = productRepository.findByPriceBetween(minPrice, maxPrice, sort);
+                }
+            }
+        }
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
     }
 
     public Product getProduct(int id) {
@@ -79,4 +128,5 @@ public class ProductService {
     public void deleteProduct(int id) {
         productRepository.deleteById(id);
     }
+
 }

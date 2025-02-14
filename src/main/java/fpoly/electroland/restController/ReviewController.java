@@ -33,7 +33,7 @@ public class ReviewController {
     @Autowired
     UserService userService;
 
-    @Autowired 
+    @Autowired
     CustomerService customerService;
 
     @Autowired
@@ -61,14 +61,12 @@ public class ReviewController {
         review.setProduct(product);
         Review newReview = reviewService.creatReview(review);
 
-        
         // // Lấy danh sách imgs
         List<String> imgs = (List<String>) object.get("imgs");
-        if(imgs.size()>0){
+        if (imgs.size() > 0) {
             reviewImgService.creatReviewImg(imgs, newReview);
         }
 
-        
         return null;
     }
 }

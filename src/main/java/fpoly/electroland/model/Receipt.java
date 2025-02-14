@@ -3,6 +3,8 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -43,7 +45,7 @@ public class Receipt {
 	private String note;
 
 	@ManyToOne
-	@JoinColumn(name = "idStatus", nullable = true)
+	@JoinColumn(name = "idReceiptStatus", nullable = true)
 	private ReceiptStatus receiptStatus;
 
 	@ManyToOne

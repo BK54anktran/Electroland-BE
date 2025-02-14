@@ -6,13 +6,14 @@ import fpoly.electroland.model.Product;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,12 +34,27 @@ public class ProductController {
     UserService userService;
 
     @GetMapping("/product")
-    public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
-        userService.getUser();
-        if (id == 0) {
-            return ResponseEntityUtil.ok(productService.getProduct());
+    public Object getMethodName(
+            @RequestParam(name = "id", required = false, defaultValue = "0") int id,
+            @RequestParam(name = "key", required = false) String key,
+            @RequestParam(name = "sortOrder", required = false) String sortOrder,
+            @RequestParam(name = "category", required = false, defaultValue = "0") int category,
+            @RequestParam(name = "minPrice", required = false, defaultValue = "0") int minPrice,
+            @RequestParam(name = "maxPrice", required = false, defaultValue = "0") int maxPrice,
+            @RequestParam(name = "supplier", required = false) List<Integer> supplier) {
+        Sort sort = Sort.unsorted();
+        if ("asc".equalsIgnoreCase(sortOrder))
+            sort = Sort.by("price").ascending();
+        if ("desc".equalsIgnoreCase(sortOrder))
+            sort = Sort.by("price").descending();
+
+        if (id != 0) {
+            return ResponseEntityUtil.ok(productService.getProduct(id));
         }
-        return ResponseEntityUtil.ok(productService.getProduct(id));
+
+        // Gọi phương thức service duy nhất với các tham số lọc
+        return ResponseEntityUtil
+                .ok(productService.getProductByFilter(key, category, minPrice, maxPrice, supplier, sort));
     }
 
     @PostMapping("/product/search")
