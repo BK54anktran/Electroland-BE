@@ -37,7 +37,10 @@ public class ProductService {
         List<Product> products = new ArrayList<>();
         if (key != null && key.length() > 0) {
             if (minPrice == 0 && maxPrice == 0) {
-                return productRepository.findByNameContaining(key);
+                if (category == 0) {
+                    return productRepository.findByNameContaining(key);
+                }
+                return productRepository.findByCategoryId(category);
             }
             if (category != 0) {
                 if (supplier != null && supplier.size() > 0) {
@@ -59,6 +62,12 @@ public class ProductService {
                 }
             }
         } else {
+            if (minPrice == 0 && maxPrice == 0) {
+                if (category == 0) {
+                    return productRepository.findByNameContaining(key);
+                }
+                return productRepository.findByCategoryId(category);
+            }
             if (category != 0) {
                 if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByCategoryIdAndPriceBetweenAndSupplierIdIn(category, minPrice,
