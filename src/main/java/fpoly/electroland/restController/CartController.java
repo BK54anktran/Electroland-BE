@@ -1,16 +1,37 @@
 package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import fpoly.electroland.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class CartController {
-    @PostMapping("/cart")
-    public String postMethodName(@RequestBody Object object) {
-        System.out.println(object);
-        return null;
+
+    @Autowired
+    CartService cartService;
+
+    @GetMapping("/cart")
+    public Object getListCart() {
+        return cartService.getList();
     }
-    
+
+    @PutMapping("/cart")
+    public Object updateCart(@RequestParam("id") int id,
+            @RequestParam(name = "quantity", required = false, defaultValue = "0") int quantity) {
+        if (quantity != 0) {
+            return cartService.UpdateCart(id, quantity);
+        }
+        return cartService.UpdateCart(id);
+    }
+
+    @DeleteMapping("/cart")
+    public Object DeleteCart(@RequestParam("id") int id) {
+        return cartService.deleteCart(id);
+    }
+
 }
