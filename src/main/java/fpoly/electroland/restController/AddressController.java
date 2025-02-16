@@ -58,4 +58,9 @@ public class AddressController {
     public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
+
+    @GetMapping("/user/address")
+    public Object getUserAddress() {
+        return addressService.getUserAddress();
+    }
 }
