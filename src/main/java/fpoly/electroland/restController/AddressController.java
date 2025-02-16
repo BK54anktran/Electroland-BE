@@ -27,7 +27,7 @@ public class AddressController {
     @Autowired
     AddressService addressService;
 
-    @GetMapping("/getUserAdress")
+    @GetMapping("/getUserAddress")
     public List<Address> getAddresses() {
         System.out.println(userService.getUser());
         int id = userService.getUser().getId();
@@ -41,19 +41,21 @@ public class AddressController {
         Customer customer = customerService.getCustomer(id).get();
         address.setCustomer(customer);
         System.out.println(address);
-        if(address.isStatus()){
+        if (address.isStatus()) {
             List<Address> list = addressService.getAddresses(customer);
-            list.forEach(ad ->{
-                if(ad.isStatus() && (ad.getId() !=address.getId())){
+            list.forEach(ad -> {
+                if (ad.isStatus() && (ad.getId() != address.getId())) {
                     ad.setStatus(false);
-                };
+                }
+                ;
             });
-        };
+        }
+        ;
         addressService.savAddress(address);
     }
 
     @PostMapping("/deleteAddress")
-    public void deleteAddress(@RequestBody Address address){
+    public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
 }
