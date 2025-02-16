@@ -15,8 +15,26 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
-	private String address;
+	@Column(nullable = false, columnDefinition = "NVARCHAR(5)")
+	private String idCity;
+	
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+	private String nameCity;
+
+	@Column(nullable = false, columnDefinition = "NVARCHAR(5)")
+	private String idDistrict;
+	
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255)")
+	private String nameDistrict;
+
+	@Column(nullable = false, columnDefinition = "NVARCHAR(10)")
+	private String idWard;
+
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
+	private String nameWard;
+
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
+	private String street;
 
 	@Column(nullable = true)
 	private boolean status;
