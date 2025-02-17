@@ -27,22 +27,18 @@ public class AddressController {
     @Autowired
     AddressService addressService;
 
-    @GetMapping("/getUserAdress")
+    @GetMapping("/getUserAddress")
     public List<Address> getAddresses() {
-        System.out.println(userService.getUser());
-        int id = userService.getUser().getId();
-        Customer customer = customerService.getCustomer(id).get();
-        return addressService.getAddresses(customer);
+       return addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
     }
 
     @PostMapping("/updateAddress")
     public void updateUserAddress(@RequestBody Address address) {
-        int id = userService.getUser().getId();
-        Customer customer = customerService.getCustomer(id).get();
-        address.setCustomer(customer);
+        
+        address.setCustomer(customerService.getCustomer(userService.getUser().getId()).get());
         System.out.println(address);
         if(address.isStatus()){
-            List<Address> list = addressService.getAddresses(customer);
+            List<Address> list = addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
             list.forEach(ad ->{
                 if(ad.isStatus() && (ad.getId() !=address.getId())){
                     ad.setStatus(false);
