@@ -19,7 +19,7 @@ public class CustomerService {
     TypeCustomerService typeCustomerService;
 
     public Optional<Customer> findCustomerById(Integer id){
-        return customerReponsitory.findById(id);
+        return customerRepository.findById(id);
     }
     public Optional<Customer> getCustomer(String email) {
         return customerRepository.findByEmail(email);
