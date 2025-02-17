@@ -43,8 +43,6 @@ public class Product {
 	@JoinColumn(name = "idSupplier", nullable = false)
 	Supplier supplier;
 
-	@OneToMany(mappedBy = "product")
-	List<ProductColor> productColors;
 
 	@OneToMany(mappedBy = "product")
 	List<ProductImg> productImgs;
