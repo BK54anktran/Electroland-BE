@@ -23,7 +23,7 @@ public class Action {
 
 	int idRecord;
 
-	Date time;
+	Date time = new Date();
 
 	@Column(nullable = false, columnDefinition = "nvarchar(225)")
 	String oldValue;

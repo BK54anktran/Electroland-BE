@@ -1,29 +1,49 @@
 package fpoly.electroland.restController;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.User;
-import fpoly.electroland.util.JwtUtil;
+import fpoly.electroland.service.CustomerService;
+import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.UserService;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 @RestController
 public class AuthController {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    UserService userService;
+
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @PostMapping("admin/login")
-    public String authenticateAdmin(@RequestBody User user) throws AuthenticationException {
-        return jwtUtil.generateToken(user.getUsername());
+    public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
+        if (!employeeService.getEmployee(user.getEmail()).isPresent())
+            return ResponseEntityUtil.unauthorizedError("Tài khoản không tồn tại");
+        return userService.authentication_getData(user.getEmail(), user.getPassword());
     }
 
     @PostMapping("/login")
-    public String authenticate(@RequestBody User user) throws AuthenticationException {
-        return jwtUtil.generateToken(user.getUsername());
+    public Object authenticate(@RequestBody User user) throws AuthenticationException {
+        if (!customerService.getCustomer(user.getEmail()).isPresent())
+            return ResponseEntityUtil.unauthorizedError("Tài khoản không tồn tại");
+        return userService.authentication_getData(user.getEmail(), user.getPassword());
+    }
+
+    @PostMapping("/register")
+    public Object register(@RequestBody Customer user) throws AuthenticationException {
+        if (customerService.getCustomer(user.getEmail()).isPresent())
+            return ResponseEntityUtil.badRequest("Tài khoản đã tồn tại");
+        else {
+            customerService.createCustomer(user);
+            return userService.authentication_getData(user.getEmail(), user.getPassword());
+        }
     }
 }

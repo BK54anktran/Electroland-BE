@@ -21,6 +21,20 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Customer {
 
+	public Customer(String fullName,
+			Date dateOfBirth,
+			String phoneNumber,
+			Boolean gender,
+			String email,
+			String password) {
+		this.fullName = fullName;
+		this.dateOfBirth = dateOfBirth;
+		this.phoneNumber = phoneNumber;
+		this.gender = gender;
+		this.email = email;
+		this.password = password;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;

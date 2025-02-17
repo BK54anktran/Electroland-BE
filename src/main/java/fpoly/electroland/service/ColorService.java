@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Color;
-import fpoly.electroland.repository.ColorReponsitory;
+import fpoly.electroland.repository.ColorRepository;
 
 @Service
 public class ColorService {
 
     @Autowired
-    ColorReponsitory colorReponsitory;
+    ColorRepository colorRepository;
 
     public Optional<Color> getColorById(Integer id){
-        return colorReponsitory.findById(id);
+        return colorRepository.findById(id);
     }
 }

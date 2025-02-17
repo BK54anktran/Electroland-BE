@@ -1,75 +1,51 @@
 package fpoly.electroland.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import lombok.RequiredArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import fpoly.electroland.model.Customer;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.User;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import fpoly.electroland.util.JwtUtil;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 @Service
-@RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
-    private final EmployeeService employeeService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    private final CustomerService customerService;
+    Authentication authentication = null;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public User getUser() {
+        this.authentication = this.authentication instanceof User
+                ? this.authentication
+                : SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Author: "+authentication.getPrincipal().toString());
+        return this.authentication.getPrincipal() instanceof User ? (User) authentication.getPrincipal() : null;
     }
 
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest();
-        String requestUrl = request.getRequestURL().toString();
-
-        if (requestUrl.contains("admin")) {
-            Optional<Employee> userInfo = employeeService.getUser(email);
-            if (userInfo.isPresent()) {
-                List<GrantedAuthority> authorities = userInfo.get().getEmployeeAuthority().stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getAuthority().getName())) // Chuyển các
-                        .collect(Collectors.toList());
-                return new User(userInfo.get().getId(), userInfo.get().getFullName(),
-                        userInfo.get().getEmail(),
-                        passwordEncoder().encode(userInfo.get().getPassword()),
-                        authorities);
-            }
-            throw new UsernameNotFoundException(email);
+    public Object authentication_getData(String email, String password) {
+        try {
+            this.authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+        } catch (Exception e) {
+            return ResponseEntityUtil.unauthorizedError("Mật khẩu không chính xác");
         }
-
-        Optional<Customer> customer = customerService.getCustomer(email);
-        System.out.println(customer.get().toString());
-        if (customer.isPresent()) {
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("Customer"));
-            return new User(customer.get().getId(), customer.get().getFullName(),
-                    customer.get().getEmail(),
-                    passwordEncoder().encode(customer.get().getPassword()), authorities);
-        }
-        throw new UsernameNotFoundException(email);
+        User user = (User) authentication.getPrincipal();
+        Map<String, String> data = new HashMap<>();
+        data.put("token", jwtUtil.generateToken(user.getEmail(), user.getRole()));
+        data.put("userName", user.getName());
+        return ResponseEntity.ok(data);
     }
 }

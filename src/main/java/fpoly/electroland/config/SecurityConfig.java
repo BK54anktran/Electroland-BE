@@ -13,13 +13,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import fpoly.electroland.util.JwtRequestFilter;
-
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import java.util.Set;
 
 @Configuration
 public class SecurityConfig {
 
+    @SuppressWarnings("unused")
     private final UserDetailsService userDetailsService;
 
     public SecurityConfig(UserDetailsService userDetailsService) {
@@ -28,19 +29,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
+        Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
+                "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review","/admin/review/**","admin/review/sreachs/**", "/admin/review/{id}/status");
+        Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
+        // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
                 .cors(withDefaults()) // Hỗ trợ CORS
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho API
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/login").permitAll() // Mở quyền truy cập cho API đăng nhập
-                            .requestMatchers("/admin/**").hasAnyAuthority("Admin") // Quyền hạn khác
-                            .requestMatchers("/product").permitAll()
-                            .anyRequest().permitAll(); // Yêu cầu xác thực với các request khác
+                    auth.requestMatchers(AdminEndpoint.toArray(new String[0])).hasAnyAuthority("Admin")
+                            // .requestMatchers(permitAllEndpoint.toArray(new String[0])).permitAll()
+                            .anyRequest().permitAll();
                 })
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -55,6 +57,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // Nếu sử dụng cookie hoặc xác thực
         config.addAllowedOrigin("http://localhost:3000"); // URL React app
+        config.addAllowedOrigin("https://bk54anktran.web.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);
