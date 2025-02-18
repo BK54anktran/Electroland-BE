@@ -38,4 +38,10 @@ public class Cart {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
 	List<CartProductAttribute> cartProductAttributes;
 
+	@Override
+	public String toString() {
+		return "Cart [id=" + id + ", quantity=" + quantity + ", description=" + description + ", status=" + status
+				+ ", product=" + product.getId() + ", customer=" + customer.getId() + "]";
+	}
+
 }

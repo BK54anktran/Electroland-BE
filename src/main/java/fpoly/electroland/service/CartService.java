@@ -12,6 +12,9 @@ import fpoly.electroland.model.Cart;
 import fpoly.electroland.model.CartProductAttribute;
 import fpoly.electroland.model.User;
 import fpoly.electroland.repository.CartProductAttributeRepository;
+import fpoly.electroland.model.Cart;
+import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.Product;
 import fpoly.electroland.repository.CartRepository;
 import jakarta.transaction.Transactional;
 
@@ -80,4 +83,15 @@ public class CartService {
         return null;
     }
 
+    public Cart createCart(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
+    public Cart updateCart(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
+    public Optional<Cart> getCartByProductAndDesAndUser(Product product, String des, Customer customer) {
+        return cartRepository.findByProductAndDescriptionAndCustomer(product, des, customer);
+    }
 }
