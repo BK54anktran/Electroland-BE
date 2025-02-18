@@ -18,6 +18,9 @@ public class CustomerService {
     @Autowired
     TypeCustomerService typeCustomerService;
 
+    public Optional<Customer> findCustomerById(Integer id){
+        return customerRepository.findById(id);
+    }
     public Optional<Customer> getCustomer(String email) {
         return customerRepository.findByEmail(email);
     }
@@ -45,7 +48,18 @@ public class CustomerService {
                                                                             // hàng
         }
     }
-
+    public Customer updateCustomer(Integer id, boolean status) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        if (customerOptional.isPresent()) {
+            Customer existingCustomer = customerOptional.get();
+            // Cập nhật thông tin khách hàng;
+            existingCustomer.setStatus(status);
+            return customerRepository.save(existingCustomer);
+        } else {
+            throw new RuntimeException("Customer not found with id " + id);  // Ném ngoại lệ nếu không tìm thấy khách hàng
+        }
+    }
+    
     public Customer createCustomer(Customer customer) {
         customer.setTypeCustomer(typeCustomerService.getTypeCustomer(1));
         customer.setAvatar("");
@@ -55,6 +69,20 @@ public class CustomerService {
 
     public List<Customer> getAll() {
         return customerRepository.findAll();
+    }
+      // Tìm kiếm khách hàng theo từ khóa
+      public List<Customer> searchCustomers(String keyword) {
+        return customerRepository.searchByKeyword(keyword);
+    }
+
+    // Lọc khách hàng theo trạng thái
+    public List<Customer> filterCustomersByStatus(boolean status) {
+        return customerRepository.findByStatus(status);
+    }
+
+    // Kết hợp tìm kiếm và lọc
+    public List<Customer> searchAndFilterCustomers(String keyword, boolean status) {
+        return customerRepository.searchAndFilter(keyword, status);
     }
 
 }

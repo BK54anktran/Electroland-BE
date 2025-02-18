@@ -1,13 +1,14 @@
 package fpoly.electroland.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.CategoryRepository;
@@ -30,10 +31,76 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public Object getProductByFilter(String key, int category, int minPrice, int maxPrice,
+            List<Integer> supplier,
+            Sort sort) {
+        List<Product> products = new ArrayList<>();
+        if (key != null && key.length() > 0) {
+            if (minPrice == 0 && maxPrice == 0) {
+                if (category == 0) {
+                    products = productRepository.findByNameContaining(key);
+                }
+                products = productRepository.findByCategoryId(category);
+            }
+            if (category != 0) {
+                if (supplier != null && supplier.size() > 0) {
+                    products = productRepository.findByNameContainingAndCategoryIdAndPriceBetweenAndSupplierIdIn(key,
+                            category,
+                            minPrice, maxPrice, supplier, sort);
+                } else {
+                    products = productRepository.findByNameContainingAndCategoryIdAndPriceBetween(key, category,
+                            minPrice,
+                            maxPrice, sort);
+                }
+            } else {
+                if (supplier != null && supplier.size() > 0) {
+                    products = productRepository.findByNameContainingAndPriceBetweenAndSupplierIdIn(key, minPrice,
+                            maxPrice,
+                            supplier, sort);
+                } else {
+                    products = productRepository.findByNameContainingAndPriceBetween(key, minPrice, maxPrice, sort);
+                }
+            }
+        } else {
+            if (minPrice == 0 && maxPrice == 0) {
+                if (category == 0) {
+                    products = productRepository.findAll(sort);
+                } else
+                    products = productRepository.findByCategoryId(category);
+            } else if (category != 0) {
+                if (supplier != null && supplier.size() > 0) {
+                    products = productRepository.findByCategoryIdAndPriceBetweenAndSupplierIdIn(category, minPrice,
+                            maxPrice,
+                            supplier, sort);
+                } else {
+                    products = productRepository.findByCategoryIdAndPriceBetween(category, minPrice, maxPrice, sort);
+                }
+            } else {
+                if (supplier != null && supplier.size() > 0) {
+                    products = productRepository.findByPriceBetweenAndSupplierIdIn(minPrice, maxPrice, supplier, sort);
+                } else {
+                    products = productRepository.findByPriceBetween(minPrice, maxPrice, sort);
+                }
+            }
+        }
+        if (products.size() > 0) {
+            return products;
+        }
+        return productRepository.findAll(sort);
+    }
+
     public Product getProduct(int id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             return product.get();
+        }
+        return null;
+    }
+
+    public List<Product> getProductSupplier(int id) {
+        List<Product> products = productRepository.findBySupplier(supplierRepository.findById(id).get());
+        if (products.size() > 0) {
+            return products;
         }
         return null;
     }
@@ -72,4 +139,5 @@ public class ProductService {
     public void deleteProduct(int id) {
         productRepository.deleteById(id);
     }
+
 }
