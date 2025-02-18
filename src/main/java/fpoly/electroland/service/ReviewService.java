@@ -15,16 +15,15 @@ public class ReviewService {
     @Autowired
     ReviewRepository reviewRepository;
 
-    public Review creatReview(Review review) {
-        return reviewRepository.save(review);
-    }
-
-    public List<Review> getAll() {
+       public List<Review> getAll(){
         return reviewRepository.findAll();
-    }
-
+   }
+    
     public List<Review> getReviewsByproductId(int productId) {
         return reviewRepository.getReviewsByProductId(productId);
+    }
+    public Review creatReview(Review review) {
+        return reviewRepository.save(review);
     }
 
     public void deleteReview(int reviewId) {
@@ -34,13 +33,14 @@ public class ReviewService {
     public List<Review> searchReviews(int productId, int point, Boolean status, String keyword) {
         return reviewRepository.searchReviews(productId, point, status, keyword);
     }
-
     public Review getReviewById(int id) {
         return reviewRepository.findById(id).orElse(null);
     }
-
+    
     public void saveReview(Review review) {
         reviewRepository.save(review);
     }
-
+    
+    
+    
 }
