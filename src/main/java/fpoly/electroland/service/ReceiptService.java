@@ -4,7 +4,9 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -106,6 +108,46 @@ public Receipt updateReceiptStatus(Long id, Integer statusId, int userId) {
 
     return savedReceipt;
 }
+// 🔹 1. Tổng số đơn hàng
+    public long countTotalOrders() {
+        return receiptRepository.countTotalOrders();
+    }
+
+    // 🔹 2. Đếm đơn hàng theo trạng thái
+    public Map<String, Long> countOrdersByStatus() {
+        List<Object[]> results = receiptRepository.countOrdersByStatus();
+        Map<String, Long> stats = new HashMap<>();
+        
+        for (Object[] row : results) {
+            String status = (String) row[0];
+            Long count = (Long) row[1];
+            stats.put(status, count);
+        }
+        return stats;
+    }
+
+    // 🔹 3. Tổng doanh thu từ đơn hàng
+    public double getTotalRevenue() {
+        Double result = receiptRepository.totalRevenue();
+        return result != null ? result : 0.0;
+    }
+
+    // 🔹 4. Doanh thu theo tháng
+    public List<Object[]> getRevenueByMonth() {
+        return receiptRepository.revenueByMonth();
+    }
+
+    // 🔹 5. Số đơn hàng theo phương thức thanh toán
+    public List<Object[]> countOrdersByPaymentMethod() {
+        return receiptRepository.countOrdersByPaymentMethod();
+    }
+
+
+    // 🔹 7. Tỷ lệ hoàn đơn
+    public double getRefundRate() {
+        Double result = receiptRepository.refundRate();
+        return result != null ? result : 0.0;
+    }
 
 
 

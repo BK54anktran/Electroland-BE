@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,6 +101,45 @@ public class ReceiptManagementController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi khi cập nhật hóa đơn: " + e.getMessage());
         }
+    }
+
+    
+
+    // 🔹 1. API lấy tổng số đơn hàng
+    @GetMapping("/orders/count")
+    public long getTotalOrders() {
+        return receiptService.countTotalOrders();
+    }
+
+    // 🔹 2. API lấy số đơn hàng theo trạng thái
+    @GetMapping("/orders/status")
+    public Map<String, Long> getOrdersByStatus() {
+        return receiptService.countOrdersByStatus();
+    }
+
+    // 🔹 3. API lấy tổng doanh thu
+    @GetMapping("/orders/revenue")
+    public double getTotalRevenue() {
+        return receiptService.getTotalRevenue();
+    }
+
+    // 🔹 4. API lấy doanh thu theo tháng
+    @GetMapping("/orders/revenue/monthly")
+    public List<Object[]> getRevenueByMonth() {
+        return receiptService.getRevenueByMonth();
+    }
+
+    // 🔹 5. API lấy số đơn hàng theo phương thức thanh toán
+    @GetMapping("/orders/payment-methods")
+    public List<Object[]> getOrdersByPaymentMethod() {
+        return receiptService.countOrdersByPaymentMethod();
+    }
+
+
+    // 🔹 7. API lấy tỷ lệ hoàn đơn
+    @GetMapping("/orders/refund-rate")
+    public double getRefundRate() {
+        return receiptService.getRefundRate();
     }
 
 }
