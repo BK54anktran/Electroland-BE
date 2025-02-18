@@ -22,6 +22,10 @@ public class ReviewService {
     public List<Review> getReviewsByproductId(int productId) {
         return reviewRepository.getReviewsByProductId(productId);
     }
+    public Review creatReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
     public void deleteReview(int reviewId) {
         reviewRepository.deleteById(reviewId);
     }

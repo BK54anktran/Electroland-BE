@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,5 +34,8 @@ public class Cart {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	Customer customer;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
+	List<CartProductAttribute> cartProductAttributes;
 
 }
