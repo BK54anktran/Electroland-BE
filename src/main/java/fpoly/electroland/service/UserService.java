@@ -31,7 +31,7 @@ public class UserService {
         this.authentication = this.authentication instanceof User
                 ? this.authentication
                 : SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getPrincipal().toString());
+        System.out.println("Author: "+authentication.getPrincipal().toString());
         return this.authentication.getPrincipal() instanceof User ? (User) authentication.getPrincipal() : null;
     }
 
@@ -44,7 +44,7 @@ public class UserService {
         }
         User user = (User) authentication.getPrincipal();
         Map<String, String> data = new HashMap<>();
-        data.put("token", jwtUtil.generateToken(user.getEmail()));
+        data.put("token", jwtUtil.generateToken(user.getEmail(), user.getRole()));
         data.put("userName", user.getName());
         return ResponseEntity.ok(data);
     }
