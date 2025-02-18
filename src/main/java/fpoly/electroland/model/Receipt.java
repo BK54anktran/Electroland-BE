@@ -59,4 +59,6 @@ public class Receipt {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	private Customer customer;
+	@Column(nullable = true)
+	private Boolean isRead = false;
 }
