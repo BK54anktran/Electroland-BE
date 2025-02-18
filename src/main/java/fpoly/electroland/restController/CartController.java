@@ -110,6 +110,7 @@ public class CartController {
         } else {
             int quantity = cart.get().getQuantity();
             cart.get().setQuantity(quantity += 1);
+            cartService.updateCart(cart.get());
             System.out.println(cart.get());
         }
     }
