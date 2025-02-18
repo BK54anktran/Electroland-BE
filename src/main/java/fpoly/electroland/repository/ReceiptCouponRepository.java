@@ -7,5 +7,5 @@ import fpoly.electroland.model.ReceiptCoupon;
 
 @Repository
 public interface ReceiptCouponRepository extends JpaRepository<ReceiptCoupon, Integer> {
-
+    
 }
