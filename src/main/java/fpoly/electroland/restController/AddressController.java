@@ -56,7 +56,10 @@ public class AddressController {
         return addressService.getUserAddress();
     }
 
+    @PostMapping("/deleteAddress")
     public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
+    
+    
 }
