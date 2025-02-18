@@ -48,7 +48,7 @@ public class AddressController {
             });
         }
         ;
-        addressService.savAddress(address);
+        addressService.saveAddress(address);
     }
 
     @GetMapping("/user/address")
