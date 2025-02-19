@@ -108,6 +108,17 @@ public Receipt updateReceiptStatus(Long id, Integer statusId, int userId) {
 
     return savedReceipt;
 }
+public boolean updateReadStatus(int id) {
+    // Tìm receipt theo ID
+    Receipt receipt = receiptRepository.findById(id).orElse(null);
+    if (receipt != null) {
+        receipt.setIsRead(true); // Đánh dấu là đã đọc
+        receiptRepository.save(receipt); // Lưu lại thay đổi
+        return true;
+    }
+    return false;
+}
+
 // 🔹 1. Tổng số đơn hàng
     public long countTotalOrders() {
         return receiptRepository.countTotalOrders();

@@ -41,6 +41,14 @@ public class ReviewService {
         reviewRepository.save(review);
     }
     
-    
+    public boolean updateReadStatus(int id) {
+        Review review = reviewRepository.findById(id).orElse(null);
+        if (review != null) {
+            review.setIsRead(true);
+            reviewRepository.save(review);
+            return true;
+        }
+        return false;
+    }
     
 }
