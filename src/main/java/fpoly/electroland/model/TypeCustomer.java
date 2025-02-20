@@ -17,4 +17,5 @@ public class TypeCustomer {
 
 	@Column(columnDefinition = "nvarchar(225)", nullable = false)
 	String nameType;
+
 }

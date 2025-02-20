@@ -21,6 +21,7 @@ public class CouponController {
     @Autowired
     CustomerCouponService customerCouponService;
 
+
     @GetMapping("/coupon")
     public Object getProductCoupon() {
         return productCouponService.getList();
@@ -29,5 +30,10 @@ public class CouponController {
     @GetMapping("/user/coupon")
     public Object getUserProductCoupon() {
         return customerCouponService.getList();
+    }
+
+    @GetMapping("/coupontrue")
+    public Object getCouponByUserTrue() {
+        return customerCouponService.getListTrue();
     }
 }
