@@ -50,7 +50,8 @@ public class CartService {
             price += att.getAttribute().getAttributePrice();
         }
         ;
-        return new CartDto(cart.getId(), cart.getProduct().getName(), cart.getProduct().getAvatar(),
+        return new CartDto(cart.getId(), cart.getProduct().getId(), cart.getProduct().getName(),
+                cart.getProduct().getAvatar(),
                 cart.getDescription(), cart.getQuantity(), cart.getStatus(), price);
     }
 
@@ -97,5 +98,14 @@ public class CartService {
 
     public Optional<Cart> getCartByProductAndDesAndUser(Product product, String des, Customer customer) {
         return cartRepository.findByProductAndDescriptionAndCustomer(product, des, customer);
+    }
+
+    public Object UpdateCartStatusAll(boolean status) {
+        List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
+        list.forEach((cart) -> {
+            cart.setStatus(status);
+            this.updateCart(cart);
+        });
+        return null;
     }
 }

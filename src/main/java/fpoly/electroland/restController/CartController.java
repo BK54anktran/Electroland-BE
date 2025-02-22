@@ -55,8 +55,13 @@ public class CartController {
     }
 
     @PutMapping("/cart")
-    public Object updateCart(@RequestParam("id") int id,
-            @RequestParam(name = "quantity", required = false, defaultValue = "0") int quantity) {
+    public Object updateCart(@RequestParam(name = "id", required = false, defaultValue = "0") int id,
+            @RequestParam(name = "quantity", required = false, defaultValue = "0") int quantity,
+            @RequestParam(name = "status", required = false, defaultValue = "true") boolean status) {
+
+        if (id == 0) {
+            return cartService.UpdateCartStatusAll(status);
+        }
         if (quantity != 0) {
             return cartService.UpdateCart(id, quantity);
         }
