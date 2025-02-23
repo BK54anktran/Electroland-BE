@@ -57,17 +57,12 @@ public class ReviewController {
         }
     }
 
-<<<<<<< HEAD
     @GetMapping("admin/review/sreachs")
     public Object searchReviews(
             @RequestParam(name = "productId", required = false, defaultValue = "0") int productId,
             @RequestParam(name = "point", required = false, defaultValue = "0") int point,
             @RequestParam(name = "status", required = false) Boolean status,
             @RequestParam(name = "keyword", required = false) String keyword) {
-=======
-    @Autowired
-    CustomerService customerService;
->>>>>>> Developer
 
         return ResponseEntityUtil.ok(reviewService.searchReviews(productId, point, status, keyword));
     }
@@ -92,8 +87,6 @@ public class ReviewController {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
-<<<<<<< HEAD
-=======
 
     @PostMapping("/createReview")
     public String postMethodName(@RequestBody Map<String, Object> object) {
@@ -120,5 +113,5 @@ public class ReviewController {
 
         return null;
     }
->>>>>>> Developer
+    
 }
