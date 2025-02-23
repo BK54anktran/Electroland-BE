@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,15 +18,20 @@ public class CartProductAttribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "idCart")
     Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "idProductColor")
-    ProductColor productColor;
-
-    @ManyToOne
     @JoinColumn(name = "idAttribute")
     Attribute attribute;
+
+    @Override
+    public String toString() {
+        return "CartProductAttribute [id=" + id + ", cart=" + cart.id + " attribute="
+                + attribute.id + "]";
+    }
+
+    
 }

@@ -29,4 +29,13 @@ public class ProductAttribute {
 
 	@OneToMany(mappedBy = "productAttribute")
 	List<Attribute> attributes;
+
+	@Override
+	public String toString() {
+		return "ProductAttribute [id=" + id + ", name=" + name + ", product=" + product.id
+				+ "]";
+	}
+
+
+	
 }
