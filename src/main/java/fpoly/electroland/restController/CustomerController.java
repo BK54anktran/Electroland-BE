@@ -34,7 +34,7 @@ public class CustomerController {
     public List<Customer> GetAllList() {
         return customerService.getAll();
     }
-
+    
     @PostMapping("/customer/save")
     public Customer addCustomer(@RequestBody Customer customer) {
         return customerService.createCustomer(customer);
