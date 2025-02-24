@@ -31,7 +31,7 @@ public class Receipt {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	@Column(nullable = false)
+
 	private Date receiptDate = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)

@@ -15,7 +15,6 @@ public class ProductCoupon {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false)
 	Double value;
 
 	@Column
