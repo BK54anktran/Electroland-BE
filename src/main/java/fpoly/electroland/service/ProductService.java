@@ -39,10 +39,9 @@ public class ProductService {
             if (minPrice == 0 && maxPrice == 0) {
                 if (category == 0) {
                     products = productRepository.findByNameContaining(key);
-                }
-                products = productRepository.findByCategoryId(category);
-            }
-            if (category != 0) {
+                } else
+                    products = productRepository.findByCategoryId(category);
+            } else if (category != 0) {
                 if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByNameContainingAndCategoryIdAndPriceBetweenAndSupplierIdIn(key,
                             category,
