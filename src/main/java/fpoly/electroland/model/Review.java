@@ -27,13 +27,13 @@ public class Review {
 	private String content;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+
 	private Date date = new Date();
 
 	private Boolean status = true;
 
 	@OneToMany(mappedBy = "review")
-    private List<ReviewImg> imgs;
+	private List<ReviewImg> imgs;
 
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)

@@ -17,10 +17,8 @@ public class ReceiptDetail {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false)
 	private int quantity;
 
-	@Column(nullable = false)
 	private Double price;
 
 	@Column(nullable = true, columnDefinition = "NVARCHAR(225)")
