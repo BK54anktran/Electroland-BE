@@ -46,11 +46,11 @@ public class CheckoutController {
 
     @SuppressWarnings("deprecation")
     @GetMapping("/checkTransaction")
-    public ResponseEntity<String> checkTransaction(@RequestParam int sotien, @RequestParam String noidung,
-            @RequestParam String timesubmit) {
+    public ResponseEntity<String> checkTransaction(@RequestParam int amount, @RequestParam String content,
+            @RequestParam String timeStart) {
         String account_number = "0865854002";
-        String transaction_date_min = timesubmit;
-        int amount_in = sotien;
+        String transaction_date_min = timeStart;
+        int amount_in = amount;
         String urlString = "https://my.sepay.vn/userapi/transactions/list?account_number=" + account_number
                 + "&amount_in=" + amount_in + "&transaction_date_min=" + transaction_date_min;
         System.out.println(urlString);
@@ -87,7 +87,7 @@ public class CheckoutController {
 
             // Kiểm tra `transaction_content`
             JsonNode contentNode = node.findValue("transaction_content");
-            if (contentNode != null && contentNode.asText().contains(noidung)) {
+            if (contentNode != null && contentNode.asText().contains(content)) {
                 return ResponseEntity.ok("true");
             } else {
                 return ResponseEntity.ok("false");

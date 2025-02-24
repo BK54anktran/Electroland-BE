@@ -158,7 +158,7 @@ public class ReceiptService {
         Payment payment = paymentRepository.save(new Payment(0, new Date(), null,
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
-                paymentStatusRepository.findById(1).get()));
+                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));
 
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
         List<Cart> cartList = cartRepository.findByCustomerIdAndStatus(userService.getUser().getId(), true);
@@ -177,7 +177,7 @@ public class ReceiptService {
             }
             if (removei >= 0)
                 listCouponProduct.remove(removei);
-            Double price = cart.getProduct().getPriceDiscount() > 0 ? cart.getProduct().getPriceDiscount()
+            Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                     : cart.getProduct().getPrice();
             for (CartProductAttribute att : cart.getCartProductAttributes()) {
                 price += att.getAttribute().getAttributePrice();
