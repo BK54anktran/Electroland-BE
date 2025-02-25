@@ -1,5 +1,6 @@
 package fpoly.electroland.dto.request;
 
+import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -20,5 +21,6 @@ public class ReceiptRequest {
     private int idReceiptCoupon;
     private Double totalAmount;
     private String content;
+    private Date createTime;
 
 }

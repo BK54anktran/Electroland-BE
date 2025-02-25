@@ -155,7 +155,7 @@ public class ReceiptService {
     }
 
     public Receipt createCart(ReceiptRequest receiptRequest) {
-        Payment payment = paymentRepository.save(new Payment(0, new Date(), null,
+        Payment payment = paymentRepository.save(new Payment(0, receiptRequest.getCreateTime(), new Date(),
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
                 paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));

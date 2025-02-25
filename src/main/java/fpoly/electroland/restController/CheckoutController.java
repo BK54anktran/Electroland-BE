@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
-
 import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fpoly.electroland.dto.request.ReceiptRequest;
-import fpoly.electroland.model.Payment;
 import fpoly.electroland.service.PaymentService;
 import fpoly.electroland.service.PaymentTypeService;
 import fpoly.electroland.service.ReceiptService;
