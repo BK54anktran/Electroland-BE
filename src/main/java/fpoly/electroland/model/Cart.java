@@ -18,7 +18,6 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false)
 	int quantity;
 
 	@Column(nullable = true, columnDefinition = "nvarchar(225)")
