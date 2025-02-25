@@ -57,17 +57,12 @@ public class ReviewController {
         }
     }
 
-<<<<<<< HEAD
     @GetMapping("admin/review/sreachs")
     public Object searchReviews(
             @RequestParam(name = "productId", required = false, defaultValue = "0") int productId,
             @RequestParam(name = "point", required = false, defaultValue = "0") int point,
             @RequestParam(name = "status", required = false) Boolean status,
             @RequestParam(name = "keyword", required = false) String keyword) {
-=======
-    @Autowired
-    CustomerService customerService;
->>>>>>> Developer
 
         return ResponseEntityUtil.ok(reviewService.searchReviews(productId, point, status, keyword));
     }
@@ -92,33 +87,4 @@ public class ReviewController {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
-<<<<<<< HEAD
-=======
-
-    @PostMapping("/createReview")
-    public String postMethodName(@RequestBody Map<String, Object> object) {
-        Optional<Customer> customer = customerService.getCustomer(userService.getUser().getId());
-        Integer idProduct = (Integer) object.get("id");
-        Product product = productService.getProduct(idProduct);
-
-        // // Lấy values và chuyển thành Map
-        Map<String, Object> values = (Map<String, Object>) object.get("values");
-        Integer point = (Integer) values.get("point");
-        String content = (String) values.get("content");
-        Review review = new Review();
-        review.setPoint(point);
-        review.setContent(content);
-        review.setCustomer(customer.get());
-        review.setProduct(product);
-        Review newReview = reviewService.creatReview(review);
-
-        // // Lấy danh sách imgs
-        List<String> imgs = (List<String>) object.get("imgs");
-        if (imgs.size() > 0) {
-            reviewImgService.creatReviewImg(imgs, newReview);
-        }
-
-        return null;
-    }
->>>>>>> Developer
 }
