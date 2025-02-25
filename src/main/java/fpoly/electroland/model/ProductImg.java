@@ -26,4 +26,11 @@ public class ProductImg {
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
+
+	@Override
+	public String toString() {
+		return "ProductImg [id=" + id + ", link=" + link + ", product=" + product.id + "]";
+	}
+
+	
 }

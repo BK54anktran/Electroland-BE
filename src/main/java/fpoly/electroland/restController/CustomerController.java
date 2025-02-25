@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,20 +53,20 @@ public class CustomerController {
 
     @PostMapping("/userUpdate")
     public void updateUser(@RequestBody Map<String, Object> object) {
-        String dateOfBirthStr = (String) object.get("dateOfBirth"); // Lấy ngày dưới dạng chuỗi
+        String dateOfBirthStr = (String) object.get("dateOfBirth");  // Lấy ngày dưới dạng chuỗi
         Date dateOfBirth = (Date) DateUtil.formatDate(dateOfBirthStr);
-        String fullName = (String) object.get("fullName");
-        Boolean gender = (Boolean) object.get("gender");
-        String phoneNumber = (String) object.get("phoneNumber");
-
+        String fullName =(String)object.get("fullName");
+        Boolean gender = (Boolean)object.get("gender");
+        String phoneNumber = (String)object.get("phoneNumber");
+        
         int id = userService.getUser().getId();
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         customer.setDateOfBirth(dateOfBirth);
         customer.setGender(gender);
         customer.setPhoneNumber(phoneNumber);
         customer.setFullName(fullName);
-        if (object.get("newPassword") != null) {
-            String newPassword = (String) object.get("newPassword");
+        if(object.get("newPassword")!=null){
+            String newPassword = (String)object.get("newPassword");
             customer.setPassword(newPassword);
         }
         System.out.println(customer);

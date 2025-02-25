@@ -18,6 +18,9 @@ public class CustomerService {
     @Autowired
     TypeCustomerService typeCustomerService;
 
+    public Optional<Customer> findCustomerById(Integer id){
+        return customerRepository.findById(id);
+    }
     public Optional<Customer> getCustomer(String email) {
         return customerRepository.findByEmail(email);
     }

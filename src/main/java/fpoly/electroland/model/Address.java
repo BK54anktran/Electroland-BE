@@ -15,18 +15,27 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
-	private String address;
+	@Column(columnDefinition = "NVARCHAR(255)")
+	private String nameCity;
 
-	@Column(nullable = true)
+	@Column(columnDefinition = "NVARCHAR(255)")
+	private String nameDistrict;
+
+	@Column(columnDefinition = "NVARCHAR(255) ")
+	private String nameWard;
+
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
+	private String street;
+
 	private boolean status;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String addressType;
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String nameReciever;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String phoneReciever;
 
 	@ManyToOne

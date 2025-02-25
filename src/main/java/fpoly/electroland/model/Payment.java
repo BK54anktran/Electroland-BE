@@ -21,7 +21,6 @@ public class Payment {
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Column(nullable = false)
     private Date date;
 
     Double price;

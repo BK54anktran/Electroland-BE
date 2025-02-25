@@ -60,9 +60,15 @@ public class ProductService {
             List<Integer> supplier,
             Sort sort) {
         List<Product> products = new ArrayList<>();
-        if (key != null) {
+        if (key != null && key.length() > 0) {
+            if (minPrice == 0 && maxPrice == 0) {
+                if (category == 0) {
+                    products = productRepository.findByNameContaining(key);
+                }
+                products = productRepository.findByCategoryId(category);
+            }
             if (category != 0) {
-                if (supplier == null || supplier.size() > 0) {
+                if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByNameContainingAndCategoryIdAndPriceBetweenAndSupplierIdIn(key,
                             category,
                             minPrice, maxPrice, supplier, sort);
@@ -72,7 +78,7 @@ public class ProductService {
                             maxPrice, sort);
                 }
             } else {
-                if (supplier == null || supplier.size() > 0) {
+                if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByNameContainingAndPriceBetweenAndSupplierIdIn(key, minPrice,
                             maxPrice,
                             supplier, sort);
@@ -81,8 +87,13 @@ public class ProductService {
                 }
             }
         } else {
-            if (category != 0) {
-                if (supplier == null || supplier.size() > 0) {
+            if (minPrice == 0 && maxPrice == 0) {
+                if (category == 0) {
+                    products = productRepository.findAll(sort);
+                } else
+                    products = productRepository.findByCategoryId(category);
+            } else if (category != 0) {
+                if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByCategoryIdAndPriceBetweenAndSupplierIdIn(category, minPrice,
                             maxPrice,
                             supplier, sort);
@@ -90,7 +101,7 @@ public class ProductService {
                     products = productRepository.findByCategoryIdAndPriceBetween(category, minPrice, maxPrice, sort);
                 }
             } else {
-                if (supplier == null || supplier.size() > 0) {
+                if (supplier != null && supplier.size() > 0) {
                     products = productRepository.findByPriceBetweenAndSupplierIdIn(minPrice, maxPrice, supplier, sort);
                 } else {
                     products = productRepository.findByPriceBetween(minPrice, maxPrice, sort);
