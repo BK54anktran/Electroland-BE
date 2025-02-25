@@ -46,7 +46,14 @@ import fpoly.electroland.util.ResponseEntityUtil;
 public class ReviewController {
     @Autowired
     ReviewService reviewService;
-
+    @Autowired
+    CustomerService customerService;
+    @Autowired
+    ProductService productService;
+    @Autowired
+    ReviewImgService reviewImgService;
+    @Autowired
+    UserService userService;
     @GetMapping("/admin/review")
     public List<Review> GetAllList() {
         return reviewService.getAll();
