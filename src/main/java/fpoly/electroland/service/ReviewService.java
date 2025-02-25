@@ -15,10 +15,13 @@ public class ReviewService {
     @Autowired
     ReviewRepository reviewRepository;
 
+<<<<<<< HEAD
+=======
     public Review creatReview(Review review) {
         return reviewRepository.save(review);
     }
 
+>>>>>>> Developer
     public List<Review> getAll() {
         return reviewRepository.findAll();
     }
