@@ -42,6 +42,18 @@ public class ReviewController {
     @Autowired
     ReviewService reviewService;
 
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    ReviewImgService reviewImgService;
+
+    @Autowired
+    CustomerService customerService;
+
     @GetMapping("/admin/review")
     public List<Review> GetAllList() {
         return reviewService.getAll();
