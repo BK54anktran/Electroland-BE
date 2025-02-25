@@ -2,6 +2,7 @@ package fpoly.electroland.restController;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -28,14 +29,6 @@ public class DashboardController {
     @Autowired
     private ReceiptDetailService receiptDetailService;
 
-    /**
-     * API nhận ngày từ tham số truyền vào để tính tổng số lượng sản phẩm bán được
-     * trong khoảng từ 1 tháng trước đến ngày truyền vào.
-     *
-     * @param date Ngày kết thúc (theo định dạng YYYY-MM-DD).
-     * @return Dữ liệu tổng số lượng sản phẩm bán trong phạm vi từ 1 tháng trước đến ngày đó.
-     */
-
     @GetMapping("/dashboard/sales-data-by-month-range")
     public ResponseEntity<List<Object[]>> getSalesDataByMonthRange( 
         @RequestParam(value = "date", required = false) String  CompareDateStr) {
@@ -46,5 +39,97 @@ public class DashboardController {
             }
         List<Object[]> salesData = receiptDetailService.getSalesDataByMonthRange(CompareDate);
         return new ResponseEntity<>(salesData, HttpStatus.OK);
+    }
+    // API để nhận ngày và trả về dữ liệu thống kê
+    @GetMapping("/dashboard/getSalesData")
+    public ResponseEntity<Map<String, Object>> getSalesData(
+        @RequestParam (value = "date", required = false) String  endDateStr) {
+            LocalDateTime endDate = null;
+            // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
+            if (endDateStr != null) {
+                endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                System.out.println("CompareDate: " + endDate);
+            }
+        // Tạo một Map để trả về dữ liệu
+        Map<String, Object> response = new HashMap<>();
+        
+        // Tính toán các chỉ số cho tháng hiện tại và tháng trước
+        Long revenue = receiptDetailService.getRevenue(endDate);
+        Long successfulOrders = receiptDetailService.getSuccessfulOrders(endDate);
+        Long failedOrders = receiptDetailService.getFailedOrders(endDate);
+        Long customerCount = receiptDetailService.getCustomerCount(endDate);
+        
+        // Tính toán phần trăm thay đổi so với tháng trước
+        Double revenuePercentChange = receiptDetailService.getRevenuePercentChange(endDate);
+        Double successfulOrdersPercentChange = receiptDetailService.getSuccessfulOrdersPercentChange(endDate);
+        Double failedOrdersPercentChange = receiptDetailService.getFailedOrdersPercentChange(endDate);
+        Double customerCountPercentChange = receiptDetailService.getCustomerCountPercentChange(endDate);
+        
+        // Thêm dữ liệu vào response
+        response.put("doanhSo", createStatistic("Doanh số", revenue, "VND", revenuePercentChange));
+        response.put("donThanhCong", createStatistic("Đơn thành công", successfulOrders, "Đơn", successfulOrdersPercentChange));
+        response.put("donThatBai", createStatistic("Đơn thất bại", failedOrders, "Đơn", failedOrdersPercentChange));
+        response.put("soLuongKhachHang", createStatistic("Số lượng khách hàng", customerCount, "Người", customerCountPercentChange));
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Helper method to create statistic object
+    private Map<String, Object> createStatistic(String title, Long value, String suffix, Double percentChange) {
+        Map<String, Object> statistic = new HashMap<>();
+        statistic.put("title", title);
+        statistic.put("value", value);
+        statistic.put("suffix", suffix);
+        statistic.put("percentChange", percentChange);
+        return statistic;
+    }
+    // API để nhận ngày và trả về doanh thu theo tháng
+    @GetMapping("/dashboard/getRevenueByMonth")
+    public ResponseEntity<List<Object[]>> getRevenueByMonth(
+            @RequestParam(value = "date") String endDateStr) {
+        
+                LocalDateTime endDate = null;
+                // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
+                if (endDateStr != null) {
+                    endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                    System.out.println("CompareDate: " + endDate);
+                }
+
+         // Lấy doanh thu theo tháng từ Service
+    List<Object[]> revenueData = receiptDetailService.getRevenueByMonth(endDate);
+
+    return ResponseEntity.ok(revenueData);
+    }
+     // API tỉ lệ đơn hàng thành công trên tổng đơn hàng từ đầu tháng đến ngày truyền vào
+     @GetMapping("/dashboard/success-rate")
+     public ResponseEntity<Double> getSuccessRate(
+             @RequestParam(value = "date") String endDateStr) {
+         
+                 LocalDateTime endDate = null;
+                 // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
+                 if (endDateStr != null) {
+                     endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                     System.out.println("CompareDate: " + endDate);
+                 }
+ 
+          // Lấy doanh thu theo tháng từ Service
+     Double successratedata = receiptDetailService.getSuccessRate(endDate);
+ 
+     return ResponseEntity.ok(successratedata);
+     }
+     @GetMapping("/dashboard/payment-method-stats")
+    public ResponseEntity<List<Object[]>> getPaymentMethodStats(
+        @RequestParam(value = "date") String endDateStr) {
+            LocalDateTime endDate = null;
+            // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
+            if (endDateStr != null) {
+                endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                System.out.println("CompareDate: " + endDate);
+            }
+        // Gọi service để lấy dữ liệu
+        List<Object[]> paymentStats = receiptDetailService.getPaymentMethodStats(endDate);
+
+        // Trả về dữ liệu
+        return ResponseEntity.ok(paymentStats);
     }
 }
