@@ -3,6 +3,7 @@ package fpoly.electroland.restController;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -103,7 +104,23 @@ public class ReceiptManagementController {
         }
     }
 
-    
+    @GetMapping("/orders/details")
+    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
+        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/orders/by-date")
+    public ResponseEntity<List<Receipt>> getOrdersByDateRange(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = LocalDate.parse(startDateStr, formatter).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59);
+
+        return ResponseEntity.ok(receiptService.getOrdersByDateRange(startDate, endDate));
+    }
 
     // 🔹 1. API lấy tổng số đơn hàng
     @GetMapping("/orders/count")
@@ -117,29 +134,87 @@ public class ReceiptManagementController {
         return receiptService.countOrdersByStatus();
     }
 
-    // 🔹 3. API lấy tổng doanh thu
-    @GetMapping("/orders/revenue")
-    public double getTotalRevenue() {
-        return receiptService.getTotalRevenue();
-    }
-
-    // 🔹 4. API lấy doanh thu theo tháng
-    @GetMapping("/orders/revenue/monthly")
-    public List<Object[]> getRevenueByMonth() {
-        return receiptService.getRevenueByMonth();
-    }
-
     // 🔹 5. API lấy số đơn hàng theo phương thức thanh toán
     @GetMapping("/orders/payment-methods")
     public List<Object[]> getOrdersByPaymentMethod() {
         return receiptService.countOrdersByPaymentMethod();
     }
 
-
     // 🔹 7. API lấy tỷ lệ hoàn đơn
     @GetMapping("/orders/refund-rate")
     public double getRefundRate() {
         return receiptService.getRefundRate();
     }
+    @GetMapping("/orders/statistics")
+    public ResponseEntity<Map<String, Object>> getStatisticsByDateRange(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+    
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = LocalDate.parse(startDateStr, formatter).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59);
+    
+        List<Receipt> filteredReceipts = receiptService.getOrdersByDateRange(startDate, endDate);
+        long totalOrders = filteredReceipts.size();
+    
+        Map<String, Long> ordersByStatus = receiptService.countOrdersByStatusWithinRange(startDate, endDate);
+        List<Object[]> ordersByPaymentMethod = receiptService.countOrdersByPaymentMethodWithinRange(startDate, endDate);
+        List<Map<String, Object>> ordersByMonth = receiptService.getOrdersCountByMonth(startDate, endDate);
+    
+        Map<String, Object> statistics = new HashMap<>();
+        statistics.put("totalOrders", totalOrders);
+        statistics.put("ordersByStatus", ordersByStatus);
+        statistics.put("ordersByPaymentMethod", ordersByPaymentMethod);
+        statistics.put("ordersByMonth", ordersByMonth);
+    
+        return ResponseEntity.ok(statistics);
+    }
+    
+
+    // 🔹 API lấy tổng doanh thu trong khoảng thời gian
+    @GetMapping("/orders/revenue")
+    public ResponseEntity<Double> getTotalRevenueByDateRange(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        double revenue = receiptService.getTotalRevenueByDateRange(startDate, endDate);
+        return ResponseEntity.ok(revenue);
+    }
+
+    // 🔹 API lấy doanh thu theo tháng
+    @GetMapping("/orders/revenue/monthly")
+    public ResponseEntity<List<Map<String, Object>>> getRevenueByMonth(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        List<Map<String, Object>> revenueData = receiptService.getRevenueByMonth(startDate, endDate);
+
+        // In ra log để kiểm tra dữ liệu trả về
+        System.out.println("Dữ liệu doanh thu: " + revenueData);
+
+        return ResponseEntity.ok(revenueData);
+    }
+    @GetMapping("/orders/count/monthly")
+    public ResponseEntity<List<Map<String, Object>>> getOrdersCountByMonth(
+        @RequestParam(required = false) String startDateStr,
+        @RequestParam(required = false) String endDateStr) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+    LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+    List<Map<String, Object>> ordersData = receiptService.getOrdersCountByMonth(startDate, endDate);
+    
+    return ResponseEntity.ok(ordersData);
+}
+
 
 }

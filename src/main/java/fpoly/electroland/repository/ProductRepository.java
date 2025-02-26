@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.Supplier;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -66,5 +67,30 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
         List<Product> findByPriceBetweenAndSupplierIdIn(Integer minPrice, Integer maxPrice, List<Integer> supplier,
                         Sort sort);
+
+        // Thêm câu truy vấn thống kê sản phẩm
+        @Query("SELECT p.name AS product_name, "
+                        + "c.name AS category_name, "
+                        + "s.name AS supplier_name, "
+                        + "COUNT(p.id) AS total_products, "
+                        + "SUM(CASE WHEN p.priceDiscount IS NOT NULL THEN 1 ELSE 0 END) AS discounted_products, "
+                        + "AVG(p.priceDiscount / p.price) AS avg_discount_percentage, "
+                        + "AVG(p.price) AS avg_price "
+                        + "FROM Product p "
+                        + "JOIN Category c ON p.category.id = c.id "
+                        + "JOIN Supplier s ON p.supplier.id = s.id "
+                        + "GROUP BY p.name, c.name, s.name")
+        List<Object[]> getProductStatistics(Sort sort);
+
+        @Query("SELECT p.name AS productName, " +
+                        "SUM(rd.quantity * rd.price) AS revenue, " +
+                        "SUM(rd.quantity) AS totalQuantity " +
+                        "FROM ReceiptDetail rd JOIN rd.product p JOIN rd.receipt r " +
+                        "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
+                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +
+                        "GROUP BY p.name " +
+                        "ORDER BY revenue DESC")
+        List<Object[]> getTop10ProductRevenue(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 
 }
