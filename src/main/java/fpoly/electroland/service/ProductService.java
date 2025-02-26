@@ -1,20 +1,30 @@
 package fpoly.electroland.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import fpoly.electroland.model.Attribute;
+import fpoly.electroland.model.CartProductAttribute;
 import fpoly.electroland.model.Category;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.ProductAttribute;
+import fpoly.electroland.model.ProductImg;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.AttributeRepository;
+import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CategoryRepository;
 
 import fpoly.electroland.repository.ProductAttributeRepository;
@@ -22,7 +32,7 @@ import fpoly.electroland.repository.ProductAttributeRepository;
 import fpoly.electroland.repository.ProductImgRepository;
 import fpoly.electroland.repository.ProductRepository;
 import fpoly.electroland.repository.SupplierRepository;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProductService {
@@ -45,8 +55,105 @@ public class ProductService {
     @Autowired
     ProductAttributeRepository productAttributeRepository;
 
+    @Autowired
+    CartProductAttributeRepository cartProductAttributeRepository;
+
     public List<Product> getProduct() {
         return productRepository.findAll();
+    }
+
+    @Transactional
+    public void editProduct(Product product) {
+
+        product.getProductAttributes().forEach(pa -> pa.setProduct(product));
+        Product savedProduct = productRepository.save(product);
+        // int idProduct = savedProduct.getId();
+
+        // Lấy danh sách ảnh cũ từ DB
+        List<ProductImg> oldImages = productImgRepository.findByProduct(savedProduct);
+
+        // Nếu có danh sách ảnh mới
+        if (product.getProductImgs() != null) {
+            List<ProductImg> newImages = product.getProductImgs();
+
+            // Bước 1: Xóa các ảnh cũ không còn trong danh sách mới
+            List<String> newImageLinks = newImages.stream()
+                    .map(ProductImg::getLink)
+                    .collect(Collectors.toList());
+
+            oldImages.stream()
+                    .filter(oldImg -> !newImageLinks.contains(oldImg.getLink()))
+                    .forEach(productImgRepository::delete);
+
+            // Bước 2 & 3: Cập nhật hoặc thêm mới ảnh
+            for (ProductImg newImg : newImages) {
+                if (newImg.getLink() != null) {
+                    // Kiểm tra xem ảnh đã tồn tại hay chưa (dựa trên link)
+                    Optional<ProductImg> existingImgOpt = oldImages.stream()
+                            .filter(oldImg -> oldImg.getLink().equals(newImg.getLink()))
+                            .findFirst();
+
+                    if (existingImgOpt.isPresent()) {
+                        // Ảnh đã tồn tại -> Cập nhật thông tin khác nếu cần
+                        ProductImg existingImg = existingImgOpt.get();
+                        existingImg.setProduct(savedProduct); // Đảm bảo ảnh vẫn thuộc sản phẩm
+                        productImgRepository.save(existingImg);
+                    } else {
+                        // Ảnh chưa tồn tại -> Thêm mới
+                        newImg.setProduct(savedProduct);
+                        productImgRepository.save(newImg);
+                    }
+                }
+            }
+        }
+        // // saveProductAttributes(product, savedProduct);
+        List<ProductAttribute> listPA = product.getProductAttributes();
+
+        // Lấy danh sách ProductAttribute hiện có trong database
+        List<ProductAttribute> existingPAs = productAttributeRepository.findByProductId(savedProduct.getId());
+
+        listPA.forEach(pa -> {
+            Optional<ProductAttribute> pAttribute = productAttributeRepository.findByNameAndProductId(pa.getName(),
+                    savedProduct.getId());
+
+            ProductAttribute pat;
+            if (!pAttribute.isPresent()) {
+                ProductAttribute newPA = new ProductAttribute();
+                newPA.setName(pa.getName());
+                newPA.setProduct(savedProduct);
+                pat = productAttributeRepository.save(newPA);
+            } else {
+                pat = pAttribute.get();
+            }
+
+            // Lấy danh sách Attribute hiện có trong database của ProductAttribute này
+            List<Attribute> existingAttributes = attributeRepository.findByProductAttribute(pat);
+
+            pa.getAttributes().forEach(att -> {
+                Optional<Attribute> existingAttribute = attributeRepository
+                        .findByNameAndProductAttributeId(att.getName(), pat.getId());
+                if (!existingAttribute.isPresent()) {
+                    Attribute newAttribute = new Attribute();
+                    newAttribute.setName(att.getName());
+                    newAttribute.setProductAttribute(pat);
+                    newAttribute.setAttributePrice(att.getAttributePrice());
+                    attributeRepository.save(newAttribute);
+                } else {
+                    existingAttributes.remove(existingAttribute.get());
+                }
+            });
+
+            // Xóa các Attribute không có trong product.getProductAttributes()
+            existingAttributes.forEach(attributeRepository::delete);
+
+            existingPAs.remove(pat);
+        });
+
+        // Xóa các ProductAttribute không có trong product.getProductAttributes()
+        existingPAs.forEach(pa -> {
+            attributeRepository.deleteByProductAttributeId(pa.getId()); // Xóa tất cả Attribute liên quan
+            productAttributeRepository.delete(pa);
+        });
     }
 
     public Object getProductByFilter(String key, int category, int minPrice, int maxPrice,
@@ -126,89 +233,53 @@ public class ProductService {
     public Product saveProduct(Product product) {
         // Kiểm tra và gán Category nếu tồn tại
         assignCategory(product);
-    
+
         // Kiểm tra và gán Supplier nếu tồn tại
         assignSupplier(product);
-    
+
         // Lưu sản phẩm chính
         Product savedProduct = productRepository.save(product);
-    
+
         // Lưu các ProductImg nếu tồn tại
         saveProductImages(product, savedProduct);
-    
+
         // Lưu các ProductAttribute và Attributes con nếu tồn tại
-        saveProductAttributes(product, savedProduct);
-    
+
         return savedProduct;
     }
-    
+
     private void assignCategory(Product product) {
         if (product.getCategory() != null) {
             Category category = categoryRepository.findById(product.getCategory().getId())
-                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + product.getCategory().getId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Category not found with id: " + product.getCategory().getId()));
             product.setCategory(category);
         }
     }
-    
+
     private void assignSupplier(Product product) {
         if (product.getSupplier() != null) {
             Supplier supplier = supplierRepository.findById(product.getSupplier().getId())
-                    .orElseThrow(() -> new RuntimeException("Supplier not found with id: " + product.getSupplier().getId()));
+                    .orElseThrow(
+                            () -> new RuntimeException("Supplier not found with id: " + product.getSupplier().getId()));
             product.setSupplier(supplier);
         }
     }
-    
-    
+
     private void saveProductImages(Product product, Product savedProduct) {
+        productImgRepository.deleteByProduct(savedProduct);
         if (product.getProductImgs() != null && !product.getProductImgs().isEmpty()) {
             product.getProductImgs().forEach(productImg -> {
                 if (productImg.getLink() != null) {
+
                     productImg.setProduct(savedProduct);
+
                     productImgRepository.save(productImg);
                 }
             });
         }
     }
-    
-    private void saveProductAttributes(Product product, Product savedProduct) {
-        if (product.getProductAttributes() != null && !product.getProductAttributes().isEmpty()) {
-            product.getProductAttributes().forEach(productAttribute -> {
-                if (productAttribute.getName() != null) {
-                    // Kiểm tra xem ProductAttribute đã tồn tại chưa
-                    Optional<ProductAttribute> existingAttribute = productAttributeRepository.findByNameAndProductId(productAttribute.getName(), savedProduct.getId());
-    
-                    ProductAttribute savedProductAttribute;
-                    if (existingAttribute.isPresent()) {
-                        // Nếu tồn tại, lấy ra đối tượng đã có
-                        savedProductAttribute = existingAttribute.get();
-                    } else {
-                        // Nếu không tồn tại, tạo mới
-                        productAttribute.setProduct(savedProduct);
-                        savedProductAttribute = productAttributeRepository.save(productAttribute);
-                    }
-    
-                    // Xử lý các attributes con
-                    if (productAttribute.getAttributes() != null && !productAttribute.getAttributes().isEmpty()) {
-                        productAttribute.getAttributes().forEach(attribute -> {
-                            if (attribute.getName() != null) {
-                                // Kiểm tra xem attribute con đã tồn tại trong savedProductAttribute chưa
-                                boolean exists = savedProductAttribute.getAttributes().stream()
-                                        .anyMatch(existingAttr -> existingAttr.getName().equals(attribute.getName()));
-    
-                                if (!exists) {
-                                    // Nếu chưa tồn tại, thêm mới
-                                    attribute.setProductAttribute(savedProductAttribute);
-                                    attributeRepository.save(attribute);
-                                }
-                            }
-                        });
-                    }
-                }
-            });
-        }
-    }
-    
-    
+
     public Product updateProduct(Integer id, Product product) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
@@ -237,31 +308,31 @@ public class ProductService {
     }
 
     // public List<Product> searchProducts(String keyword) {
-    //     if (keyword == null || keyword.isEmpty()) {
-    //         return new ArrayList<>();
-    //     }
-    //     return productRepository.findProduct(keyword);
+    // if (keyword == null || keyword.isEmpty()) {
+    // return new ArrayList<>();
+    // }
+    // return productRepository.findProduct(keyword);
     // }
 
     // public List<Product> sortProducts(String criteria, String order) {
-    //     if ("price".equalsIgnoreCase(criteria)) {
-    //         if ("asc".equalsIgnoreCase(order)) {
-    //             return productRepository.sortByPriceAsc();
-    //         } else if ("desc".equalsIgnoreCase(order)) {
-    //             return productRepository.sortByPriceDesc();
-    //         } else {
-    //             throw new IllegalArgumentException("Invalid sorting order: " + order);
-    //         }
-    //     } else if ("name".equalsIgnoreCase(criteria)) {
-    //         if ("asc".equalsIgnoreCase(order)) {
-    //             return productRepository.sortByNameAsc();
-    //         } else if ("desc".equalsIgnoreCase(order)) {
-    //             return productRepository.sortByNameDesc();
-    //         } else {
-    //             throw new IllegalArgumentException("Invalid sorting order: " + order);
-    //         }
-    //     } else {
-    //         throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
-    //     }
-    // }    
+    // if ("price".equalsIgnoreCase(criteria)) {
+    // if ("asc".equalsIgnoreCase(order)) {
+    // return productRepository.sortByPriceAsc();
+    // } else if ("desc".equalsIgnoreCase(order)) {
+    // return productRepository.sortByPriceDesc();
+    // } else {
+    // throw new IllegalArgumentException("Invalid sorting order: " + order);
+    // }
+    // } else if ("name".equalsIgnoreCase(criteria)) {
+    // if ("asc".equalsIgnoreCase(order)) {
+    // return productRepository.sortByNameAsc();
+    // } else if ("desc".equalsIgnoreCase(order)) {
+    // return productRepository.sortByNameDesc();
+    // } else {
+    // throw new IllegalArgumentException("Invalid sorting order: " + order);
+    // }
+    // } else {
+    // throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
+    // }
+    // }
 }

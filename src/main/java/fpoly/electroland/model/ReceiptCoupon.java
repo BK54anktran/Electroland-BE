@@ -32,6 +32,6 @@ public class ReceiptCoupon {
 	@Column(columnDefinition = "nvarchar(225)", nullable = true)
 	String description;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	Boolean status = true;
 }
