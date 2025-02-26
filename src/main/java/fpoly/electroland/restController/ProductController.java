@@ -90,30 +90,30 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchProduct(@RequestParam String search) {
-        try {
-            List<Product> products = productService.searchProducts(search);
-            if (products.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found matching the keyword: " + search);
-            }
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while searching for products.");
-        }
-    }
+    // @GetMapping("/search")
+    // public ResponseEntity<?> searchProduct(@RequestParam String search) {
+    //     try {
+    //         List<Product> products = productService.searchProducts(search);
+    //         if (products.isEmpty()) {
+    //             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found matching the keyword: " + search);
+    //         }
+    //         return ResponseEntity.ok(products);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while searching for products.");
+    //     }
+    // }
 
-    @GetMapping("/sort")
-    public ResponseEntity<List<Product>> sortProducts(
-            @RequestParam String criteria,
-            @RequestParam String order) {
-        try {
-            List<Product> products = productService.sortProducts(criteria, order);
-            return ResponseEntity.ok(products);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
+    // @GetMapping("/sort")
+    // public ResponseEntity<List<Product>> sortProducts(
+    //         @RequestParam String criteria,
+    //         @RequestParam String order) {
+    //     try {
+    //         List<Product> products = productService.sortProducts(criteria, order);
+    //         return ResponseEntity.ok(products);
+    //     } catch (IllegalArgumentException e) {
+    //         return ResponseEntity.badRequest().body(null);
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    //     }
+    // }
 }

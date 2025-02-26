@@ -10,16 +10,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
-import fpoly.electroland.model.Color;
+// import fpoly.electroland.model.Color;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.ProductAttribute;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.AttributeRepository;
 import fpoly.electroland.repository.CategoryRepository;
-import fpoly.electroland.repository.ColorRepository;
+// import fpoly.electroland.repository.ColorRepository;
 import fpoly.electroland.repository.ProductAttributeRepository;
-import fpoly.electroland.repository.ProductColorRepository;
+// import fpoly.electroland.repository.ProductColorRepository;
 import fpoly.electroland.repository.ProductImgRepository;
 import fpoly.electroland.repository.ProductRepository;
 import fpoly.electroland.repository.SupplierRepository;
@@ -37,11 +37,11 @@ public class ProductService {
     @Autowired
     SupplierRepository supplierRepository;
 
-    @Autowired
-    ColorRepository colorRepository;
+    // @Autowired
+    // ColorRepository colorRepository;
 
-    @Autowired
-    ProductColorRepository productColorRepository;
+    // @Autowired
+    // ProductColorRepository productColorRepository;
 
     @Autowired
     ProductImgRepository productImgRepository;
@@ -141,7 +141,7 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
     
         // Lưu các ProductColor nếu tồn tại
-        saveProductColors(product, savedProduct);
+        // saveProductColors(product, savedProduct);
     
         // Lưu các ProductImg nếu tồn tại
         saveProductImages(product, savedProduct);
@@ -168,19 +168,19 @@ public class ProductService {
         }
     }
     
-    private void saveProductColors(Product product, Product savedProduct) {
-        if (product.getProductColors() != null && !product.getProductColors().isEmpty()) {
-            product.getProductColors().forEach(productColor -> {
-                if (productColor.getColor() != null) {
-                    Color color = colorRepository.findById(productColor.getColor().getId())
-                            .orElseThrow(() -> new RuntimeException("Color not found with id: " + productColor.getColor().getId()));
-                    productColor.setColor(color);
-                    productColor.setProduct(savedProduct);
-                    productColorRepository.save(productColor);
-                }
-            });
-        }
-    }
+    // private void saveProductColors(Product product, Product savedProduct) {
+    //     if (product.getProductColors() != null && !product.getProductColors().isEmpty()) {
+    //         product.getProductColors().forEach(productColor -> {
+    //             if (productColor.getColor() != null) {
+    //                 Color color = colorRepository.findById(productColor.getColor().getId())
+    //                         .orElseThrow(() -> new RuntimeException("Color not found with id: " + productColor.getColor().getId()));
+    //                 productColor.setColor(color);
+    //                 productColor.setProduct(savedProduct);
+    //                 productColorRepository.save(productColor);
+    //             }
+    //         });
+    //     }
+    // }
     
     private void saveProductImages(Product product, Product savedProduct) {
         if (product.getProductImgs() != null && !product.getProductImgs().isEmpty()) {
@@ -259,32 +259,32 @@ public class ProductService {
         }
     }
 
-    public List<Product> searchProducts(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return productRepository.findProduct(keyword);
-    }
+    // public List<Product> searchProducts(String keyword) {
+    //     if (keyword == null || keyword.isEmpty()) {
+    //         return new ArrayList<>();
+    //     }
+    //     return productRepository.findProduct(keyword);
+    // }
 
-    public List<Product> sortProducts(String criteria, String order) {
-        if ("price".equalsIgnoreCase(criteria)) {
-            if ("asc".equalsIgnoreCase(order)) {
-                return productRepository.sortByPriceAsc();
-            } else if ("desc".equalsIgnoreCase(order)) {
-                return productRepository.sortByPriceDesc();
-            } else {
-                throw new IllegalArgumentException("Invalid sorting order: " + order);
-            }
-        } else if ("name".equalsIgnoreCase(criteria)) {
-            if ("asc".equalsIgnoreCase(order)) {
-                return productRepository.sortByNameAsc();
-            } else if ("desc".equalsIgnoreCase(order)) {
-                return productRepository.sortByNameDesc();
-            } else {
-                throw new IllegalArgumentException("Invalid sorting order: " + order);
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
-        }
-    }    
+    // public List<Product> sortProducts(String criteria, String order) {
+    //     if ("price".equalsIgnoreCase(criteria)) {
+    //         if ("asc".equalsIgnoreCase(order)) {
+    //             return productRepository.sortByPriceAsc();
+    //         } else if ("desc".equalsIgnoreCase(order)) {
+    //             return productRepository.sortByPriceDesc();
+    //         } else {
+    //             throw new IllegalArgumentException("Invalid sorting order: " + order);
+    //         }
+    //     } else if ("name".equalsIgnoreCase(criteria)) {
+    //         if ("asc".equalsIgnoreCase(order)) {
+    //             return productRepository.sortByNameAsc();
+    //         } else if ("desc".equalsIgnoreCase(order)) {
+    //             return productRepository.sortByNameDesc();
+    //         } else {
+    //             throw new IllegalArgumentException("Invalid sorting order: " + order);
+    //         }
+    //     } else {
+    //         throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
+    //     }
+    // }    
 }
