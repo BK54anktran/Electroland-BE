@@ -42,7 +42,6 @@ public class Customer {
 	@Column(columnDefinition = "nvarchar(225)", nullable = false)
 	String fullName;
 
-	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date dateOfBirth;
