@@ -3,6 +3,7 @@ package fpoly.electroland.restController;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.model.Category;
+import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.ProductAttribute;
 import fpoly.electroland.model.ProductImg;
@@ -86,32 +87,6 @@ public class ProductController {
     @PostMapping("/saveProduct")
     public void saveProduct(@RequestBody Product product) {
         productService.editProduct(product);
-
-        // int id = (int) body.get("id");
-        // String name = (String) body.get("name");
-        // String avatar =(String) body.get("avatar");
-        // String description = (String) body.get("description");
-        // Double price = Double.parseDouble((String)body.get("price"));
-        // Double priceDiscount = Double.parseDouble((String)body.get("priceDiscount"));
-        // Boolean status = (Boolean)body.get("status");
-        // Category category = (Category) body.get("category");
-        // Supplier supplier = (Supplier)body.get("supplier");
-        // List<ProductImg> listImgs = (List<ProductImg>) body.get("productImgs");
-        // List<ProductAttribute> listAttributes = (List<ProductAttribute>)body.get("productAttributes");
-      
-        // Product newP = new Product();
-        // newP.setId(id);
-        // newP.setName(name);
-        // newP.setAvatar(avatar);
-        // newP.setDescription(description);
-        // newP.setPrice(price);
-        // newP.setPriceDiscount(priceDiscount);
-        // newP.setStatus(status);
-        // newP.setCategory(category);
-        // newP.setSupplier(supplier);
-        // newP.setProductImgs(listImgs);
-        // newP.setProductAttributes(listAttributes);
-        // System.out.println(newP);
     }
 
     @PutMapping("/update/{id}")
@@ -127,32 +102,15 @@ public class ProductController {
         }
     }
 
-    // @GetMapping("/search")
-    // public ResponseEntity<?> searchProduct(@RequestParam String search) {
-    // try {
-    // List<Product> products = productService.searchProducts(search);
-    // if (products.isEmpty()) {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found
-    // matching the keyword: " + search);
-    // }
-    // return ResponseEntity.ok(products);
-    // } catch (Exception e) {
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error
-    // occurred while searching for products.");
-    // }
-    // }
-
-    // @GetMapping("/sort")
-    // public ResponseEntity<List<Product>> sortProducts(
-    // @RequestParam String criteria,
-    // @RequestParam String order) {
-    // try {
-    // List<Product> products = productService.sortProducts(criteria, order);
-    // return ResponseEntity.ok(products);
-    // } catch (IllegalArgumentException e) {
-    // return ResponseEntity.badRequest().body(null);
-    // } catch (Exception e) {
-    // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    // }
-    // }
+    @GetMapping("/admin/product/search")
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword) {
+        try {
+            List<Product> products = productService.searchProducts(keyword); 
+            return ResponseEntity.ok(products); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(null); 
+        }
+    }
 }

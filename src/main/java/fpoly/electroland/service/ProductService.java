@@ -307,32 +307,7 @@ public class ProductService {
         }
     }
 
-    // public List<Product> searchProducts(String keyword) {
-    // if (keyword == null || keyword.isEmpty()) {
-    // return new ArrayList<>();
-    // }
-    // return productRepository.findProduct(keyword);
-    // }
-
-    // public List<Product> sortProducts(String criteria, String order) {
-    // if ("price".equalsIgnoreCase(criteria)) {
-    // if ("asc".equalsIgnoreCase(order)) {
-    // return productRepository.sortByPriceAsc();
-    // } else if ("desc".equalsIgnoreCase(order)) {
-    // return productRepository.sortByPriceDesc();
-    // } else {
-    // throw new IllegalArgumentException("Invalid sorting order: " + order);
-    // }
-    // } else if ("name".equalsIgnoreCase(criteria)) {
-    // if ("asc".equalsIgnoreCase(order)) {
-    // return productRepository.sortByNameAsc();
-    // } else if ("desc".equalsIgnoreCase(order)) {
-    // return productRepository.sortByNameDesc();
-    // } else {
-    // throw new IllegalArgumentException("Invalid sorting order: " + order);
-    // }
-    // } else {
-    // throw new IllegalArgumentException("Invalid sorting criteria: " + criteria);
-    // }
-    // }
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByNameContaining(keyword);
+    }
 }

@@ -62,5 +62,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
         List<Product> findByPriceBetweenAndSupplierIdIn(Integer minPrice, Integer maxPrice, List<Integer> supplier,
                         Sort sort);
-
 }
