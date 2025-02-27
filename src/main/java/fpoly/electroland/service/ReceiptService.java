@@ -105,6 +105,11 @@ public class ReceiptService {
         return receiptDetailRepository.findByReceiptId(receiptId);
     }
 
+    public List<Receipt> getReceiptsByUser(Customer customer){
+        List<Receipt> list = receiptRepository.findByCustomer(customer);
+        return list;
+    }
+
     public List<Receipt> getReceiptsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate == null) {
             startDate = receiptRepository.findEarliestDate().orElse(LocalDateTime.of(2000, 1, 1, 0, 0, 0));
