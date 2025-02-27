@@ -114,26 +114,24 @@ public class AdminDiscountController {
     }
 
     @PostMapping("/discountProduct/newDiscountProduct")
-    public ResponseEntity<ProductCoupon> newProductCoupon(@RequestBody ProductCoupon productCoupon){
-        Integer userId = userService.getUser().getId();
-        ProductCoupon saveProductCoupon = productCouponService.newProductCoupon(productCoupon, userId);
-        return ResponseEntity.ok(saveProductCoupon);
+    public ProductCoupon newProductCoupon(@RequestBody ProductCoupon productCoupon){
+        return productCouponService.newProductCoupon(productCoupon);
     }
 
-    @PutMapping("/discountProduct/update/{id}")
-    public ResponseEntity<?> updateProductCoupon(@PathVariable Long id, @RequestBody ProductCoupon productCoupon){
-        try{
-            Integer userId = userService.getUser().getId();
-            ProductCoupon updatedProductCoupon = productCouponService.updateProductCoupon(id, productCoupon, userId);
-            return ResponseEntity.ok(updatedProductCoupon);
-        } catch(NoSuchElementException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
-        } catch(Exception e){
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
-        }
-    }
+    // @PutMapping("/discountProduct/update/{id}")
+    // public ResponseEntity<?> updateProductCoupon(@PathVariable Long id, @RequestBody ProductCoupon productCoupon){
+    //     try{
+    //         Integer userId = userService.getUser().getId();
+    //         ProductCoupon updatedProductCoupon = productCouponService.updateProductCoupon(id, productCoupon, userId);
+    //         return ResponseEntity.ok(updatedProductCoupon);
+    //     } catch(NoSuchElementException e){
+    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
+    //     } catch(Exception e){
+    //         e.printStackTrace();
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //         .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
+    //     }
+    // }
 
     @GetMapping("/discountProduct/search")
     public ResponseEntity<List<ProductCoupon>> searchProductCoupon(@RequestParam String key) {

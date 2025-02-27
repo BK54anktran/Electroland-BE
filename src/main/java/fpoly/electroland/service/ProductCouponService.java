@@ -32,42 +32,35 @@ public class ProductCouponService {
         return productCouponRepository.findAll();
     }
 
-    public ProductCoupon newProductCoupon(ProductCoupon productCoupon, int userId) {
-        ProductCoupon saveProductCoupon = productCouponRepository.save(productCoupon);
-
-        Employee creatorEmployee = employeeRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        createAction.createAction("ProductCoupon", "CREATE", saveProductCoupon.getId(), null, saveProductCoupon.toString(), creatorEmployee);
-        
-        return saveProductCoupon;
+    public ProductCoupon newProductCoupon(ProductCoupon productCoupon) {
+        return productCouponRepository.save(productCoupon);
     }
 
-    public ProductCoupon updateProductCoupon(Long id, ProductCoupon updateProductCoupon, int userId) {
-        Optional<ProductCoupon> optionalProductCoupon = productCouponRepository.findById(id);
-        if (optionalProductCoupon.isPresent()) {
-            ProductCoupon existingProductCoupon = optionalProductCoupon.get();
+    // public ProductCoupon updateProductCoupon(Long id, ProductCoupon updateProductCoupon, int userId) {
+    //     Optional<ProductCoupon> optionalProductCoupon = productCouponRepository.findById(id);
+    //     if (optionalProductCoupon.isPresent()) {
+    //         ProductCoupon existingProductCoupon = optionalProductCoupon.get();
 
-            String oldValue = existingProductCoupon.toString();
+    //         String oldValue = existingProductCoupon.toString();
 
-            existingProductCoupon.setRedemptionCost(updateProductCoupon.getRedemptionCost());
-            existingProductCoupon.setDescription(updateProductCoupon.getDescription());
-            existingProductCoupon.setValue(updateProductCoupon.getValue());
-            existingProductCoupon.setProduct(updateProductCoupon.getProduct());
+    //         existingProductCoupon.setRedemptionCost(updateProductCoupon.getRedemptionCost());
+    //         existingProductCoupon.setDescription(updateProductCoupon.getDescription());
+    //         existingProductCoupon.setValue(updateProductCoupon.getValue());
+    //         existingProductCoupon.setProduct(updateProductCoupon.getProduct());
 
-            ProductCoupon savedProductCoupon = productCouponRepository.save(existingProductCoupon);
+    //         ProductCoupon savedProductCoupon = productCouponRepository.save(existingProductCoupon);
 
-            Employee creatorEmployee = employeeRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+    //         Employee creatorEmployee = employeeRepository.findById(userId)
+    //                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-            createAction.createAction("ProductCoupon", "UPDATE", savedProductCoupon.getId(), oldValue,
-                savedProductCoupon.toString(), creatorEmployee);
+    //         createAction.createAction("ProductCoupon", "UPDATE", savedProductCoupon.getId(), oldValue,
+    //             savedProductCoupon.toString(), creatorEmployee);
 
-            return savedProductCoupon;
-        } else {
-            throw new RuntimeException("Employee not found with id: " + id);
-        }
-    }
+    //         return savedProductCoupon;
+    //     } else {
+    //         throw new RuntimeException("Employee not found with id: " + id);
+    //     }
+    // }
 
     public List<ProductCoupon> searchDiscountProduct(String key) {
         Integer keyNumeric = null;
