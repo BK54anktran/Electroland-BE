@@ -12,4 +12,5 @@ public interface CustomerCouponRepository extends JpaRepository<CustomerCoupon, 
 
     List<CustomerCoupon> findByCustomerId(int id);
 
+    List<CustomerCoupon> findByCustomerIdAndStatusTrue(int customerId);
 }

@@ -53,4 +53,8 @@ public class CustomerCouponService {
                 receiptCoupon.getMaxDiscount(), receiptCoupon.getMinReceiptPrice(), receiptCoupon.getDescription());
     }
 
+    public Object getListTrue() {
+        List<CustomerCoupon> list = customerCouponRepository.findByCustomerIdAndStatusTrue(userService.getUser().getId());
+        return list;
+    }
 }

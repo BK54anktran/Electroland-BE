@@ -19,7 +19,8 @@ public class Receipt {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String address;
 
 	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")

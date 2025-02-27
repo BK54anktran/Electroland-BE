@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 
 @Repository
@@ -22,11 +23,11 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
     Optional<LocalDateTime> findEarliestDate();
 
     @Query("SELECT r FROM Receipt r WHERE " +
-    "(:startDate IS NULL OR r.receiptDate >= :startDate) " +
-    "AND (:endDate IS NULL OR r.receiptDate <= :endDate)")
-List<Receipt> findReceiptsByDateRange(
-    @Param("startDate") LocalDateTime startDate,
-    @Param("endDate") LocalDateTime endDate);
+            "(:startDate IS NULL OR r.receiptDate >= :startDate) " +
+            "AND (:endDate IS NULL OR r.receiptDate <= :endDate)")
+    List<Receipt> findReceiptsByDateRange(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT r FROM Receipt r WHERE " +
             "CAST(r.id AS string) LIKE %:searchKey% OR " +
@@ -34,4 +35,6 @@ List<Receipt> findReceiptsByDateRange(
             "LOWER(r.nameReciver) LIKE LOWER(CONCAT('%', :searchKey, '%')) OR " +
             "r.phoneReciver LIKE %:searchKey%")
     List<Receipt> searchReceipts(@Param("searchKey") String searchKey);
+
+    List<Receipt> findByCustomer(Customer customer);
 }

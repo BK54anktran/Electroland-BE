@@ -85,4 +85,8 @@ public class CustomerService {
         return customerRepository.searchAndFilter(keyword, status);
     }
 
+    public Customer updateCustomer(Customer customer){
+        return customerRepository.save(customer);
+    }
+
 }
