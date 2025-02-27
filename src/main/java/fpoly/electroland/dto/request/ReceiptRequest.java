@@ -1,10 +1,8 @@
 package fpoly.electroland.dto.request;
 
 import java.util.Date;
-import fpoly.electroland.model.Customer;
-import fpoly.electroland.model.Payment;
-import fpoly.electroland.model.ReceiptCoupon;
-import fpoly.electroland.model.ReceiptStatus;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,10 +11,16 @@ import lombok.Data;
 
 public class ReceiptRequest {
 
-    private String nameReciver;
-    private String phoneReciver;
+    private int id;
     private String address;
+    private String nameReciver;
+    private String phoneReciever;
     private String note;
-    private Payment payment;
-    private ReceiptCoupon ReceiptCoupon;
+    private int paymentType;
+    private List<Integer> listCouponProduct;
+    private int idReceiptCoupon;
+    private Double totalAmount;
+    private String content;
+    private Date createTime;
+
 }

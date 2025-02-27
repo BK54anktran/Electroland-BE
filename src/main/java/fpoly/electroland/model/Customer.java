@@ -43,7 +43,6 @@ public class Customer {
 	@NotBlank(message = "Họ tên không được để trống")
 	String fullName;
 
-	@Column(nullable = false)
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message = "Ngày sinh không được để trống")

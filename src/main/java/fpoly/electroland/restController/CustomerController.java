@@ -34,23 +34,10 @@ public class CustomerController {
     public List<Customer> GetAllList() {
         return customerService.getAll();
     }
-    
+
     @PostMapping("/customer/save")
     public Customer addCustomer(@RequestBody Customer customer) {
         return customerService.createCustomer(customer);
-    }
-
-    @PutMapping("/customer/update/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestParam boolean status) {
-
-        Customer updatedCustomer = customerService.updateCustomer(id, status);
-
-        if (updatedCustomer != null) {
-            return ResponseEntity.ok(updatedCustomer);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
     }
 
     // Tìm kiếm khách hàng
@@ -91,20 +78,20 @@ public class CustomerController {
 
     @PostMapping("/userUpdate")
     public void updateUser(@RequestBody Map<String, Object> object) {
-        String dateOfBirthStr = (String) object.get("dateOfBirth");  // Lấy ngày dưới dạng chuỗi
+        String dateOfBirthStr = (String) object.get("dateOfBirth"); // Lấy ngày dưới dạng chuỗi
         Date dateOfBirth = (Date) DateUtil.formatDate(dateOfBirthStr);
-        String fullName =(String)object.get("fullName");
-        Boolean gender = (Boolean)object.get("gender");
-        String phoneNumber = (String)object.get("phoneNumber");
-        
+        String fullName = (String) object.get("fullName");
+        Boolean gender = (Boolean) object.get("gender");
+        String phoneNumber = (String) object.get("phoneNumber");
+
         int id = userService.getUser().getId();
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         customer.setDateOfBirth(dateOfBirth);
         customer.setGender(gender);
         customer.setPhoneNumber(phoneNumber);
         customer.setFullName(fullName);
-        if(object.get("newPassword")!=null){
-            String newPassword = (String)object.get("newPassword");
+        if (object.get("newPassword") != null) {
+            String newPassword = (String) object.get("newPassword");
             customer.setPassword(newPassword);
         }
         System.out.println(customer);

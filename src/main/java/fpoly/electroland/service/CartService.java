@@ -40,7 +40,7 @@ public class CartService {
     }
 
     CartDto CartToCartDto(Cart cart) {
-        Double price = cart.getProduct().getPriceDiscount() > 0 ? cart.getProduct().getPriceDiscount()
+        Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                 : cart.getProduct().getPrice();
         for (CartProductAttribute att : cart.getCartProductAttributes()) {
             price += att.getAttribute().getAttributePrice();

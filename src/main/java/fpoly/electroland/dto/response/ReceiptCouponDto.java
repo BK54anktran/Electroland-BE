@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReceiptCouponDto {
     int id;
+    int idReceiptCoupon;
     Double discountMoney;
     Double discountPercent;
     Double maxDiscount;
