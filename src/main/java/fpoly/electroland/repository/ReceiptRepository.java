@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 
 @Repository
@@ -59,4 +60,5 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
     @Query("SELECT (COUNT(r) * 1.0 / (SELECT COUNT(r2) FROM Receipt r2)) FROM Receipt r WHERE r.receiptStatus.name = 'Hoàn hàng'")
     Double refundRate();
 
+    List<Receipt> findByCustomer(Customer customer);
 }

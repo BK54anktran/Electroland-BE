@@ -3,7 +3,6 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,7 +19,8 @@ public class Receipt {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String address;
 
 	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")

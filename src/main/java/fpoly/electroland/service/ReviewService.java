@@ -15,6 +15,10 @@ public class ReviewService {
     @Autowired
     ReviewRepository reviewRepository;
 
+    public Review creatReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
     public List<Review> getAll() {
         return reviewRepository.findAll();
    }

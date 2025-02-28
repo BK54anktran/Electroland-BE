@@ -86,4 +86,8 @@ public class EmployeeService {
         // Tìm kiếm nhân viên có fullName hoặc email chứa key
         return employeeRepository.findByFullNameContainingOrEmailContainingOrPhoneNumberContaining(key, key,key);
     }
+
+    public Employee save(Employee employee){
+        return employeeRepository.save(employee);
+    }
 }

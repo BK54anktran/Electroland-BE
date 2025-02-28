@@ -36,6 +36,6 @@ public class Payment {
     PaymentType paymentType;
 
     @ManyToOne
-    @JoinColumn(name = "idPaymentStatus", nullable = false)
+    @JoinColumn(name = "idPaymentStatus", nullable = true)
     PaymentStatus paymentStatus;
 }

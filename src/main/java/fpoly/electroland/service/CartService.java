@@ -30,6 +30,10 @@ public class CartService {
     @Autowired
     UserService userService;
 
+    public List<Cart> getCartByUser(int id){
+        List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
+        return list;
+    }
     public Object getList() {
         List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
         List<CartDto> listDto = new ArrayList<>();

@@ -26,4 +26,12 @@ public class Attribute {
 	@ManyToOne
 	@JoinColumn(name = "idProductAtt", nullable = false)
 	ProductAttribute productAttribute;
+
+	@Override
+	public String toString() {
+		return "Attribute [name=" + name + ", AttributePrice=" + AttributePrice + ", productAttribute="
+				+ productAttribute + "]";
+	}
+
+	
 }
