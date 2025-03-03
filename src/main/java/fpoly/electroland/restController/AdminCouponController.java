@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("/admin/discount")
-public class AdminDiscountController {
+@RequestMapping("/admin/coupon")
+public class AdminCouponController {
     
     @Autowired
     ReceiptCouponService receiptCouponService;
@@ -37,45 +37,45 @@ public class AdminDiscountController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/discountOrder")
-    public List<ReceiptCoupon> getListDiscountOrder() {
-        return receiptCouponService.getAllReceiptCoupon();
+    @GetMapping("/receiptCoupon")
+    public List<ReceiptCoupon> getListReceiptCoupons() {
+        return receiptCouponService.getListReceiptCoupons();
     }
     
-    @GetMapping("/discountOrder/search/discountPercent")
-    public List<ReceiptCoupon> searchByDiscountPercent(@RequestParam String discountPercent) {
-        return receiptCouponService.searchByDiscountPercent(discountPercent);
+    @GetMapping("/receiptCoupon/search/percent")
+    public List<ReceiptCoupon> searchByDiscountPercent(@RequestParam String percent) {
+        return receiptCouponService.searchByDiscountPercent(percent);
     }
 
-    @GetMapping("/discountOrder/search/discountMoney")
+    @GetMapping("/receiptCoupon/search/money")
     public List<ReceiptCoupon> searchByDiscountMoney(@RequestParam String discountMoney) {
         return receiptCouponService.searchByDiscountMoney(discountMoney);
     }
 
-    @GetMapping("/discountOrder/search")
+    @GetMapping("/receiptCoupon/search")
     public List<ReceiptCoupon> searchReceiptCoupon(
             @RequestParam(required = false) String discountPercent,
             @RequestParam(required = false) String discountMoney) {
         return receiptCouponService.searchReceiptCoupon(discountPercent, discountMoney);
     }   
 
-    @GetMapping("/discountOrder/{id}")
+    @GetMapping("/receiptCoupon/{id}")
     public ReceiptCoupon getReceiptCouponById(@PathVariable int id) {
         return receiptCouponService.getReceiptCouponById(id).orElse(null);
     }
 
-    @PostMapping("/discountOrder/newDiscountOrder")
+    @PostMapping("/receiptCoupon/new")
     public ResponseEntity<ReceiptCoupon> newDReceiptCoupon(@RequestBody ReceiptCoupon receiptCoupon) {
         Integer userId = userService.getUser().getId();
-        ReceiptCoupon saveReceiptCoupon = receiptCouponService.newDiscountOrder(receiptCoupon, userId);
+        ReceiptCoupon saveReceiptCoupon = receiptCouponService.newReceiptCoupon(receiptCoupon, userId);
         return ResponseEntity.ok(saveReceiptCoupon);
     }
 
-    @PutMapping("/discountOrder/updateDiscountOrder/{id}")
+    @PutMapping("/receiptCoupon/update/{id}")
     public ResponseEntity<?> updaReceiptCoupon(@PathVariable Long id, @RequestBody ReceiptCoupon receiptCoupon){
         try {
             Integer userId = userService.getUser().getId();
-            ReceiptCoupon updatedReceiptCoupon = receiptCouponService.updateDiscountOrder(id, receiptCoupon, userId);
+            ReceiptCoupon updatedReceiptCoupon = receiptCouponService.updaReceiptCoupon(id, receiptCoupon, userId);
             if (updatedReceiptCoupon == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
             }
@@ -89,11 +89,11 @@ public class AdminDiscountController {
         }
     }
 
-    @PutMapping("/discountOrder/deleteDiscountOrder/{id}")
+    @PutMapping("/receiptCoupon/delete/{id}")
     public ResponseEntity<?> deleteReceiptCoupon(@PathVariable Long id){
         try {
             Integer userId = userService.getUser().getId();
-            ReceiptCoupon deleteReceiptCoupon = receiptCouponService.deleteReceiptCoupon(id, userId);
+            ReceiptCoupon deleteReceiptCoupon = receiptCouponService.delReceiptCoupon(id, userId);
             if (deleteReceiptCoupon == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
             }
@@ -108,35 +108,37 @@ public class AdminDiscountController {
     }
 
     //ProductCoupon
-    @GetMapping("/discountProduct")
-    public Object getAllProductCoupon() {
+    @GetMapping("/productCoupon")
+    public Object getListProductCoupon() {
         return productCouponService.getList();
     }
 
-    @PostMapping("/discountProduct/newDiscountProduct")
-    public ProductCoupon newProductCoupon(@RequestBody ProductCoupon productCoupon){
-        return productCouponService.newProductCoupon(productCoupon);
+    @PostMapping("/productCoupon/new")
+    public ResponseEntity<ProductCoupon> newProductCoupon(@RequestBody ProductCoupon productCoupon){
+        Integer userId = userService.getUser().getId();
+        ProductCoupon saveProductCoupon = productCouponService.newProductCoupon(productCoupon, userId);
+        return ResponseEntity.ok(saveProductCoupon);
     }
 
-    // @PutMapping("/discountProduct/update/{id}")
-    // public ResponseEntity<?> updateProductCoupon(@PathVariable Long id, @RequestBody ProductCoupon productCoupon){
-    //     try{
-    //         Integer userId = userService.getUser().getId();
-    //         ProductCoupon updatedProductCoupon = productCouponService.updateProductCoupon(id, productCoupon, userId);
-    //         return ResponseEntity.ok(updatedProductCoupon);
-    //     } catch(NoSuchElementException e){
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
-    //     } catch(Exception e){
-    //         e.printStackTrace();
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //         .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
-    //     }
-    // }
+    @PutMapping("/productCoupon/update/{id}")
+    public ResponseEntity<?> updateProductCoupon(@PathVariable Long id, @RequestBody ProductCoupon productCoupon){
+        try{
+            Integer userId = userService.getUser().getId();
+            ProductCoupon updatedProductCoupon = productCouponService.updateProductCoupon(id, productCoupon, userId);
+            return ResponseEntity.ok(updatedProductCoupon);
+        } catch(NoSuchElementException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
+        } catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
+        }
+    }
 
-    @GetMapping("/discountProduct/search")
+    @GetMapping("/productCoupon/search")
     public ResponseEntity<List<ProductCoupon>> searchProductCoupon(@RequestParam String key) {
         try {
-            List<ProductCoupon> discountProducts = productCouponService.searchDiscountProduct(key);
+            List<ProductCoupon> discountProducts = productCouponService.searchProductCoupon(key);
             return ResponseEntity.ok(discountProducts);
         } catch (Exception e) {
             e.printStackTrace();

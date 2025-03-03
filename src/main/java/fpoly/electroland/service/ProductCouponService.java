@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.ProductCoupon;
+import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.repository.EmployeeRepository;
 import fpoly.electroland.repository.ProductCouponRepository;
@@ -32,37 +33,50 @@ public class ProductCouponService {
         return productCouponRepository.findAll();
     }
 
-    public ProductCoupon newProductCoupon(ProductCoupon productCoupon) {
-        return productCouponRepository.save(productCoupon);
+    public ProductCoupon newProductCoupon(ProductCoupon productCoupon, int userId) {
+        ProductCoupon savedProductCoupon = productCouponRepository.save(productCoupon);
+        Employee creatorEmployee = employeeRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        createAction.createAction("ProductCoupon", "CREATE", savedProductCoupon.getId(), null,
+            savedProductCoupon.toString(), creatorEmployee);
+        return savedProductCoupon;
     }
 
-    // public ProductCoupon updateProductCoupon(Long id, ProductCoupon updateProductCoupon, int userId) {
-    //     Optional<ProductCoupon> optionalProductCoupon = productCouponRepository.findById(id);
-    //     if (optionalProductCoupon.isPresent()) {
-    //         ProductCoupon existingProductCoupon = optionalProductCoupon.get();
+    public ProductCoupon updateProductCoupon(Long id, ProductCoupon updateProductCoupon, int userId) {
+        Optional<ProductCoupon> optionalProductCoupon = productCouponRepository.findById(id);
+        if (optionalProductCoupon.isPresent()) {
+            ProductCoupon existingProductCoupon = optionalProductCoupon.get();
+            
+            existingProductCoupon.setRedemptionCost(updateProductCoupon.getRedemptionCost());
+            existingProductCoupon.setDescription(updateProductCoupon.getDescription());
+            existingProductCoupon.setValue(updateProductCoupon.getValue());
+            existingProductCoupon.setProduct(updateProductCoupon.getProduct());
 
-    //         String oldValue = existingProductCoupon.toString();
+            ProductCoupon savedProductCoupon = productCouponRepository.save(existingProductCoupon);
 
-    //         existingProductCoupon.setRedemptionCost(updateProductCoupon.getRedemptionCost());
-    //         existingProductCoupon.setDescription(updateProductCoupon.getDescription());
-    //         existingProductCoupon.setValue(updateProductCoupon.getValue());
-    //         existingProductCoupon.setProduct(updateProductCoupon.getProduct());
+            Employee creatorEmployee = employeeRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-    //         ProductCoupon savedProductCoupon = productCouponRepository.save(existingProductCoupon);
+            int maxLength = 200;
 
-    //         Employee creatorEmployee = employeeRepository.findById(userId)
-    //                 .orElseThrow(() -> new RuntimeException("User not found"));
+            String oldValue = existingProductCoupon.toString();
+            if (oldValue.length() > maxLength) {
+                oldValue = oldValue.substring(0, maxLength - 3) + "...";
+            }
 
-    //         createAction.createAction("ProductCoupon", "UPDATE", savedProductCoupon.getId(), oldValue,
-    //             savedProductCoupon.toString(), creatorEmployee);
+            String newValue = savedProductCoupon.toString();
+            if (newValue.length() > maxLength) {
+            newValue = newValue.substring(0, maxLength - 3) + "...";
+            }
 
-    //         return savedProductCoupon;
-    //     } else {
-    //         throw new RuntimeException("Employee not found with id: " + id);
-    //     }
-    // }
+            createAction.createAction("ProductCoupon", "UPDATE", savedProductCoupon.getId(), oldValue, newValue, creatorEmployee);
+            return savedProductCoupon;
+        } else {
+            throw new RuntimeException("Employee not found with id: " + id);
+        }
+    }
 
-    public List<ProductCoupon> searchDiscountProduct(String key) {
+    public List<ProductCoupon> searchProductCoupon(String key) {
         Integer keyNumeric = null;
         String keyString = key;
         Double keyDouble = null;

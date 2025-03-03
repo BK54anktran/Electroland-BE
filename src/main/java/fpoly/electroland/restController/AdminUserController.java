@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/info")
 public class AdminUserController {
 
     @Autowired
@@ -40,6 +40,34 @@ public class AdminUserController {
             employee.get().getPhoneNumber(),
             employee.get().getRole(),
             employee.get().getStatus()
+        );
+    }
+
+    @PostMapping("/save")
+    public AdminUserDTO saveUserInfo(@RequestBody AdminUserDTO userDTO) {
+        User user = userService.getUser();
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        Optional<Employee> employeeOpt = employeeService.getEmployee(user.getEmail());
+        if (!employeeOpt.isPresent()) {
+            throw new RuntimeException("Employee not found");
+        }
+
+        Employee employee = employeeOpt.get();
+        employee.setPhoneNumber(userDTO.getPhoneNumber());
+        employee.setRole(userDTO.getRole());
+        employee.setStatus(userDTO.getStatus());
+
+        employeeService.save(employee);
+
+        return new AdminUserDTO(
+            user.getName(),
+            user.getEmail(),
+            employee.getPhoneNumber(),
+            employee.getRole(),
+            employee.getStatus()
         );
     }
 }
