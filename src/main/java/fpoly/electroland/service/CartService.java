@@ -47,6 +47,7 @@ public class CartService {
         Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                 : cart.getProduct().getPrice();
         for (CartProductAttribute att : cart.getCartProductAttributes()) {
+            if(att.getAttribute().getAttributePrice() != null)
             price += att.getAttribute().getAttributePrice();
         }
         ;
