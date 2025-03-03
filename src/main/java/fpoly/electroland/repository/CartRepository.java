@@ -6,7 +6,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import fpoly.electroland.model.Attribute;
 import fpoly.electroland.model.Cart;
+import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.Product;
+import fpoly.electroland.model.User;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
@@ -15,4 +19,7 @@ public interface CartRepository extends JpaRepository<Cart, Integer> {
 
     Optional<Cart> findByIdAndCustomerId(int id, int customerId);
 
+    Optional<Cart> findByProductAndDescriptionAndCustomer(Product product, String description, Customer customer);
+
+    List<Cart> findByCustomerIdAndStatus(int id, boolean b);
 }

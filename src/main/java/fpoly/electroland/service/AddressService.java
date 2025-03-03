@@ -21,19 +21,6 @@ public class AddressService {
     @Autowired
     UserService userService;
 
-    public List<Address> getAddresses(Customer customer) {
-        return addressRepository.getAddressesByCustomer(customer);
-    }
-
-    public Address savAddress(Address address) {
-        return addressRepository.save(address);
-    }
-
-    public void deletAddress(Address address) {
-        System.out.println(address);
-        addressRepository.delete(address);
-    }
-
     public Object getUserAddress() {
         List<Address> list = addressRepository.findByCustomerId(userService.getUser().getId());
         List<AddressDto> list2 = new ArrayList<>();
@@ -48,5 +35,18 @@ public class AddressService {
                 address.getStreet() + ", " + address.getNameWard() + ", " + address.getNameDistrict() + ", "
                         + address.getNameCity(),
                 address.isStatus(), address.getNameReciever(), address.getPhoneReciever());
+    }
+
+    public List<Address> getAddresses(Customer customer) {
+        return addressRepository.getAddressesByCustomer(customer);
+    }
+
+    public Address saveAddress(Address address) {
+        return addressRepository.save(address);
+    }
+
+    public void deletAddress(Address address) {
+        System.out.println(address);
+        addressRepository.delete(address);
     }
 }

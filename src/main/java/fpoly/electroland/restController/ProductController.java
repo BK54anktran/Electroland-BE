@@ -2,7 +2,12 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.model.Category;
+import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
+import fpoly.electroland.model.ProductAttribute;
+import fpoly.electroland.model.ProductImg;
+import fpoly.electroland.model.Supplier;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
@@ -26,6 +31,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -61,6 +67,12 @@ public class ProductController {
                 .ok(productService.getProductByFilter(key, category, minPrice, maxPrice, supplier, sort));
     }
 
+    // @GetMapping("/product")
+    // public List<Product> getMethodName() {
+    // List<Product> list = productService.getProduct();
+    // return list;
+    // }
+
     @PostMapping("/product/search")
     public Object getProductsSearch(@RequestBody String body) {
         userService.getUser();
@@ -74,12 +86,12 @@ public class ProductController {
         return ResponseEntityUtil.ok(productService.getProduct());
     }
 
-    @PostMapping("/product/save")
-    public Object saveMethodName(@RequestBody Product product) {
-        return productService.saveProduct(product);
+    @PostMapping("/saveProduct")
+    public void saveProduct(@RequestBody Product product) {
+        productService.editProduct(product);
     }
 
-    @PutMapping("/product/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
         System.out.println(id);
         try {
@@ -92,14 +104,15 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/product/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
+    @GetMapping("/admin/product/search")
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword) {
         try {
-            productService.deleteProduct(id);
-            return ResponseEntity.ok("Đã xóa thành công nhân viên với ID: " + id);
+            List<Product> products = productService.searchProducts(keyword); 
+            return ResponseEntity.ok(products); 
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Lỗi khi xóa nhân viên: " + e.getMessage());
+                                 .body(null); 
         }
     }
 

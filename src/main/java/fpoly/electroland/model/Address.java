@@ -24,7 +24,7 @@ public class Address {
 	@Column(columnDefinition = "NVARCHAR(255) ")
 	private String nameWard;
 
-	@Column(columnDefinition = "NVARCHAR(255) ")
+	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
 	private String street;
 
 	private boolean status;

@@ -18,7 +18,6 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false)
 	int quantity;
 
 	@Column(nullable = true, columnDefinition = "nvarchar(225)")
@@ -37,5 +36,11 @@ public class Cart {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
 	List<CartProductAttribute> cartProductAttributes;
+
+	@Override
+	public String toString() {
+		return "Cart [id=" + id + ", quantity=" + quantity + ", description=" + description + ", status=" + status
+				+ ", product=" + product.getId() + ", customer=" + customer.getId() + "]";
+	}
 
 }

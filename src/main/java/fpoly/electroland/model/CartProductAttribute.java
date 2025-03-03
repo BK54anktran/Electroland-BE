@@ -24,10 +24,14 @@ public class CartProductAttribute {
     Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "idProductColor")
-    ProductColor productColor;
-
-    @ManyToOne
     @JoinColumn(name = "idAttribute")
     Attribute attribute;
+
+    @Override
+    public String toString() {
+        return "CartProductAttribute [id=" + id + ", cart=" + cart.id + " attribute="
+                + attribute.id + "]";
+    }
+
+    
 }

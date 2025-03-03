@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 
 @Repository
@@ -113,4 +114,5 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         List<Object[]> countOrdersByPaymentMethodWithinRange(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
+        List<Receipt> findByCustomer(Customer customer);
 }

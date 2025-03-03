@@ -12,6 +12,9 @@ import fpoly.electroland.model.Cart;
 import fpoly.electroland.model.CartProductAttribute;
 import fpoly.electroland.model.User;
 import fpoly.electroland.repository.CartProductAttributeRepository;
+import fpoly.electroland.model.Cart;
+import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.Product;
 import fpoly.electroland.repository.CartRepository;
 import jakarta.transaction.Transactional;
 
@@ -27,6 +30,10 @@ public class CartService {
     @Autowired
     UserService userService;
 
+    public List<Cart> getCartByUser(int id){
+        List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
+        return list;
+    }
     public Object getList() {
         List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
         List<CartDto> listDto = new ArrayList<>();
@@ -37,13 +44,14 @@ public class CartService {
     }
 
     CartDto CartToCartDto(Cart cart) {
-        Double price = cart.getProduct().getPriceDiscount() > 0 ? cart.getProduct().getPriceDiscount()
+        Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                 : cart.getProduct().getPrice();
         for (CartProductAttribute att : cart.getCartProductAttributes()) {
             price += att.getAttribute().getAttributePrice();
         }
         ;
-        return new CartDto(cart.getId(), cart.getProduct().getName(), cart.getProduct().getAvatar(),
+        return new CartDto(cart.getId(), cart.getProduct().getId(), cart.getProduct().getName(),
+                cart.getProduct().getAvatar(),
                 cart.getDescription(), cart.getQuantity(), cart.getStatus(), price);
     }
 
@@ -80,4 +88,24 @@ public class CartService {
         return null;
     }
 
+    public Cart createCart(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
+    public Cart updateCart(Cart cart) {
+        return cartRepository.save(cart);
+    }
+
+    public Optional<Cart> getCartByProductAndDesAndUser(Product product, String des, Customer customer) {
+        return cartRepository.findByProductAndDescriptionAndCustomer(product, des, customer);
+    }
+
+    public Object UpdateCartStatusAll(boolean status) {
+        List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
+        list.forEach((cart) -> {
+            cart.setStatus(status);
+            this.updateCart(cart);
+        });
+        return null;
+    }
 }
