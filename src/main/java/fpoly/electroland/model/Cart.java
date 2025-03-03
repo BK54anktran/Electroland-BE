@@ -1,5 +1,7 @@
 package fpoly.electroland.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +18,6 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false)
 	int quantity;
 
 	@Column(nullable = true, columnDefinition = "nvarchar(225)")
@@ -32,5 +33,14 @@ public class Cart {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	Customer customer;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
+	List<CartProductAttribute> cartProductAttributes;
+
+	@Override
+	public String toString() {
+		return "Cart [id=" + id + ", quantity=" + quantity + ", description=" + description + ", status=" + status
+				+ ", product=" + product.getId() + ", customer=" + customer.getId() + "]";
+	}
 
 }

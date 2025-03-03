@@ -11,4 +11,8 @@ public class ProductCouponService {
     @Autowired
     ProductCouponRepository productCouponRepository;
 
+    public Object getList() {
+        return productCouponRepository.findAll();
+    }
+
 }

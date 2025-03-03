@@ -3,7 +3,6 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,21 +19,19 @@ public class Receipt {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+	
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String address;
 
-	@NotEmpty(message = "Vui lòng nhập thông tin người nhận")
 	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
 	private String nameReciver;
 
-	@NotEmpty(message = "Vui lòng nhập số điện thoại người nhận")
 	@Column(nullable = false, columnDefinition = "VARCHAR(15)")
 	private String phoneReciver;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-	@Column(nullable = false)
+
 	private Date receiptDate = new Date();
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -49,7 +46,7 @@ public class Receipt {
 	private ReceiptStatus receiptStatus;
 
 	@ManyToOne
-	@JoinColumn(name = "idPayment", nullable = false)
+	@JoinColumn(name = "idPayment", nullable = true)
 	private Payment payment;
 
 	@ManyToOne

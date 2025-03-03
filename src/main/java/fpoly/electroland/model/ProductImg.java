@@ -6,13 +6,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class ProductImg {
 
 	@Id
@@ -26,4 +25,11 @@ public class ProductImg {
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
+
+	@Override
+	public String toString() {
+		return "ProductImg [id=" + id + ", link=" + link + ", product=" + product.id + "]";
+	}
+
+	
 }

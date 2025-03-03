@@ -26,13 +26,11 @@ public class Product {
 	@Column(nullable = true, columnDefinition = "nvarchar(225)")
 	String description;
 
-	@Column(nullable = false)
 	Double price;
 
 	@Column(nullable = true)
 	Double priceDiscount;
 
-	@Column(nullable = false)
 	Boolean status = true;
 
 	@ManyToOne
@@ -44,11 +42,8 @@ public class Product {
 	Supplier supplier;
 
 	@OneToMany(mappedBy = "product")
-	List<ProductColor> productColors;
-
-	@OneToMany(mappedBy = "product")
 	List<ProductImg> productImgs;
 
-	@OneToMany(mappedBy = "product")
+	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ProductAttribute> productAttributes;
 }

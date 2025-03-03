@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Color {
+public class PaymentStatus {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int id;
 
-	@Column(columnDefinition = "nvarchar(225)", nullable = false)
-	String nameColor;
+    @Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+    String name;
 }

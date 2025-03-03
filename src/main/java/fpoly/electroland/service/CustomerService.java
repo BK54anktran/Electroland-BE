@@ -18,6 +18,9 @@ public class CustomerService {
     @Autowired
     TypeCustomerService typeCustomerService;
 
+    public Optional<Customer> findCustomerById(Integer id){
+        return customerRepository.findById(id);
+    }
     public Optional<Customer> getCustomer(String email) {
         return customerRepository.findByEmail(email);
     }
@@ -80,6 +83,10 @@ public class CustomerService {
     // Kết hợp tìm kiếm và lọc
     public List<Customer> searchAndFilterCustomers(String keyword, boolean status) {
         return customerRepository.searchAndFilter(keyword, status);
+    }
+
+    public Customer updateCustomer(Customer customer){
+        return customerRepository.save(customer);
     }
 
 }

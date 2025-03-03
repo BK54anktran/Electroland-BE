@@ -27,15 +27,15 @@ public class Address {
 	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
 	private String street;
 
-	@Column(nullable = true)
 	private boolean status;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String addressType;
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String nameReciever;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(100)")
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String phoneReciever;
 
 	@ManyToOne
