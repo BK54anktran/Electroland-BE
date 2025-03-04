@@ -11,10 +11,10 @@ import fpoly.electroland.model.ReceiptStatus;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.ReceiptService;
 import fpoly.electroland.service.ReceiptStatusService;
+import fpoly.electroland.service.UserService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 public class ReceiptController {
@@ -27,12 +27,15 @@ public class ReceiptController {
     @Autowired
     ReceiptStatusService receiptStatusService;
 
+    @Autowired
+    UserService userService;
+
     @GetMapping("/userReceipt")
     public List<Receipt> getReceiptByUser() {
-        Customer customer = customerService.findCustomerById(1007).get();
+        Customer customer = customerService.findCustomerById(userService.getUser().getId()).get();
         return receiptService.getReceiptsByUser(customer);
     }
-    
+
     @GetMapping("/getReceiptStatus")
     public List<ReceiptStatus> getReceiptStatust() {
         return receiptStatusService.getAll();

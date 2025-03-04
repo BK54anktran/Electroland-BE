@@ -105,7 +105,7 @@ public class ReceiptService {
         return receiptDetailRepository.findByReceiptId(receiptId);
     }
 
-    public List<Receipt> getReceiptsByUser(Customer customer){
+    public List<Receipt> getReceiptsByUser(Customer customer) {
         List<Receipt> list = receiptRepository.findByCustomer(customer);
         return list;
     }
@@ -165,6 +165,7 @@ public class ReceiptService {
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
                 paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));
 
+        System.out.println(receiptRequest.getAddress());
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
         List<Cart> cartList = cartRepository.findByCustomerIdAndStatus(userService.getUser().getId(), true);
         List<Integer> listCouponProduct = receiptRequest.getListCouponProduct();
@@ -178,6 +179,7 @@ public class ReceiptService {
                     productCoupon = customerCoupon.get().getProductCoupon();
                     removei = i;
                 }
+                customerCouponRepository.delete(customerCoupon.get());
                 i++;
             }
             if (removei >= 0)
@@ -193,7 +195,8 @@ public class ReceiptService {
                     cart.getProduct(), receipt));
             cartRepository.delete(cart);
         }
-        System.out.println(cartList);
+        if (receiptRequest.getIdReceiptCoupon() != 0)
+            customerCouponRepository.deleteById(receiptRequest.getIdReceiptCoupon());
         return receipt;
     }
 
