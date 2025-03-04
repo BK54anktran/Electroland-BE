@@ -5,15 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.model.Customer;
-import fpoly.electroland.model.Product;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.DateUtil;
