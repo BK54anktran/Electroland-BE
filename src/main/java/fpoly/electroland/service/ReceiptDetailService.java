@@ -92,7 +92,9 @@ public class ReceiptDetailService {
         if (revenuePreviousMonth == null || revenuePreviousMonth == 0) {
             return revenueCurrentMonth != null && revenueCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0, nếu tháng trước không có doanh thu
         }
-        return ((double) (revenueCurrentMonth != null ? revenueCurrentMonth : 0) - revenuePreviousMonth) / revenuePreviousMonth ;
+        double percentChange = ((double) (revenueCurrentMonth != null ? revenueCurrentMonth : 0) - revenuePreviousMonth) / revenuePreviousMonth;
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        return roundedPercentChange.doubleValue();
     }
 
     // Tính phần trăm thay đổi số đơn thành công so với tháng trước
@@ -138,7 +140,9 @@ public class ReceiptDetailService {
         if (failedOrdersPreviousMonth == 0) {
             return failedOrdersCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0
         }
-        return ((double) failedOrdersCurrentMonth - failedOrdersPreviousMonth) / failedOrdersPreviousMonth ;
+        double percentChange = ((double) failedOrdersCurrentMonth - failedOrdersPreviousMonth) / failedOrdersPreviousMonth;
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        return roundedPercentChange.doubleValue();
     }
 
     // Tính phần trăm thay đổi số khách hàng so với tháng trước
@@ -159,7 +163,9 @@ public class ReceiptDetailService {
         if (customerCountPreviousMonth == 0) {
             return customerCountCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0
         }
-        return ((double) customerCountCurrentMonth - customerCountPreviousMonth) / customerCountPreviousMonth ;
+        double percentChange = ((double) customerCountCurrentMonth - customerCountPreviousMonth) / customerCountPreviousMonth;
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        return roundedPercentChange.doubleValue();
     }
 
     public List<Object[]> getRevenueByMonth(LocalDateTime endDate) {

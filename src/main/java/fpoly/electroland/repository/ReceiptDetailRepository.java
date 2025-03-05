@@ -50,7 +50,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
 
     // Truy vấn số lượng đơn hàng thất bại từ đầu tháng đến ngày truyền vào
     @Query("SELECT COUNT(r) FROM Receipt r " +
-            "WHERE (r.receiptStatus.id = 4 OR r.receiptStatus.id = 12) " +
+            "WHERE (r.receiptStatus.id = 4) " +
             "AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
     Long getFailedOrders(@Param("startDate") LocalDateTime startOfMonth, @Param("endDate") LocalDateTime endDate);
 
