@@ -31,4 +31,8 @@ public class ActionService {
     public List<Action> getListAction(){
         return actionRepository.findAll();
     }
+
+    public List<Action> searchAction(String keyword){
+        return actionRepository.findByTableNameOrActionOrEmployee_FullName(keyword, keyword, keyword);
+    }
 }
