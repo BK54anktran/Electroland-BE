@@ -33,6 +33,6 @@ public class ActionService {
     }
 
     public List<Action> searchAction(String keyword){
-        return actionRepository.findByTableNameOrActionOrEmployee_FullName(keyword, keyword, keyword);
+        return actionRepository.findByTableNameContainingOrActionContainingOrEmployee_FullNameContaining(keyword, keyword, keyword);
     }
 }

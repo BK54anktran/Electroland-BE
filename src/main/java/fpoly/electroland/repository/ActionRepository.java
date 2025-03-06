@@ -9,5 +9,5 @@ import fpoly.electroland.model.Action;
 
 @Repository
 public interface ActionRepository extends JpaRepository<Action, Integer> {
-    List<Action> findByTableNameOrActionOrEmployee_FullName(String tableName, String action, String employeeFullName);
+    List<Action> findByTableNameContainingOrActionContainingOrEmployee_FullNameContaining(String tableName, String action, String employeeFullName);
 }
