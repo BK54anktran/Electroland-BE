@@ -32,9 +32,9 @@ public class ForgotPassController {
 
     JwtUtil jwtUtil = new JwtUtil();
 
-    @PostMapping("/forgotpass")
+    @PostMapping("/forgotpass") //
     public Object forgot(@RequestBody Map<String, String> request) throws MessagingException {
-        String email = request.get("email");
+        String email = request.get("email"); //
         if (!customerService.getCustomer(email).isPresent()){
             return ResponseEntityUtil.unauthorizedError("Tài khoản không tồn tại");
         }
