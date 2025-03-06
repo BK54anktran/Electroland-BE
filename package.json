@@ -1,0 +1,8 @@
+{
+  "name": "electroland",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BK54anktran/electroland.git",
+  "author": "luukimnguyen24 <luukimnguyen24@gmail.com>",
+  "license": "MIT"
+}
