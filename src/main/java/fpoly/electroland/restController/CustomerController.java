@@ -14,6 +14,8 @@ import fpoly.electroland.model.Customer;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.DateUtil;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class CustomerController {
@@ -67,4 +69,5 @@ public class CustomerController {
         System.out.println(customer);
         customerService.updateCustomer(id, customer);
     }
+    
 }

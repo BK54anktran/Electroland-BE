@@ -18,6 +18,7 @@ public class CustomerService {
     @Autowired
     TypeCustomerService typeCustomerService;
 
+
     public Optional<Customer> findCustomerById(Integer id){
         return customerRepository.findById(id);
     }
@@ -89,4 +90,5 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+   
 }
