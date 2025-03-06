@@ -34,10 +34,7 @@ public class CustomerController {
     public List<Customer> GetAllList() {
         return customerService.getAll();
     }
-      @PostMapping("/customer/save")
-    public Customer addCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
-    }
+   
     @PutMapping("/customer/update/{id}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestParam String status) {
         boolean statusBoolean = Boolean.parseBoolean(status); // Chuyển chuỗi thành boolean
@@ -65,30 +62,14 @@ public class CustomerController {
         boolean statusBoolean = Boolean.parseBoolean(status); // Chuyển đổi sang Boolean
         return customerService.filterCustomersByStatus(statusBoolean);
     }
-    
 
-    // Kết hợp tìm kiếm và lọc
-    @GetMapping("/customer/search-filter")
-    public List<Customer> searchAndFilterCustomers(@RequestParam String keyword, @RequestParam boolean status) {
-        return customerService.searchAndFilterCustomers(keyword, status);
-    }
 
     @PostMapping("/customer/save")
     public Customer addCustomer(@RequestBody Customer customer) {
         return customerService.createCustomer(customer);
     }
 
-    // Tìm kiếm khách hàng
-    @GetMapping("/customer/search")
-    public List<Customer> searchCustomers(@RequestParam String keyword) {
-        return customerService.searchCustomers(keyword);
-    }
 
-    // Lọc khách hàng theo trạng thái
-    @GetMapping("/customer/filter")
-    public List<Customer> filterCustomers(@RequestParam boolean status) {
-        return customerService.filterCustomersByStatus(status);
-    }
 
     // Kết hợp tìm kiếm và lọc
     @GetMapping("/customer/search-filter")
