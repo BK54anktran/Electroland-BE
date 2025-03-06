@@ -26,4 +26,7 @@ public class ProductCoupon {
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
+
+	@Column(nullable = true)
+	Integer point;
 }
