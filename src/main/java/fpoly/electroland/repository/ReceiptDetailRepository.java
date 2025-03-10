@@ -34,7 +34,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
     // Truy vấn doanh thu từ bảng Payment, từ ngày đầu tháng đến ngày truyền vào
     @Query("SELECT SUM(p.amount) FROM Receipt r " +
             "JOIN r.payment p " +
-            "WHERE r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
+            "WHERE r.receiptStatus.id = 6 AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
     Long getRevenueByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // Truy vấn số lượng đơn hàng từ bảng Receipt, từ ngày đầu tháng đến ngày truyền
