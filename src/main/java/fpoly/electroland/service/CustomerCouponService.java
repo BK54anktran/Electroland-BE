@@ -48,8 +48,13 @@ public class CustomerCouponService {
     }
 
     ReceiptCouponDto ReceiptCouponToDto(int id, ReceiptCoupon receiptCoupon) {
-        return new ReceiptCouponDto(id, receiptCoupon.getDiscountMoney(), receiptCoupon.getDiscountPercent(),
+        return new ReceiptCouponDto(id, receiptCoupon.getId(), receiptCoupon.getDiscountMoney(),
+                receiptCoupon.getDiscountPercent(),
                 receiptCoupon.getMaxDiscount(), receiptCoupon.getMinReceiptPrice(), receiptCoupon.getDescription());
     }
 
+    public Object getListTrue() {
+        List<CustomerCoupon> list = customerCouponRepository.findByCustomerIdAndStatusTrue(userService.getUser().getId());
+        return list;
+    }
 }

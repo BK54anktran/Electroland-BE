@@ -10,7 +10,7 @@ import fpoly.electroland.model.ReceiptStatus;
 
 @Repository
 public interface ReceiptStatusRepository extends JpaRepository<ReceiptStatus, Integer> {
-   Optional<ReceiptStatus> findById(Long receiptId);
+   Optional<ReceiptStatus> findById(int receiptId);
 
-Optional<ReceiptStatus> findByName(String newStatusName);
+   Optional<ReceiptStatus> findByName(String newStatusName);
 }

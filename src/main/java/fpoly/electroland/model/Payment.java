@@ -21,13 +21,21 @@ public class Payment {
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date date;
+    private Date createTime;
 
-    Double price;
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Date successTime;
+
+    Double amount;
 
     String content;
 
     @ManyToOne
     @JoinColumn(name = "idPaymentType", nullable = false)
     PaymentType paymentType;
+
+    @ManyToOne
+    @JoinColumn(name = "idPaymentStatus", nullable = true)
+    PaymentStatus paymentStatus;
 }

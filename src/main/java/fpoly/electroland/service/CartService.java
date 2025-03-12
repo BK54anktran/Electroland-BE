@@ -30,6 +30,10 @@ public class CartService {
     @Autowired
     UserService userService;
 
+    public List<Cart> getCartByUser(int id){
+        List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
+        return list;
+    }
     public Object getList() {
         List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
         List<CartDto> listDto = new ArrayList<>();
@@ -40,7 +44,7 @@ public class CartService {
     }
 
     CartDto CartToCartDto(Cart cart) {
-        Double price = cart.getProduct().getPriceDiscount() > 0 ? cart.getProduct().getPriceDiscount()
+        Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                 : cart.getProduct().getPrice();
         for (CartProductAttribute att : cart.getCartProductAttributes()) {
             price += att.getAttribute().getAttributePrice();

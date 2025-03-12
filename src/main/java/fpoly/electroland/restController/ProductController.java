@@ -2,7 +2,12 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.model.Category;
+import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
+import fpoly.electroland.model.ProductAttribute;
+import fpoly.electroland.model.ProductImg;
+import fpoly.electroland.model.Supplier;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
@@ -10,6 +15,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.Map;
+
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/product")
 public class ProductController {
 
     @Autowired
@@ -59,6 +65,12 @@ public class ProductController {
                 .ok(productService.getProductByFilter(key, category, minPrice, maxPrice, supplier, sort));
     }
 
+    // @GetMapping("/product")
+    // public List<Product> getMethodName() {
+    // List<Product> list = productService.getProduct();
+    // return list;
+    // }
+
     @PostMapping("/product/search")
     public Object getProductsSearch(@RequestBody String body) {
         userService.getUser();
@@ -72,9 +84,9 @@ public class ProductController {
         return ResponseEntityUtil.ok(productService.getProduct());
     }
 
-    @PostMapping("/save")
-    public Object saveMethodName(@RequestBody Product product) {
-        return productService.saveProduct(product);
+    @PostMapping("/saveProduct")
+    public void saveProduct(@RequestBody Product product) {
+        productService.editProduct(product);
     }
 
     @PutMapping("/update/{id}")
@@ -90,30 +102,15 @@ public class ProductController {
         }
     }
 
-    // @GetMapping("/search")
-    // public ResponseEntity<?> searchProduct(@RequestParam String search) {
-    //     try {
-    //         List<Product> products = productService.searchProducts(search);
-    //         if (products.isEmpty()) {
-    //             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No products found matching the keyword: " + search);
-    //         }
-    //         return ResponseEntity.ok(products);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while searching for products.");
-    //     }
-    // }
-
-    // @GetMapping("/sort")
-    // public ResponseEntity<List<Product>> sortProducts(
-    //         @RequestParam String criteria,
-    //         @RequestParam String order) {
-    //     try {
-    //         List<Product> products = productService.sortProducts(criteria, order);
-    //         return ResponseEntity.ok(products);
-    //     } catch (IllegalArgumentException e) {
-    //         return ResponseEntity.badRequest().body(null);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    //     }
-    // }
+    @GetMapping("/admin/product/search")
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword) {
+        try {
+            List<Product> products = productService.searchProducts(keyword); 
+            return ResponseEntity.ok(products); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(null); 
+        }
+    }
 }

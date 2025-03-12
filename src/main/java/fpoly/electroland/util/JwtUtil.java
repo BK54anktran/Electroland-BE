@@ -61,4 +61,26 @@ public class JwtUtil {
         return (extractedUsername.equals(username));
     }
 
+    @SuppressWarnings("deprecation")
+    public String generateTokenResetPassword(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 1000)) // Hết hạn sau 10 phút
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+    @SuppressWarnings("deprecation")
+    public String extractEmailTokenResetPasseowd(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            throw new JwtException("signature does not match");
+        }
+
+    }
 }

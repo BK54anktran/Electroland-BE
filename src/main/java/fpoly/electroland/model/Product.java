@@ -44,6 +44,6 @@ public class Product {
 	@OneToMany(mappedBy = "product")
 	List<ProductImg> productImgs;
 
-	@OneToMany(mappedBy = "product")
+	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ProductAttribute> productAttributes;
 }

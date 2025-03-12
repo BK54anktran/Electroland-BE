@@ -20,21 +20,15 @@ import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.ReviewImgService;
 import fpoly.electroland.service.ReviewService;
 import fpoly.electroland.service.UserService;
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import fpoly.electroland.model.Review;
-import fpoly.electroland.service.ReviewService;
+
 import fpoly.electroland.util.ResponseEntityUtil;
 
 @RestController
@@ -43,16 +37,16 @@ public class ReviewController {
     ReviewService reviewService;
 
     @Autowired
-    ProductService productService;
+    CustomerService customerService;
 
     @Autowired
     UserService userService;
 
     @Autowired
-    ReviewImgService reviewImgService;
+    ProductService productService;
 
     @Autowired
-    CustomerService customerService;
+    ReviewImgService reviewImgService;
 
     @GetMapping("/admin/review")
     public List<Review> GetAllList() {
@@ -99,7 +93,7 @@ public class ReviewController {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
-
+    
     @PostMapping("/createReview")
     public String postMethodName(@RequestBody Map<String, Object> object) {
         Optional<Customer> customer = customerService.getCustomer(userService.getUser().getId());
@@ -125,5 +119,4 @@ public class ReviewController {
 
         return null;
     }
-    
 }
