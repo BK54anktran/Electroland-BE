@@ -57,36 +57,38 @@ public class AuthController {
             return userService.authentication_getData(user.getEmail(), user.getPassword());
         }
     }
+
     @PostMapping("/google-login")
     public Object authenticateWithGoogle(@RequestParam String token) throws GeneralSecurityException, IOException {
         @SuppressWarnings("deprecation")
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-            new NetHttpTransport(),
-            new JacksonFactory()
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder( //Tạo 1 đối tượng dùng để xác thực Google Id
+            new NetHttpTransport(), 
+            new JacksonFactory() //Dùng để kết nối với phân tích cú pháp JSON của Google API
         )
-        .setAudience(Collections.singletonList("975818315662-aamqq1dhn3adae3640jrc8902oedicfn.apps.googleusercontent.com")) // Đảm bảo trùng với Client ID của bạn
-        .build();
+        .setAudience(Collections.singletonList("975818315662-aamqq1dhn3adae3640jrc8902oedicfn.apps.googleusercontent.com"))
+        .build(); // Dùng để xác thực token được gửi từ cái client ID trên
 
-        GoogleIdToken idToken = verifier.verify(token);
+        GoogleIdToken idToken = verifier.verify(token); //Xác mình token hợp lệ ko hợp lệ nó sẽ trả null
         if (idToken == null) {
             System.out.println("Token không hợp lệ hoặc hết hạn.");
             return ResponseEntityUtil.unauthorizedError("Token không hợp lệ hoặc hết hạn");
         }
 
-        Payload payload = idToken.getPayload();
-
+        Payload payload = idToken.getPayload(); //Payload chưa thông tin của người dùng bằng cách mã hóa Token
+        System.out.println(payload);
+        
         String email = payload.getEmail();
-        String firstName = (String) payload.get("given_name");
+        String firstName = (String) payload.get("given_name"); 
         String lastName = (String) payload.get("family_name");
         String fullName = firstName + " " + lastName;
         String image = (String) payload.get("picture");
 
         System.out.println("IMAGE:" +image);
 
-        Optional<Customer> existingCustomer = customerService.getCustomer(email);
+        Optional<Customer> existingCustomer = customerService.getCustomer(email); //Kiểm tra đã tồn tại Email này thì login luôn
         if (existingCustomer.isPresent()) {
             return userService.authentication_getData(email, existingCustomer.get().getPassword());
-        } else {
+        } else { // Ngược lại tạo mới
             Customer newCustomer = new Customer();
             newCustomer.setEmail(email);
             newCustomer.setFullName(fullName);
@@ -97,7 +99,7 @@ public class AuthController {
             newCustomer.setAvatar(image);
             System.out.println(newCustomer);
             customerService.createCustomerGoogle(newCustomer);
-            return userService.authentication_getData(email, newCustomer.getPassword());
+            return userService.authentication_getData(email, newCustomer.getPassword()); //Rồi đăng nhập
         }
     }    
 }
