@@ -23,6 +23,9 @@ public class ProductCoupon {
 	@Column(columnDefinition = "nvarchar(225)", nullable = true)
 	String description;
 
+	@Column(nullable = false)
+	Boolean status = true;
+
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;

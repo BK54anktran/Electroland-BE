@@ -145,4 +145,22 @@ public class AdminCouponController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @PutMapping("/productCoupon/delete/{id}")
+    public ResponseEntity<?> deleteProductCoupon(@PathVariable Long id){
+        try{
+            Integer userId = userService.getUser().getId();
+            ProductCoupon deleteProductCoupon = productCouponService.deleteProductCoupon(id, userId);
+            if(deleteProductCoupon == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy mã giảm giá sản phẩm với ID: "+ id);
+            }
+            return ResponseEntity.ok(deleteProductCoupon);
+        } catch(NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
+        }
+    }
 }

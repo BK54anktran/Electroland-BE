@@ -90,5 +90,26 @@ public class ProductCouponService {
             }
         }
         return productCouponRepository.findByRedemptionCostOrProductNameContainingOrValue(keyNumeric, keyString, keyDouble);
-    }      
+    }   
+    
+    public ProductCoupon deleteProductCoupon(Long id, int userId){
+        Optional<ProductCoupon> optionalProductCoupon = productCouponRepository.findById(id);
+        if (optionalProductCoupon.isPresent()) {
+            ProductCoupon existingProductCoupon = optionalProductCoupon.get();
+            String oldValue = existingProductCoupon.toString();
+            existingProductCoupon.setStatus(false);
+
+            ProductCoupon savedProductCoupon = productCouponRepository.save(existingProductCoupon);
+
+            Employee creatorEmployee = employeeRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            createAction.createAction("ProductCoupon", "DELETE", savedProductCoupon.getId(), oldValue,
+                savedProductCoupon.toString(), creatorEmployee);
+
+            return savedProductCoupon;
+        }else {
+            throw new RuntimeException("Employee not found with id: " + id);
+        }
+    }
 }
