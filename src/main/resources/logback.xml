@@ -1,47 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- Console Appender -->
+
+    <!-- Định nghĩa biến LOG_PATH để quản lý thư mục log -->
+    <property name="LOG_PATH" value="logs" />
+    
+    <!-- Console Appender với MDC -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] - %msg%n</pattern>
         </encoder>
     </appender>
-    
-    <!-- File Appender -->
+
+    <!-- File Appender chính -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/electroland.log</file>
+        <file>${LOG_PATH}/electroland.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/electroland.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/electroland.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap> <!-- Giới hạn tổng dung lượng log -->
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] %class.%method - %msg%n</pattern>
         </encoder>
     </appender>
-    
+
+    <!-- File Appender dành cho lỗi -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/electroland-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/electroland-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap> <!-- Giới hạn dung lượng log lỗi -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] %class.%method - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Google Cloud Logging Appender -->
     <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
-        <projectId>electroland-454016</projectId>  <!-- Ensure the correct projectId is specified -->
-        <logName>application-log</logName>         <!-- This is the name of the log in Google Cloud -->
-        <jsonPayload>true</jsonPayload>           <!-- This ensures logs are in JSON format -->
+        <projectId>electroland-454016</projectId>
+        <logName>application-log</logName>
+        <jsonPayload>true</jsonPayload>
     </appender>
-    
+
+    <!-- Async Appender cho hiệu suất tốt hơn -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="ERROR_FILE"/>
+    </appender>
+
     <!-- Log HTTP requests -->
     <logger name="org.springframework.web" level="DEBUG" />
-    
-    <!-- Log SQL queries -->
+
+    <!-- Log SQL queries và SQL binding -->
     <logger name="org.hibernate.SQL" level="DEBUG" />
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
-    
-    <!-- Log application activities -->
+
+    <!-- Log hoạt động ứng dụng -->
     <logger name="fpoly.electroland" level="DEBUG" />
-    
-    <!-- Log security activities -->
+
+    <!-- Log bảo mật -->
     <logger name="org.springframework.security" level="DEBUG" />
-    
+
+    <!-- Root Logger -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="ASYNC_FILE" />
         <appender-ref ref="CLOUD" />
     </root>
+
+    <!-- Logger cho lỗi nghiêm trọng -->
+    <logger name="com.fpoly.electroland" level="ERROR" additivity="false">
+        <appender-ref ref="ASYNC_ERROR"/>
+    </logger>
+
 </configuration>
