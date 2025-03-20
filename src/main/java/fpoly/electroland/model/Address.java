@@ -15,17 +15,18 @@ public class Address {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(columnDefinition = "NVARCHAR(255)")
-	private String nameCity;
+	private Integer provinceID;
 
-	@Column(columnDefinition = "NVARCHAR(255)")
-	private String nameDistrict;
+	private Integer districtID;
 
-	@Column(columnDefinition = "NVARCHAR(255) ")
-	private String nameWard;
+	@Column(nullable = true, columnDefinition = "NVARCHAR(10)")
+	private String wardCode;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(255) ")
+	@Column(nullable = true, columnDefinition = "NVARCHAR(255) ")
 	private String street;
+
+	@Column(nullable = true, columnDefinition = "NVARCHAR(255) ")
+	private String stringAddress;
 
 	private boolean status;
 
