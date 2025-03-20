@@ -3,15 +3,18 @@ package fpoly.electroland.restController;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +49,6 @@ public class MoMoController {
 
         // Ép kiểu về Map<String, String>
         Map<String, String> resultMap = (Map<String, String>) response.getBody();
-        System.out.println(resultMap);
         return ResponseEntity.ok().body(resultMap);
     }
 
@@ -66,50 +68,74 @@ public class MoMoController {
         return ResponseEntity.ok("Received callback");
     }
 
-    @GetMapping("/status")
-    public ResponseEntity<String> checkPaymentStatus(@RequestParam String orderId) throws Exception {
-        String momoUrl = "https://test-payment.momo.vn/v2/gateway/api/query";
-        RestTemplate restTemplate = new RestTemplate();
+    private final String secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"; // 🔹 Thay bằng secretKey của bạn
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    @PostMapping("/check")
+    public ResponseEntity<Map<String, Object>> checkMomoPayment(@RequestBody Map<String, String> payload) {
+        try {
+            // Lấy thông tin từ payload
+            String partnerCode = "MOMO";
+            String orderId = payload.get("orderId");
+            String requestId = payload.get("requestId");
+            String signature = payload.get("signature");
+          
 
-        // Thay thế bằng thông tin thực tế của bạn
-        String partnerCode = "MOMO";
-        String accessKey = "F8BBA842ECF85";
-        String secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-        String requestId = partnerCode + System.currentTimeMillis();
+            // Tạo chữ ký từ rawSignature
 
-        // Tạo rawData để ký
-        String rawData = "accessKey=" + accessKey
-                + "&orderId=" + orderId
-                + "&partnerCode=" + partnerCode
-                + "&requestId=" + requestId;
+            // Tạo request JSON gửi lên MoMo
+            JSONObject requestData = new JSONObject();
+            requestData.put("partnerCode", partnerCode);
+            requestData.put("orderId", orderId);
+            requestData.put("partnerCode",partnerCode);
+            requestData.put("requestId", requestId);
+            requestData.put("signature", signature);
 
-        // Tạo chữ ký SHA256
-        String signature = hmacSHA256(rawData, secretKey);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Tạo request body
-        Map<String, Object> requestData = new HashMap<>();
-        requestData.put("partnerCode", partnerCode);
-        requestData.put("accessKey", accessKey);
-        requestData.put("requestId", requestId);
-        requestData.put("orderId", orderId);
-        requestData.put("lang", "vi");
-        requestData.put("signature", signature);
+            HttpEntity<String> entity = new HttpEntity<>(requestData.toString(), headers);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://test-payment.momo.vn/v2/gateway/api/query", HttpMethod.POST, entity, String.class);
 
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestData, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(momoUrl, HttpMethod.POST, requestEntity, String.class);
+            // Chuyển response body thành JSON
+            JSONObject responseBody = new JSONObject(response.getBody());
+            int resultCode = responseBody.getInt("resultCode");
+            // Chuẩn bị phản hồi cho Frontend
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("resultCode", resultCode);
+            responseMap.put("message", responseBody.getString("message"));
+            responseMap.put("orderId", responseBody.getString("orderId"));
+            responseMap.put("requestId", responseBody.getString("requestId"));
+            responseMap.put("amount", responseBody.optInt("amount", 0));
 
-        return ResponseEntity.ok().body(response.getBody());
+            return ResponseEntity.ok(responseMap);
+
+        } catch (Exception e) {
+            // // Xử lý lỗi nếu có
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("status", "error");
+            errorResponse.put("message", "Lỗi khi kiểm tra MoMo: " + e.getMessage());
+            // return
+            // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            return null;
+        }
+
     }
 
+    // Tạo signature HMAC-SHA256 với đầu ra HEX
     public static String hmacSHA256(String data, String key) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "HmacSHA256");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         mac.init(secretKeySpec);
-        byte[] hmacData = mac.doFinal(data.getBytes());
-        return Base64.getEncoder().encodeToString(hmacData);
+        byte[] hmacData = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+
+        // Chuyển đổi sang HEX (giống FE)
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hmacData) {
+            hexString.append(String.format("%02x", b));
+        }
+        return hexString.toString();
     }
 }
