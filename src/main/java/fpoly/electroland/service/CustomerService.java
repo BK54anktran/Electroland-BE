@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Customer;
+import fpoly.electroland.model.User;
 import fpoly.electroland.repository.CustomerRepository;
 
 @Service
@@ -64,6 +65,12 @@ public class CustomerService {
         customer.setTypeCustomer(typeCustomerService.getTypeCustomer(1));
         customer.setAvatar("");
         customer.setStatus(true);
+        return customerRepository.save(customer);
+    }
+
+    public Customer createCustomerGoogle(Customer customer){
+        customer.setStatus(true);
+        customer.setTypeCustomer(typeCustomerService.getTypeCustomer(1));
         return customerRepository.save(customer);
     }
 

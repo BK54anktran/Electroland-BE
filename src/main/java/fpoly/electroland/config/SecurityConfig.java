@@ -29,11 +29,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> permitAllEndpoint = Set.of("/login", "/product", "/employees", "/employees/save",
+        Set<String> permitAllEndpoint = Set.of("/google-login", "/login", "/product", "/employees", "/employees/save",
                 "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review","/admin/review/**","admin/review/sreachs/**", "/admin/review/{id}/status", 
-                "/discountOrder", "/discountOrder/search/discountPercent", "/discountOrder/search/discountMoney", "/discountOrder/search", "/discountOrder/{id}",
-                "/discountOrder/newDiscountOrder", "/discountOrder/updateDiscountOrder/{id}", "/discountOrder/deleteDiscountOrder/{id}", "/getUserInfo",
-                "/updateInfo", "/admin/product", "/admin/product/search");
+                "/receiptCoupon", "/receiptCoupon/search", "/receiptCoupon/{id}", "/receiptCoupon/new", "/receiptCoupon/update/{id}", "/receiptCoupon/delete/{id}", 
+                "/info/getUserInfo", "/info/save", "/changePassword", "/admin/product", "/discountProduct", "/discountProduct/newDiscountProduct", "/discountProduct/search", "/discountProduct/update/{id}",
+                "/productCoupon/delete/{id}",
+                "/action", "/action/search");
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
@@ -66,5 +67,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
 }

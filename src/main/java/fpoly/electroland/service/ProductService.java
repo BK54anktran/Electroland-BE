@@ -26,9 +26,7 @@ import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.AttributeRepository;
 import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CategoryRepository;
-
 import fpoly.electroland.repository.ProductAttributeRepository;
-
 import fpoly.electroland.repository.ProductImgRepository;
 import fpoly.electroland.repository.ProductRepository;
 import fpoly.electroland.repository.SupplierRepository;
@@ -129,7 +127,7 @@ public class ProductService {
             // Lấy danh sách Attribute hiện có trong database của ProductAttribute này
             List<Attribute> existingAttributes = attributeRepository.findByProductAttribute(pat);
 
-            pa.getAttributes().forEach(att -> {
+            pat.getAttributes().forEach(att -> {
                 Optional<Attribute> existingAttribute = attributeRepository
                         .findByNameAndProductAttributeId(att.getName(), pat.getId());
                 if (!existingAttribute.isPresent()) {
@@ -238,7 +236,6 @@ public class ProductService {
 
         // Lưu sản phẩm chính
         Product savedProduct = productRepository.save(product);
-
         // Lưu các ProductImg nếu tồn tại
         saveProductImages(product, savedProduct);
 

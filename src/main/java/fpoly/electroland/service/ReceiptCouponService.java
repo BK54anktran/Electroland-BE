@@ -30,7 +30,7 @@ public class ReceiptCouponService {
     @Autowired
     EmployeeRepository employeeRepository;
 
-    public List<ReceiptCoupon> getAllReceiptCoupon() {
+    public List<ReceiptCoupon> getListReceiptCoupons() {
         return receiptCouponRepository.findAll();
     }
 
@@ -38,8 +38,8 @@ public class ReceiptCouponService {
         return receiptCouponRepository.findById(id);
     }
 
-    public List<ReceiptCoupon> searchByDiscountPercent(String discountPercent) {
-        return receiptCouponRepository.findByDiscountPercent(discountPercent);
+    public List<ReceiptCoupon> searchByDiscountPercent(String percent) {
+        return receiptCouponRepository.findByDiscountPercent(percent);
     }
 
     public List<ReceiptCoupon> searchByDiscountMoney(String discountMoney) {
@@ -60,7 +60,7 @@ public class ReceiptCouponService {
         return new ArrayList<>();
     }
 
-    public ReceiptCoupon newDiscountOrder(ReceiptCoupon receiptCoupon, int userId){
+    public ReceiptCoupon newReceiptCoupon(ReceiptCoupon receiptCoupon, int userId){
         ReceiptCoupon savedReceiptCoupon = receiptCouponRepository.save(receiptCoupon);
         Employee creatorEmployee = employeeRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
@@ -69,7 +69,7 @@ public class ReceiptCouponService {
         return savedReceiptCoupon;
     }
 
-    public ReceiptCoupon updateDiscountOrder(Long id, ReceiptCoupon receiptCoupon, int userId){
+    public ReceiptCoupon updaReceiptCoupon(Long id, ReceiptCoupon receiptCoupon, int userId){
         Optional<ReceiptCoupon> optionalReceiptCoupon = receiptCouponRepository.findById(id);
         if (optionalReceiptCoupon.isPresent()) {
             ReceiptCoupon existingReceiptCoupon = optionalReceiptCoupon.get();
@@ -95,7 +95,7 @@ public class ReceiptCouponService {
         }
     }
 
-    public ReceiptCoupon deleteReceiptCoupon(Long id, int userId){
+    public ReceiptCoupon delReceiptCoupon(Long id, int userId){
         Optional<ReceiptCoupon> optionalReceiptCoupon = receiptCouponRepository.findById(id);
         if (optionalReceiptCoupon.isPresent()) {
             ReceiptCoupon existingReceiptCoupon = optionalReceiptCoupon.get();
