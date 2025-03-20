@@ -259,6 +259,7 @@ public class ReceiptService {
                 payment,
                 receiptCoupon, // Có thể null nếu không tìm thấy
                 customer // Đã kiểm tra tồn tại
+                , null
         );
     }
 
