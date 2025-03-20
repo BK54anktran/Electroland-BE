@@ -35,6 +35,7 @@ public class CartService {
         return list;
     }
     public Object getList() {
+        System.out.println("Hlllllleeeeeeeee");
         List<Cart> list = cartRepository.findByCustomerId(userService.getUser().getId());
         List<CartDto> listDto = new ArrayList<>();
         list.forEach((cart) -> {
