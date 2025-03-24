@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 @RestController
 public class ReceiptController {
     @Autowired
@@ -50,7 +49,7 @@ public class ReceiptController {
         Customer customer = customerService.findCustomerById(userService.getUser().getId()).get();
         return receiptService.getReceiptsByUser(customer);
     }
-    
+
     @GetMapping("/getReceiptStatus")
     public List<ReceiptStatus> getReceiptStatust() {
         return receiptStatusService.getAll();

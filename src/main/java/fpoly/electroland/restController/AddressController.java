@@ -34,9 +34,7 @@ public class AddressController {
 
     @PostMapping("/updateAddress")
     public void updateUserAddress(@RequestBody Address address) {
-
         address.setCustomer(customerService.getCustomer(userService.getUser().getId()).get());
-        System.out.println(address);
         if (address.isStatus()) {
             List<Address> list = addressService
                     .getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
@@ -60,6 +58,5 @@ public class AddressController {
     public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
-    
-    
+
 }

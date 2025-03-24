@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -77,7 +76,7 @@ public class ProductController {
         JSONObject jsonObject = new JSONObject(body);
         if (jsonObject.get("brands") != null) {
             // JSONArray brands = new JSONArray(jsonObject.get("brands"));
-            System.out.println(jsonObject.get("brands").getClass().getName());
+            // System.out.println(jsonObject.get("brands").getClass().getName());
             // return
             // ResponseEntityUtil.ok(productService.getProductSupplier(brands.getInt(0)));
         }
@@ -91,7 +90,7 @@ public class ProductController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-        System.out.println(id);
+        // System.out.println(id);
         try {
             Product updatedProduct = productService.updateProduct(id, product);
             return ResponseEntity.ok(updatedProduct);
@@ -105,12 +104,12 @@ public class ProductController {
     @GetMapping("/admin/product/search")
     public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword) {
         try {
-            List<Product> products = productService.searchProducts(keyword); 
-            return ResponseEntity.ok(products); 
+            List<Product> products = productService.searchProducts(keyword);
+            return ResponseEntity.ok(products);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(null); 
+                    .body(null);
         }
     }
 }

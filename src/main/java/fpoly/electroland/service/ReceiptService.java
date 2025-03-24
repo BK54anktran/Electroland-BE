@@ -108,7 +108,7 @@ public class ReceiptService {
         return receiptDetailRepository.findByReceiptId(receiptId);
     }
 
-    public List<Receipt> getReceiptsByUser(Customer customer){
+    public List<Receipt> getReceiptsByUser(Customer customer) {
         List<Receipt> list = receiptRepository.findByCustomer(customer);
         return list;
     }
@@ -201,40 +201,65 @@ public boolean updateReadStatus(int id) {
     }
 
     public Receipt createCart(ReceiptRequest receiptRequest) {
+
+        // Tạo giao dịch
         Payment payment = paymentRepository.save(new Payment(0, receiptRequest.getCreateTime(), new Date(),
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
                 paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));
 
+        // Tạo hóa đơn
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
+
+        // Lấy danh danh sách sản phẩm đang được chọn
         List<Cart> cartList = cartRepository.findByCustomerIdAndStatus(userService.getUser().getId(), true);
+
+        // Lấy danh sách coupon san phẩm đưuọc chọn
         List<Integer> listCouponProduct = receiptRequest.getListCouponProduct();
+
+        // LẶp qua danh sách sản phẩm được chọn
         for (Cart cart : cartList) {
+
+            // Tìm sản coupon ứng với sản phẩm
             int i = 0;
             int removei = -1;
             ProductCoupon productCoupon = null;
+
             for (Integer integer : listCouponProduct) {
                 Optional<CustomerCoupon> customerCoupon = customerCouponRepository.findById(integer);
                 if (cart.getProduct() == customerCoupon.get().getProductCoupon().getProduct()) {
                     productCoupon = customerCoupon.get().getProductCoupon();
                     removei = i;
                 }
+                customerCouponRepository.delete(customerCoupon.get());
                 i++;
             }
+
+            // xóa coupon nếu tìm thấy
             if (removei >= 0)
                 listCouponProduct.remove(removei);
+
+            // Khởi tạo giá sản phẩm
             Double price = cart.getProduct().getPriceDiscount() != null ? cart.getProduct().getPriceDiscount()
                     : cart.getProduct().getPrice();
+
+            // Tính giá sản phẩm cuối cùng the các thuộc tính được chọn
             for (CartProductAttribute att : cart.getCartProductAttributes()) {
                 price += att.getAttribute().getAttributePrice();
+
+                // Xóa thuộc tính các sản phẩm ra khỏi chi tiết giỏ hàng
                 cartProductAttributeRepository.delete(att);
             }
+
+            // Tạo hóa đơn chi tiết
             receiptDetailRepository.save(new ReceiptDetail(0, cart.getQuantity(),
                     price, cart.getDescription(), productCoupon,
                     cart.getProduct(), receipt));
+
+            // Xóa sản phẩm ra khỏi giỏ hàng
             cartRepository.delete(cart);
         }
-        System.out.println(cartList);
+
         return receipt;
     }
 
@@ -244,8 +269,19 @@ public boolean updateReadStatus(int id) {
                 .orElseThrow(() -> new RuntimeException("ReceiptStatus not found"));
 
         // Lấy thông tin voucher (ReceiptCoupon)
-        ReceiptCoupon receiptCoupon = receiptCouponRepository.findById(receiptRequest.getIdReceiptCoupon())
-                .orElse(null); // Trả về null nếu không tìm thấy (có thể cần xử lý tùy logic)
+        Optional<CustomerCoupon> customerCoupon = customerCouponRepository
+                .findById(receiptRequest.getIdReceiptCoupon());
+
+        ReceiptCoupon receiptCoupon = null;
+
+        if (customerCoupon.isPresent()) {
+
+            // lấy ReceiptCoupon được chọn
+            receiptCoupon = customerCoupon.get().getReceiptCoupon();
+
+            // Xóa Coupon ra khỏi kho của khách hàng
+            customerCouponRepository.delete(customerCoupon.get());
+        }
 
         // Lấy thông tin khách hàng
         Customer customer = customerService.findCustomerById(userService.getUser().getId())
