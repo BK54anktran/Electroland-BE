@@ -34,7 +34,7 @@ public class SecurityConfig {
                 "/receiptCoupon", "/receiptCoupon/search", "/receiptCoupon/{id}", "/receiptCoupon/new", "/receiptCoupon/update/{id}", "/receiptCoupon/delete/{id}", 
                 "/info/getUserInfo", "/info/save", "/changePassword", "/admin/product", "/discountProduct", "/discountProduct/newDiscountProduct", "/discountProduct/search", "/discountProduct/update/{id}",
                 "/productCoupon/delete/{id}",
-                "/action", "/action/search", "/send-otp", "/info");
+                "/action", "/action/search", "/send-otp", "/info", "/createUser");
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http

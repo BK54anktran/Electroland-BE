@@ -90,10 +90,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Map<String, String> request) {
+    public Object register(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String otp = request.get("otp");
-        
+
         String storedOtp = redisTemplate.opsForValue().get("otp:" + email);
         if(storedOtp == null || !storedOtp.equals(otp)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP không hợp lệ hoặc đã hết hạn.");
@@ -110,7 +110,7 @@ public class AuthController {
         newCustomer.setPassword(request.get("password"));
         newCustomer.setPhoneNumber(request.get("phoneNumber"));
         newCustomer.setStatus(true);
-        String dob = request.get("dob");
+        String dob = request.get("dateOfBirth");
         Date dateOfBirth = null;
         try {
             dateOfBirth = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
@@ -123,7 +123,7 @@ public class AuthController {
         newCustomer.setGender(gender);
 
         customerService.createCustomer(newCustomer);
-        return ResponseEntity.ok("Tạo tài khoản thành công. Vui lòng đăng nhập.");
+        return userService.authentication_getData(email, request.get("password"));
     }
 
     @PostMapping("/google-login")
@@ -155,17 +155,11 @@ public class AuthController {
         if (existingCustomer.isPresent()) {
             return userService.authentication_getData(email, existingCustomer.get().getPassword());
         } else { // Ngược lại tạo mới
-            Customer newCustomer = new Customer();
-            newCustomer.setEmail(email);
-            newCustomer.setFullName(fullName);
-            newCustomer.setDateOfBirth(new Date());
-            newCustomer.setPhoneNumber("0123456789");
-            newCustomer.setPassword("Password123!");
-            newCustomer.setGender(true);
-            newCustomer.setAvatar(image);
-            System.out.println(newCustomer);
-            customerService.createCustomerGoogle(newCustomer);
-            return userService.authentication_getData(email, newCustomer.getPassword()); //Rồi đăng nhập
+            return ResponseEntity.ok(Map.of(
+                "email", email,
+                "fullName", fullName,
+                "avatar", image
+            ));
         }
     }    
 }

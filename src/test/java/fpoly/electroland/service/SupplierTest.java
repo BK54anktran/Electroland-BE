@@ -26,30 +26,26 @@ public class SupplierTest {
     @InjectMocks
     private SupplierService supplierService;
 
+    private Supplier supplier1;
+    private Supplier supplier2;
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        supplier1 = new Supplier(1, "Supplier A", "");
+        supplier2 = new Supplier(2, "Supplier B", "");
     }
 
     @Test
     public void testGetAllSuppliers() {
-        // Dữ liệu giả lập
-        Supplier supplier1 = new Supplier(1, "Supplier A", "");
-        Supplier supplier2 = new Supplier(2, "Supplier B", "");
-
-        // Chỉ định hành vi của phương thức findAll()
         when(supplierRepository.findAll()).thenReturn(Arrays.asList(supplier1, supplier2));
 
-        // Gọi phương thức getAllSuppliers()
         List<Supplier> suppliers = supplierService.getAllSuppliers();
-
-        // Kiểm tra kết quả
+        System.out.println(suppliers);
         assertNotNull(suppliers, "Supplier list should not be null");
         assertEquals(2, suppliers.size(), "Supplier list should contain 2 elements");
         assertEquals("Supplier A", suppliers.get(0).getName(), "First supplier should be Supplier A");
         assertEquals("Supplier B", suppliers.get(1).getName(), "Second supplier should be Supplier B");
 
-        // Kiểm tra phương thức findAll() đã được gọi đúng cách
         verify(supplierRepository, times(1)).findAll();
     }
 }
