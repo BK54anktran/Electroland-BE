@@ -75,7 +75,6 @@ public class CartController {
 
     @PostMapping("/cart")
     public void createCart(@RequestBody Map<String, Object> object) {
-        System.out.println("hello");
         Map<String, Integer> values = (Map<String, Integer>) object.get("values");
 
         Integer idProdct = (Integer) object.get("id");
@@ -104,19 +103,19 @@ public class CartController {
             newCart.setQuantity(1);
             newCart.setStatus(true);
             cartService.createCart(newCart);
-            System.out.println(newCart);
+            // System.out.println(newCart);
             values.forEach((key, value) -> {
                 CartProductAttribute newCartProductAttribute = new CartProductAttribute();
                 newCartProductAttribute.setAttribute(attributeService.getAttributeById(value));
                 newCartProductAttribute.setCart(newCart);
                 cartProductAttributeService.creatCartPA(newCartProductAttribute);
-                System.out.println(newCartProductAttribute);
+                // System.out.println(newCartProductAttribute);
             });
         } else {
             int quantity = cart.get().getQuantity();
             cart.get().setQuantity(quantity += 1);
             cartService.updateCart(cart.get());
-            System.out.println(cart.get());
+            // System.out.println(cart.get());
         }
     }
 

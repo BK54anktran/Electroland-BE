@@ -23,21 +23,11 @@ public class AddressService {
 
     public Object getUserAddress() {
         List<Address> list = addressRepository.findByCustomerId(userService.getUser().getId());
-        List<AddressDto> list2 = new ArrayList<>();
-        for (Address address : list) {
-            list2.add(AddressToDto(address));
-        }
-        return list2;
-    }
-
-    public AddressDto AddressToDto(Address address) {
-        return new AddressDto(0,
-                address.getStreet() + ", " + address.getNameWard() + ", " + address.getNameDistrict() + ", "
-                        + address.getNameCity(),
-                address.isStatus(), address.getNameReciever(), address.getPhoneReciever());
+        return list;
     }
 
     public List<Address> getAddresses(Customer customer) {
+        // System.out.println(customer);
         return addressRepository.getAddressesByCustomer(customer);
     }
 
@@ -46,7 +36,7 @@ public class AddressService {
     }
 
     public void deletAddress(Address address) {
-        System.out.println(address);
+        // System.out.println(address);
         addressRepository.delete(address);
     }
 }

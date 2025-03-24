@@ -60,7 +60,7 @@ public class CustomerController {
 
     @GetMapping("/userinfor")
     public Customer getUser() {
-        System.out.println(userService.getUser());
+        // System.out.println(userService.getUser());
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         return customer;
     }
@@ -68,12 +68,12 @@ public class CustomerController {
     @PostMapping("/userAvatar")
     public void saveUserAva(@RequestBody String avaUrl) {
         avaUrl = avaUrl.replace("\"", "");
-        System.out.println(userService.getUser());
+        // System.out.println(userService.getUser());
         int id = userService.getUser().getId();
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         customer.setAvatar(avaUrl);
         customerService.updateCustomer(id, customer);
-        System.out.println(avaUrl);
+        // System.out.println(avaUrl);
     }
 
     @PostMapping("/userUpdate")
@@ -94,7 +94,7 @@ public class CustomerController {
             String newPassword = (String) object.get("newPassword");
             customer.setPassword(newPassword);
         }
-        System.out.println(customer);
+        // System.out.println(customer);
         customerService.updateCustomer(id, customer);
     }
 
