@@ -105,11 +105,58 @@
 			<version>2.0.1.Final</version>
 		</dependency>
 		<!-- Testing -->
-		<dependency>
+					<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-api</artifactId>
+					<scope>test</scope>
+				</dependency>
+
+				<dependency>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>4.8.0</version> <!-- Phiên bản mới nhất hoặc phù hợp với dự án của bạn -->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>4.8.0</version> <!-- Phiên bản mới nhất hoặc phù hợp với dự án của bạn -->
+			<scope>test</scope>
+		</dependency>
+
+
+
+	 <dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.25.0</version> <!-- Phiên bản mới nhất -->
+</dependency>
+
+
+    <dependency>
+    <groupId>io.github.bonigarcia</groupId>
+    <artifactId>webdrivermanager</artifactId>
+    <version>5.8.0</version> <!-- Phiên bản mới nhất -->
+</dependency>
+
+
+
+
+
+
+
+
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>

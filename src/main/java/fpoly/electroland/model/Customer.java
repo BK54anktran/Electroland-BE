@@ -4,11 +4,6 @@ import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +29,12 @@ public class Customer {
 		this.email = email;
 		this.password = password;
 	}
+	
+    // Constructor mặc định (chỉ với email và password)
+    public Customer(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

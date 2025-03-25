@@ -3,7 +3,9 @@ package fpoly.electroland.service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -108,11 +110,6 @@ public class ReceiptService {
         return receiptDetailRepository.findByReceiptId(receiptId);
     }
 
-    public List<Receipt> getReceiptsByUser(Customer customer) {
-        List<Receipt> list = receiptRepository.findByCustomer(customer);
-        return list;
-    }
-
     public List<Receipt> getReceiptsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate == null) {
             startDate = receiptRepository.findEarliestDate().orElse(LocalDateTime.of(2000, 1, 1, 0, 0, 0));
@@ -146,29 +143,77 @@ public class ReceiptService {
         // Lưu vào DB
         Receipt savedReceipt = receiptRepository.save(existingReceipt);
 
-    return savedReceipt;
-}
-public boolean updateReadStatus(int id) {
-    // Tìm receipt theo ID
-    Receipt receipt = receiptRepository.findById(id).orElse(null);
-    if (receipt != null) {
-        receipt.setIsRead(true); // Đánh dấu là đã đọc
-        receiptRepository.save(receipt); // Lưu lại thay đổi
-        return true;
-    }
-    return false;
-}
-
-// 🔹 1. Tổng số đơn hàng
-    public long countTotalOrders() {
-        return receiptRepository.countTotalOrders();
+        return savedReceipt;
     }
 
-    // 🔹 2. Đếm đơn hàng theo trạng thái
-    public Map<String, Long> countOrdersByStatus() {
-        List<Object[]> results = receiptRepository.countOrdersByStatus();
+    public boolean updateReadStatus(int id) {
+        // Tìm receipt theo ID
+        Receipt receipt = receiptRepository.findById(id).orElse(null);
+        if (receipt != null) {
+            receipt.setIsRead(true); // Đánh dấu là đã đọc
+            receiptRepository.save(receipt); // Lưu lại thay đổi
+            return true;
+        }
+        return false;
+    }
+
+    public List<Map<String, Object>> getAllOrdersWithDetails() {
+        List<Object[]> results = receiptRepository.findAllOrdersWithDetails();
+        List<Map<String, Object>> orders = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Map<String, Object> orderData = new HashMap<>();
+            orderData.put("id", row[0]);
+            orderData.put("receiptDate", row[1]);
+            orderData.put("deliveryDate", row[2]);
+            orderData.put("status", row[3]);
+            orderData.put("paymentMethod", row[4]);
+            orders.add(orderData);
+        }
+
+        return orders;
+    }
+
+    public List<Receipt> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return receiptRepository.findOrdersByDateRange(startDate, endDate);
+    }
+
+    // Thống kê tổng doanh thu trong khoảng thời gian
+    public double getTotalRevenueByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        Double revenue = receiptRepository.getTotalRevenueByDateRange(startDate, endDate);
+        return revenue != null ? revenue : 0.0;
+    }
+
+    public List<Map<String, Object>> getRevenueByMonth(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = receiptRepository.getRevenueByMonth(startDate, endDate);
+        List<Map<String, Object>> revenueData = new ArrayList<>();
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("year", row[0]); // Lấy năm
+            data.put("month", row[1]); // Lấy tháng
+            data.put("revenue", row[2]); // Lấy doanh thu
+            revenueData.add(data);
+        }
+        return revenueData;
+    }
+
+    public List<Map<String, Object>> getOrdersCountByMonth(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = receiptRepository.countOrdersByMonth(startDate, endDate);
+        List<Map<String, Object>> ordersData = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("year", row[0]);
+            data.put("month", row[1]);
+            data.put("totalOrders", row[2]);
+            ordersData.add(data);
+        }
+        return ordersData;
+    }
+
+    public Map<String, Long> countOrdersByStatusWithinRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = receiptRepository.countOrdersByStatusWithinRange(startDate, endDate);
         Map<String, Long> stats = new HashMap<>();
-        
         for (Object[] row : results) {
             String status = (String) row[0];
             Long count = (Long) row[1];
@@ -177,27 +222,13 @@ public boolean updateReadStatus(int id) {
         return stats;
     }
 
-    // 🔹 3. Tổng doanh thu từ đơn hàng
-    public double getTotalRevenue() {
-        Double result = receiptRepository.totalRevenue();
-        return result != null ? result : 0.0;
+    public List<Object[]> countOrdersByPaymentMethodWithinRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return receiptRepository.countOrdersByPaymentMethodWithinRange(startDate, endDate);
     }
 
-    // 🔹 4. Doanh thu theo tháng
-    public List<Object[]> getRevenueByMonth() {
-        return receiptRepository.revenueByMonth();
-    }
-
-    // 🔹 5. Số đơn hàng theo phương thức thanh toán
-    public List<Object[]> countOrdersByPaymentMethod() {
-        return receiptRepository.countOrdersByPaymentMethod();
-    }
-
-
-    // 🔹 7. Tỷ lệ hoàn đơn
-    public double getRefundRate() {
-        Double result = receiptRepository.refundRate();
-        return result != null ? result : 0.0;
+    public List<Receipt> getReceiptsByUser(Customer customer) {
+        List<Receipt> list = receiptRepository.findByCustomer(customer);
+        return list;
     }
 
     public Receipt createCart(ReceiptRequest receiptRequest) {
