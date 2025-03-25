@@ -155,11 +155,16 @@ public class AuthController {
         if (existingCustomer.isPresent()) {
             return userService.authentication_getData(email, existingCustomer.get().getPassword());
         } else { // Ngược lại tạo mới
-            return ResponseEntity.ok(Map.of(
-                "email", email,
-                "fullName", fullName,
-                "avatar", image
-            ));
+            Customer newCustomer = new Customer();
+            newCustomer.setAvatar(image);
+            newCustomer.setDateOfBirth(new Date());
+            newCustomer.setEmail(email);
+            newCustomer.setFullName(fullName);
+            newCustomer.setGender(true);
+            newCustomer.setPassword("Password123");
+            newCustomer.setPhoneNumber("0123456789");
+            customerService.createCustomerGoogle(newCustomer);
+            return userService.authentication_getData(email, newCustomer.getPassword());
         }
     }    
 }
