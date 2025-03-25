@@ -30,7 +30,7 @@ public class BirthdayService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Scheduled(cron = "0 22 12 * * ?") // Chạy vào mỗi ngày lúc 9h sáng
+    @Scheduled(cron = "0 31 19 * * ?") // Chạy vào mỗi ngày lúc 9h sáng
     public void checkBirthdaysAndSendEmail() throws MessagingException, IOException {
         List<Customer> customers = customerService.getAll();
         LocalDate today = LocalDate.now();
