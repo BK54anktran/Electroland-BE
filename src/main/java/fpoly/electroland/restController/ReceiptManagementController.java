@@ -155,6 +155,7 @@ public class ReceiptManagementController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error sending email!");
         }
+    }
 
     @GetMapping("/orders/details")
     public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
@@ -172,42 +173,6 @@ public class ReceiptManagementController {
         LocalDateTime endDate = LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59);
 
         return ResponseEntity.ok(receiptService.getOrdersByDateRange(startDate, endDate));
-    }
-
-    // 🔹 1. API lấy tổng số đơn hàng
-    @GetMapping("/orders/count")
-    public long getTotalOrders() {
-        return receiptService.countTotalOrders();
-    }
-
-    // 🔹 2. API lấy số đơn hàng theo trạng thái
-    @GetMapping("/orders/status")
-    public Map<String, Long> getOrdersByStatus() {
-        return receiptService.countOrdersByStatus();
-    }
-
-    // 🔹 3. API lấy tổng doanh thu
-    @GetMapping("/orders/revenue")
-    public double getTotalRevenue() {
-        return receiptService.getTotalRevenue();
-    }
-
-    // 🔹 4. API lấy doanh thu theo tháng
-    @GetMapping("/orders/revenue/monthly")
-    public List<Object[]> getRevenueByMonth() {
-        return receiptService.getRevenueByMonth();
-    }
-
-    // 🔹 5. API lấy số đơn hàng theo phương thức thanh toán
-    @GetMapping("/orders/payment-methods")
-    public List<Object[]> getOrdersByPaymentMethod() {
-        return receiptService.countOrdersByPaymentMethod();
-    }
-
-    // 🔹 7. API lấy tỷ lệ hoàn đơn
-    @GetMapping("/orders/refund-rate")
-    public double getRefundRate() {
-        return receiptService.getRefundRate();
     }
 
     @GetMapping("/orders/statistics")
