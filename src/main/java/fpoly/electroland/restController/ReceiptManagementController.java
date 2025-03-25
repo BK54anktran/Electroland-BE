@@ -1,23 +1,32 @@
 package fpoly.electroland.restController;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.dto.request.ReceiptDTO;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.service.EmailReceiptService;
 import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.PdfService;
 import fpoly.electroland.service.ReceiptService;
 import fpoly.electroland.service.UserService;
 
@@ -31,6 +40,11 @@ public class ReceiptManagementController {
     @Autowired
     UserService userService;
 
+       @Autowired
+    PdfService pdfService;
+    
+    @Autowired
+    EmailReceiptService emailService;
     @GetMapping("/receipts")
     public List<Receipt> GetAllList() {
         List<Receipt> list = receiptService.getAll();
@@ -100,6 +114,82 @@ public class ReceiptManagementController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi khi cập nhật hóa đơn: " + e.getMessage());
         }
+    }
+
+   
+    @PostMapping("/receipts/generate")
+    public ResponseEntity<?> generateReceipt(@RequestBody ReceiptDTO receipt) {
+    System.out.println("API nhận được receipt: " + receipt);
+    if (receipt.getItems() == null || receipt.getItems().isEmpty()) {
+        System.out.println(" Không có sản phẩm trong đơn hàng!");
+    }
+        try {
+            String pdfPath = pdfService.generatePdf(receipt);
+            File file = new File(pdfPath);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                    .body(new FileSystemResource(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Lỗi tạo PDF!");
+        }
+    }
+    @PostMapping("/receipts/send-email")
+    public ResponseEntity<?> sendEmailWithReceipt(@RequestBody ReceiptDTO receipt) {
+        System.out.println("API nhận được receipt: " + receipt);
+        if (receipt.getItems() == null || receipt.getItems().isEmpty()) {
+            System.out.println(" Không có sản phẩm trong đơn hàng!");
+        }
+        try {
+            String pdfPath = pdfService.generatePdf(receipt);
+            File file = new File(pdfPath);
+            emailService.sendEmailWithAttachment(receipt, pdfPath);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                    .body(new FileSystemResource(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error sending email!");
+        }
+    }
+
+    // 🔹 1. API lấy tổng số đơn hàng
+    @GetMapping("/orders/count")
+    public long getTotalOrders() {
+        return receiptService.countTotalOrders();
+    }
+
+    // 🔹 2. API lấy số đơn hàng theo trạng thái
+    @GetMapping("/orders/status")
+    public Map<String, Long> getOrdersByStatus() {
+        return receiptService.countOrdersByStatus();
+    }
+
+    // 🔹 3. API lấy tổng doanh thu
+    @GetMapping("/orders/revenue")
+    public double getTotalRevenue() {
+        return receiptService.getTotalRevenue();
+    }
+
+    // 🔹 4. API lấy doanh thu theo tháng
+    @GetMapping("/orders/revenue/monthly")
+    public List<Object[]> getRevenueByMonth() {
+        return receiptService.getRevenueByMonth();
+    }
+
+    // 🔹 5. API lấy số đơn hàng theo phương thức thanh toán
+    @GetMapping("/orders/payment-methods")
+    public List<Object[]> getOrdersByPaymentMethod() {
+        return receiptService.countOrdersByPaymentMethod();
+    }
+
+
+    // 🔹 7. API lấy tỷ lệ hoàn đơn
+    @GetMapping("/orders/refund-rate")
+    public double getRefundRate() {
+        return receiptService.getRefundRate();
     }
 
 }

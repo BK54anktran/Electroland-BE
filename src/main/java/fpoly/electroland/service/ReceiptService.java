@@ -1,8 +1,11 @@
 package fpoly.electroland.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -143,20 +146,58 @@ public class ReceiptService {
         // Lưu vào DB
         Receipt savedReceipt = receiptRepository.save(existingReceipt);
 
-        // Tìm nhân viên thực hiện hành động
-        Employee creatorEmployee = employeeRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + userId));
+    return savedReceipt;
+}
+public boolean updateReadStatus(int id) {
+    // Tìm receipt theo ID
+    Receipt receipt = receiptRepository.findById(id).orElse(null);
+    if (receipt != null) {
+        receipt.setIsRead(true); // Đánh dấu là đã đọc
+        receiptRepository.save(receipt); // Lưu lại thay đổi
+        return true;
+    }
+    return false;
+}
 
-        // Ghi lại hành động vào bảng Action (Chỉ log ID để tránh StackOverflow)
-        createAction.createAction(
-                "Receipt",
-                "UPDATE",
-                savedReceipt.getId(),
-                "Old Status: " + oldStatusId, // Sử dụng biến đã lưu
-                "New Status: " + savedReceipt.getReceiptStatus().getId(), // Lấy trạng thái sau khi update
-                creatorEmployee);
+// 🔹 1. Tổng số đơn hàng
+    public long countTotalOrders() {
+        return receiptRepository.countTotalOrders();
+    }
 
-        return savedReceipt;
+    // 🔹 2. Đếm đơn hàng theo trạng thái
+    public Map<String, Long> countOrdersByStatus() {
+        List<Object[]> results = receiptRepository.countOrdersByStatus();
+        Map<String, Long> stats = new HashMap<>();
+        
+        for (Object[] row : results) {
+            String status = (String) row[0];
+            Long count = (Long) row[1];
+            stats.put(status, count);
+        }
+        return stats;
+    }
+
+    // 🔹 3. Tổng doanh thu từ đơn hàng
+    public double getTotalRevenue() {
+        Double result = receiptRepository.totalRevenue();
+        return result != null ? result : 0.0;
+    }
+
+    // 🔹 4. Doanh thu theo tháng
+    public List<Object[]> getRevenueByMonth() {
+        return receiptRepository.revenueByMonth();
+    }
+
+    // 🔹 5. Số đơn hàng theo phương thức thanh toán
+    public List<Object[]> countOrdersByPaymentMethod() {
+        return receiptRepository.countOrdersByPaymentMethod();
+    }
+
+
+    // 🔹 7. Tỷ lệ hoàn đơn
+    public double getRefundRate() {
+        Double result = receiptRepository.refundRate();
+        return result != null ? result : 0.0;
     }
 
     public Receipt createCart(ReceiptRequest receiptRequest) {
@@ -259,7 +300,7 @@ public class ReceiptService {
                 payment,
                 receiptCoupon, // Có thể null nếu không tìm thấy
                 customer // Đã kiểm tra tồn tại
-        );
+                , false);
     }
 
 }
