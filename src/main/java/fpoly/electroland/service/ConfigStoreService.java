@@ -21,4 +21,19 @@ public class ConfigStoreService {
         }
         return null;
     }
+
+    public String setKey(String key, String value) {
+        Optional<ConfigStore> configStore = configStoreRepository.findByKeyword(key);
+        if (configStore.isPresent()) {
+            configStore.get().setValue(value);
+            configStoreRepository.save(configStore.get());
+            return value;
+        } else {
+            ConfigStore newConfigStore = new ConfigStore();
+            newConfigStore.setKeyword(key);
+            newConfigStore.setValue(value);
+            configStoreRepository.save(newConfigStore);
+            return value;
+        }
+    }
 }
