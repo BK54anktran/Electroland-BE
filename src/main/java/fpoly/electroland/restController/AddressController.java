@@ -46,17 +46,11 @@ public class AddressController {
             });
         }
         ;
-        addressService.saveAddress(address);
-    }
-
-    @GetMapping("/user/address")
-    public Object getUserAddress() {
-        return addressService.getUserAddress();
+        addressService.savAddress(address);
     }
 
     @PostMapping("/deleteAddress")
     public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
-
 }
