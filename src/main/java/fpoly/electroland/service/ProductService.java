@@ -1,9 +1,10 @@
 package fpoly.electroland.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -306,4 +307,24 @@ public class ProductService {
     public List<Product> searchProducts(String keyword) {
         return productRepository.findByNameContaining(keyword);
     }
+
+    // Thêm phương thức thống kê sản phẩm
+    public List<Object[]> getProductStatistics(Sort sort) {
+        return productRepository.getProductStatistics(sort);
+    }
+
+    // Thống kê Top 10 sản phẩm có doanh thu cao nhất
+    public List<Map<String, Object>> getTop10ProductRevenue(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = productRepository.getTop10ProductRevenue(startDate, endDate);
+        List<Map<String, Object>> productRevenue = new ArrayList<>();
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("productName", row[0]);
+            data.put("revenue", row[1]);
+            data.put("totalQuantity", row[2]);
+            productRevenue.add(data);
+        }
+        return productRevenue;
+    }
+
 }

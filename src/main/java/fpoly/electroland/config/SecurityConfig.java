@@ -1,8 +1,11 @@
 package fpoly.electroland.config;
 
+import java.util.Set;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -12,10 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import static org.springframework.security.config.Customizer.withDefaults;
-
-import java.util.Set;
 
 @Configuration
 public class SecurityConfig {
@@ -29,12 +28,39 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        Set<String> permitAllEndpoint = Set.of("/google-login", "/login", "/product", "/employees", "/employees/save",
-                "/employees/update/**", "/register", "/admin/customer","/admin/customer/save", "/admin/customer/update/**","/admin/customer/search/**", "/admin/customer/filter/**", "/admin/customer/search-filter/**","/admin/review","/admin/review/**","admin/review/sreachs/**", "/admin/review/{id}/status", 
-                "/receiptCoupon", "/receiptCoupon/search", "/receiptCoupon/{id}", "/receiptCoupon/new", "/receiptCoupon/update/{id}", "/receiptCoupon/delete/{id}", 
-                "/info/getUserInfo", "/info/save", "/changePassword", "/admin/product", "/discountProduct", "/discountProduct/newDiscountProduct", "/discountProduct/search", "/discountProduct/update/{id}",
-                "/productCoupon/delete/{id}",
-                "/action", "/action/search", "/send-otp", "/info", "/createUser");
+        // Set<String> permitAllEndpoint = Set.of(
+        // "/google-login", "/login", "/product", "/employees", "/employees/save",
+        // "/employees/update/**", "/register", "/admin/customer",
+        // "/admin/customer/save",
+        // "/admin/customer/update/**",
+        // "/admin/customer/search/**", "/admin/customer/filter/**",
+        // "/admin/customer/search-filter/**",
+        // "/admin/review",
+        // "/admin/review/**", "admin/review/sreachs/**", "/admin/review/{id}/status",
+        // "/orders/count",
+        // "/admin/orders/status", "/admin/orders/revenue/monthly",
+        // "/admin/orders/payment-methods",
+        // "/admin/orders/processing-time", "/admin/orders/refund-rate",
+        // "/admin/orders/by-date",
+        // "/admin/orders/statistics", "/product/statistics", "/admin/orders/revenue",
+        // "/product/top10-revenue",
+        // "/orders/count/monthly", "/admin/reset-password", "/receiptCoupon",
+        // "/receiptCoupon/search",
+        // "/receiptCoupon/{id}", "/receiptCoupon/new", "/receiptCoupon/update/{id}",
+        // "/receiptCoupon/delete/{id}",
+        // "/info/getUserInfo", "/info/save", "/changePassword", "/admin/product",
+        // "/admin/product/search",
+        // "/discountProduct", "/discountProduct/newDiscountProduct",
+        // "/discountProduct/search",
+        // "/discountProduct/update/{id}", "/discountOrder/newDiscountOrder",
+        // "/discountOrder/updateDiscountOrder/{id}",
+        // "/discountOrder/deleteDiscountOrder/{id}", "/productCoupon/delete/{id}",
+        // "/action", "/action/search",
+        // "/customer/save", "/customer/update/**", "/customer/search/**",
+        // "/customer/filter/**",
+        // "/customer/search-filter/**",
+        // "/getUserInfo", "/updateInfo");
+
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http

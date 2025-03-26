@@ -34,45 +34,44 @@ public class CustomerController {
     public List<Customer> GetAllList() {
         return customerService.getAll();
     }
-      @PostMapping("/customer/save")
-    public Customer addCustomer(@RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
-    }
-    @PutMapping("/customer/update/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestParam String status) {
-        boolean statusBoolean = Boolean.parseBoolean(status); // Chuyển chuỗi thành boolean
-    
-        Customer updatedCustomer = customerService.updateCustomer(id, statusBoolean);
-        
-        if (updatedCustomer != null) {
-            return ResponseEntity.ok(updatedCustomer);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-    
 
     @GetMapping("/customer/search")
     public List<Customer> searchCustomers(@RequestParam(required = false) String keyword) {
-    if (keyword == null || keyword.isEmpty()) {
-        return customerService.getAll(); // Nếu không có từ khóa, trả về danh sách đầy đủ
+        if (keyword == null || keyword.isEmpty()) {
+            return customerService.getAll(); // Nếu không có từ khóa, trả về danh sách đầy đủ
+        }
+        return customerService.searchCustomers(keyword);
     }
-    return customerService.searchCustomers(keyword);
-}
 
     @GetMapping("/customer/filter")
     public List<Customer> filterCustomers(@RequestParam String status) {
         boolean statusBoolean = Boolean.parseBoolean(status); // Chuyển đổi sang Boolean
         return customerService.filterCustomersByStatus(statusBoolean);
     }
-    
+
+    @PostMapping("/customer/save")
+    public Customer addCustomer(@RequestBody Customer customer) {
+        return customerService.createCustomer(customer);
+    }
+
+    @PutMapping("/customer/update/{id}")
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestParam String status) {
+        boolean statusBoolean = Boolean.parseBoolean(status); // Chuyển chuỗi thành boolean
+
+        Customer updatedCustomer = customerService.updateCustomer(id, statusBoolean);
+
+        if (updatedCustomer != null) {
+            return ResponseEntity.ok(updatedCustomer);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
     // Kết hợp tìm kiếm và lọc
     @GetMapping("/customer/search-filter")
     public List<Customer> searchAndFilterCustomers(@RequestParam String keyword, @RequestParam boolean status) {
         return customerService.searchAndFilterCustomers(keyword, status);
     }
-
 
     @GetMapping("/userinfor")
     public Customer getUser() {
