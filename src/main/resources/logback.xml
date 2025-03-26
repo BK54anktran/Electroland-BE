@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
+      <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
     <!-- Định nghĩa biến LOG_PATH để quản lý thư mục log -->
     <property name="LOG_PATH" value="logs" />
-    
-    <!-- Console Appender với MDC -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] - %msg%n</pattern>
-        </encoder>
-    </appender>
-
     <!-- File Appender chính -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/electroland.log</file>
@@ -37,6 +29,18 @@
         </encoder>
     </appender>
 
+    <!-- Console Appender (disabled) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>OFF</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Google Cloud Logging Appender -->
     <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
         <projectId>electroland-454016</projectId>
@@ -56,8 +60,7 @@
         <discardingThreshold>0</discardingThreshold>
         <appender-ref ref="ERROR_FILE"/>
     </appender>
-
-    <!-- Log HTTP requests -->
+     <!-- Log HTTP requests -->
     <logger name="org.springframework.web" level="DEBUG" />
 
     <!-- Log SQL queries và SQL binding -->
@@ -69,17 +72,11 @@
 
     <!-- Log bảo mật -->
     <logger name="org.springframework.security" level="DEBUG" />
-
     <!-- Root Logger -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
         <appender-ref ref="ASYNC_FILE" />
         <appender-ref ref="CLOUD" />
+        <!-- Note: CONSOLE appender is defined but not referenced here, so no console logging will occur -->
     </root>
-
-    <!-- Logger cho lỗi nghiêm trọng -->
-    <logger name="com.fpoly.electroland" level="ERROR" additivity="false">
-        <appender-ref ref="ASYNC_ERROR"/>
-    </logger>
 
 </configuration>
