@@ -37,7 +37,7 @@ public class CheckoutController {
 
     @PostMapping("/checkout")
     public Object Checkout(@RequestBody ReceiptRequest receiptRequest) {
-        System.out.println(receiptRequest.toString());
+        // System.out.println(receiptRequest.toString());
         return receiptService.createCart(receiptRequest);
     }
 
@@ -50,7 +50,7 @@ public class CheckoutController {
         int amount_in = amount;
         String urlString = "https://my.sepay.vn/userapi/transactions/list?account_number=" + account_number
                 + "&amount_in=" + amount_in + "&transaction_date_min=" + transaction_date_min;
-        System.out.println(urlString);
+        // System.out.println(urlString);
         StringBuilder response = new StringBuilder();
 
         try {

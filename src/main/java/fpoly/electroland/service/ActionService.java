@@ -1,5 +1,7 @@
 package fpoly.electroland.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +26,13 @@ public class ActionService {
             Employee creatorEmployee) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createAction'");
+    }
+
+    public List<Action> getListAction(){
+        return actionRepository.findAll();
+    }
+
+    public List<Action> searchAction(String keyword){
+        return actionRepository.findByTableNameContainingOrActionContainingOrEmployee_FullNameContaining(keyword, keyword, keyword);
     }
 }

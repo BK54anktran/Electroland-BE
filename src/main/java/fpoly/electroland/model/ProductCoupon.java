@@ -18,12 +18,18 @@ public class ProductCoupon {
 	Double value;
 
 	@Column
-	Integer expiredDate;
+	Integer redemptionCost;
 
 	@Column(columnDefinition = "nvarchar(225)", nullable = true)
 	String description;
 
+	@Column(nullable = false)
+	Boolean status = true;
+
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
+
+	@Column(nullable = true)
+	Integer point;
 }

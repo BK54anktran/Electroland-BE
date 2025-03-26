@@ -29,37 +29,26 @@ public class AddressController {
 
     @GetMapping("/getUserAddress")
     public List<Address> getAddresses() {
-        return addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
+       return addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
     }
 
     @PostMapping("/updateAddress")
     public void updateUserAddress(@RequestBody Address address) {
-
         address.setCustomer(customerService.getCustomer(userService.getUser().getId()).get());
-        System.out.println(address);
         if (address.isStatus()) {
             List<Address> list = addressService
                     .getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
             list.forEach(ad -> {
                 if (ad.isStatus() && (ad.getId() != address.getId())) {
                     ad.setStatus(false);
-                }
-                ;
+                };
             });
-        }
-        ;
-        addressService.saveAddress(address);
-    }
-
-    @GetMapping("/user/address")
-    public Object getUserAddress() {
-        return addressService.getUserAddress();
+        };
+        addressService.savAddress(address);
     }
 
     @PostMapping("/deleteAddress")
-    public void deleteAddress(@RequestBody Address address) {
+    public void deleteAddress(@RequestBody Address address){
         addressService.deletAddress(address);
     }
-    
-    
 }

@@ -31,7 +31,7 @@ public class Review {
 	private Date date = new Date();
 
 	private Boolean status = true;
-
+    
 	@OneToMany(mappedBy = "review")
 	private List<ReviewImg> imgs;
 
@@ -42,4 +42,7 @@ public class Review {
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	private Product product;
+
+	@Column(nullable = true)
+	private Boolean isRead = false;
 }

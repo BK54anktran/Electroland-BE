@@ -3,9 +3,7 @@ package fpoly.electroland.model;
 import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
 
-
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ public class Receipt {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	@Column(columnDefinition = "NVARCHAR(225)")
 	private String address;
 
@@ -56,4 +54,6 @@ public class Receipt {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	private Customer customer;
+	@Column(nullable = true)
+	private Boolean isRead = false;
 }

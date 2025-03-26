@@ -98,6 +98,7 @@ public class ReviewController {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
+
     
     @PostMapping("/createReview")
     public String postMethodName(@RequestBody Map<String, Object> object) {
@@ -124,4 +125,5 @@ public class ReviewController {
 
         return null;
     }
+
 }
