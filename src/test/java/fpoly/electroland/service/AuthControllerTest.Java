@@ -18,7 +18,7 @@ public class AuthControllerTest {
         WebDriver driver = new ChromeDriver();
 
         // Mở trang đăng nhập
-        driver.get("http://localhost:8080/login");  // Thay bằng URL của trang đăng nhập của bạn
+        driver.get("http://localhost:3000/login");  // Thay bằng URL của trang đăng nhập của bạn
 
         // Tìm các phần tử input cho email và password
         WebElement emailField = driver.findElement(By.id("email"));
