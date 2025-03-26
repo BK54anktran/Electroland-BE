@@ -15,16 +15,16 @@ public class ReviewService {
     @Autowired
     ReviewRepository reviewRepository;
 
-    public Review creatReview(Review review) {
-        return reviewRepository.save(review);
-    }
-
     public List<Review> getAll() {
         return reviewRepository.findAll();
     }
 
     public List<Review> getReviewsByproductId(int productId) {
         return reviewRepository.getReviewsByProductId(productId);
+    }
+
+    public Review creatReview(Review review) {
+        return reviewRepository.save(review);
     }
 
     public void deleteReview(int reviewId) {
@@ -41,6 +41,16 @@ public class ReviewService {
 
     public void saveReview(Review review) {
         reviewRepository.save(review);
+    }
+
+    public boolean updateReadStatus(int id) {
+        Review review = reviewRepository.findById(id).orElse(null);
+        if (review != null) {
+            review.setIsRead(true);
+            reviewRepository.save(review);
+            return true;
+        }
+        return false;
     }
 
 }

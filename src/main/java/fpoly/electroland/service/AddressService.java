@@ -15,7 +15,16 @@ public class AddressService {
     @Autowired
     AddressRepository addressRepository;
 
-    public List<Address> getAddresses(Customer customer){
+    @Autowired
+    UserService userService;
+
+    public Object getUserAddress() {
+        List<Address> list = addressRepository.findByCustomerId(userService.getUser().getId());
+        return list;
+    }
+
+    public List<Address> getAddresses(Customer customer) {
+        // System.out.println(customer);
         return addressRepository.getAddressesByCustomer(customer);
     }
 
@@ -23,8 +32,8 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public void deletAddress(Address address){
-        System.out.println(address);
+    public void deletAddress(Address address) {
+        // System.out.println(address);
         addressRepository.delete(address);
     }
 }

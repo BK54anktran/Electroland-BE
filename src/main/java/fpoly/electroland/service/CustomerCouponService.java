@@ -19,12 +19,18 @@ import fpoly.electroland.model.ProductCoupon;
 import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.repository.CustomerCouponRepository;
 import fpoly.electroland.repository.CustomerRepository;
+import fpoly.electroland.repository.ReceiptCouponRepository;
 
 @Service
 public class CustomerCouponService {
 
     @Autowired
     CustomerCouponRepository customerCouponRepository;
+    @Autowired
+    private ReceiptCouponRepository receiptCouponRepository;
+    @Autowired
+    private CustomerService customerService;
+
 
     @Autowired
     UserService userService;
@@ -102,4 +108,30 @@ public class CustomerCouponService {
         customerRepository.save(customer);
         return customerCouponRepository.save(newCustomerCoupon);
     }
+       // Tạo mới ReceiptCoupon và lưu vào cơ sở dữ liệu
+       public ReceiptCoupon createReceiptCoupon(ReceiptCoupon coupon) {
+        // Log để kiểm tra coupon trước khi lưu
+        System.out.println("Creating coupon with discount: " + coupon.getDiscountMoney());
+        return receiptCouponRepository.save(coupon);
+    }
+    
+
+    public void addReceiptCouponToCustomer(int customerId, ReceiptCoupon coupon) {
+        // Log để kiểm tra
+        System.out.println("Adding coupon for customer ID: " + customerId);
+    
+        // Lấy đối tượng Customer từ CustomerService dựa trên customerId
+        Customer customer = customerService.getCustomer(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+    
+        // Tạo CustomerCoupon mới và gán các giá trị
+        CustomerCoupon customerCoupon = new CustomerCoupon();
+        customerCoupon.setCustomer(customer); // Gán đối tượng Customer vào customerCoupon
+        customerCoupon.setReceiptCoupon(coupon); // Gán ReceiptCoupon vào customerCoupon
+        customerCoupon.setStatus(true); // Đảm bảo coupon có trạng thái đúng
+    
+        // Lưu CustomerCoupon vào cơ sở dữ liệu
+        customerCouponRepository.save(customerCoupon);
+        System.out.println("Coupon successfully added for customer ID: " + customerId);
+    }
+    
 }

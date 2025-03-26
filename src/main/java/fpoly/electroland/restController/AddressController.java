@@ -34,13 +34,12 @@ public class AddressController {
 
     @PostMapping("/updateAddress")
     public void updateUserAddress(@RequestBody Address address) {
-        
         address.setCustomer(customerService.getCustomer(userService.getUser().getId()).get());
-        System.out.println(address);
-        if(address.isStatus()){
-            List<Address> list = addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
-            list.forEach(ad ->{
-                if(ad.isStatus() && (ad.getId() !=address.getId())){
+        if (address.isStatus()) {
+            List<Address> list = addressService
+                    .getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
+            list.forEach(ad -> {
+                if (ad.isStatus() && (ad.getId() != address.getId())) {
                     ad.setStatus(false);
                 };
             });

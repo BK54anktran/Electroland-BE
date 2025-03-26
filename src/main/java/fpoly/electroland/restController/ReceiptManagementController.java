@@ -1,23 +1,33 @@
 package fpoly.electroland.restController;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.dto.request.ReceiptDTO;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.service.EmailReceiptService;
 import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.PdfService;
 import fpoly.electroland.service.ReceiptService;
 import fpoly.electroland.service.UserService;
 
@@ -30,6 +40,12 @@ public class ReceiptManagementController {
     EmployeeService employeeService;
     @Autowired
     UserService userService;
+
+    @Autowired
+    PdfService pdfService;
+
+    @Autowired
+    EmailReceiptService emailService;
 
     @GetMapping("/receipts")
     public List<Receipt> GetAllList() {
@@ -100,6 +116,134 @@ public class ReceiptManagementController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Lỗi khi cập nhật hóa đơn: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/receipts/generate")
+    public ResponseEntity<?> generateReceipt(@RequestBody ReceiptDTO receipt) {
+        System.out.println("API nhận được receipt: " + receipt);
+        if (receipt.getItems() == null || receipt.getItems().isEmpty()) {
+            System.out.println(" Không có sản phẩm trong đơn hàng!");
+        }
+        try {
+            String pdfPath = pdfService.generatePdf(receipt);
+            File file = new File(pdfPath);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                    .body(new FileSystemResource(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Lỗi tạo PDF!");
+        }
+    }
+
+    @PostMapping("/receipts/send-email")
+    public ResponseEntity<?> sendEmailWithReceipt(@RequestBody ReceiptDTO receipt) {
+        System.out.println("API nhận được receipt: " + receipt);
+        if (receipt.getItems() == null || receipt.getItems().isEmpty()) {
+            System.out.println(" Không có sản phẩm trong đơn hàng!");
+        }
+        try {
+            String pdfPath = pdfService.generatePdf(receipt);
+            File file = new File(pdfPath);
+            emailService.sendEmailWithAttachment(receipt, pdfPath);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
+                    .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                    .body(new FileSystemResource(file));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error sending email!");
+        }
+    }
+
+    @GetMapping("/orders/details")
+    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
+        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/orders/by-date")
+    public ResponseEntity<List<Receipt>> getOrdersByDateRange(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = LocalDate.parse(startDateStr, formatter).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59);
+
+        return ResponseEntity.ok(receiptService.getOrdersByDateRange(startDate, endDate));
+    }
+
+    @GetMapping("/orders/statistics")
+    public ResponseEntity<Map<String, Object>> getStatisticsByDateRange(
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = LocalDate.parse(startDateStr, formatter).atStartOfDay();
+        LocalDateTime endDate = LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59);
+
+        List<Receipt> filteredReceipts = receiptService.getOrdersByDateRange(startDate, endDate);
+        long totalOrders = filteredReceipts.size();
+
+        Map<String, Long> ordersByStatus = receiptService.countOrdersByStatusWithinRange(startDate, endDate);
+        List<Object[]> ordersByPaymentMethod = receiptService.countOrdersByPaymentMethodWithinRange(startDate, endDate);
+        List<Map<String, Object>> ordersByMonth = receiptService.getOrdersCountByMonth(startDate, endDate);
+
+        Map<String, Object> statistics = new HashMap<>();
+        statistics.put("totalOrders", totalOrders);
+        statistics.put("ordersByStatus", ordersByStatus);
+        statistics.put("ordersByPaymentMethod", ordersByPaymentMethod);
+        statistics.put("ordersByMonth", ordersByMonth);
+
+        return ResponseEntity.ok(statistics);
+    }
+
+    // 🔹 API lấy tổng doanh thu trong khoảng thời gian
+    @GetMapping("/orders/revenue")
+    public ResponseEntity<Double> getTotalRevenueByDateRange(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        double revenue = receiptService.getTotalRevenueByDateRange(startDate, endDate);
+        return ResponseEntity.ok(revenue);
+    }
+
+    // 🔹 API lấy doanh thu theo tháng
+    @GetMapping("/orders/revenue/monthly")
+    public ResponseEntity<List<Map<String, Object>>> getRevenueByMonth(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        List<Map<String, Object>> revenueData = receiptService.getRevenueByMonth(startDate, endDate);
+
+        // In ra log để kiểm tra dữ liệu trả về
+        System.out.println("Dữ liệu doanh thu: " + revenueData);
+
+        return ResponseEntity.ok(revenueData);
+    }
+
+    @GetMapping("/orders/count/monthly")
+    public ResponseEntity<List<Map<String, Object>>> getOrdersCountByMonth(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        List<Map<String, Object>> ordersData = receiptService.getOrdersCountByMonth(startDate, endDate);
+
+        return ResponseEntity.ok(ordersData);
     }
 
 }

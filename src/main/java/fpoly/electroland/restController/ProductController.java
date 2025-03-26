@@ -14,9 +14,11 @@ import fpoly.electroland.util.ResponseEntityUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +79,7 @@ public class ProductController {
         JSONObject jsonObject = new JSONObject(body);
         if (jsonObject.get("brands") != null) {
             // JSONArray brands = new JSONArray(jsonObject.get("brands"));
-            System.out.println(jsonObject.get("brands").getClass().getName());
+            // System.out.println(jsonObject.get("brands").getClass().getName());
             // return
             // ResponseEntityUtil.ok(productService.getProductSupplier(brands.getInt(0)));
         }
@@ -91,7 +93,7 @@ public class ProductController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-        System.out.println(id);
+        // System.out.println(id);
         try {
             Product updatedProduct = productService.updateProduct(id, product);
             return ResponseEntity.ok(updatedProduct);
@@ -105,12 +107,46 @@ public class ProductController {
     @GetMapping("/admin/product/search")
     public ResponseEntity<List<Product>> searchProduct(@RequestParam String keyword) {
         try {
-            List<Product> products = productService.searchProducts(keyword); 
-            return ResponseEntity.ok(products); 
+            List<Product> products = productService.searchProducts(keyword);
+            return ResponseEntity.ok(products);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(null); 
+                    .body(null);
         }
     }
+
+    // Thêm một endpoint để lấy thống kê sản phẩm
+    @GetMapping("/product/statistics")
+    public ResponseEntity<List<Object[]>> getProductStatistics(
+            @RequestParam(required = false) String sortField,
+            @RequestParam(required = false) String sortOrder) {
+
+        // Nếu không có tham số sắp xếp, mặc định sắp xếp theo tên sản phẩm
+        Sort sort = Sort.by(Sort.Order.asc(sortField != null ? sortField : "name"));
+
+        // Nếu có tham số sắp xếp giảm dần
+        if ("desc".equals(sortOrder)) {
+            sort = Sort.by(Sort.Order.desc(sortField != null ? sortField : "name"));
+        }
+
+        // Lấy thống kê sản phẩm
+        List<Object[]> statistics = productService.getProductStatistics(sort);
+
+        return ResponseEntity.ok(statistics);
+    }
+
+    // 🔹 API lấy Top 10 sản phẩm doanh thu cao nhất
+    @GetMapping("/product/top10-revenue")
+    public ResponseEntity<List<Map<String, Object>>> getTop10ProductRevenue(
+            @RequestParam(required = false) String startDateStr,
+            @RequestParam(required = false) String endDateStr) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+        LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+        return ResponseEntity.ok(productService.getTop10ProductRevenue(startDate, endDate));
+    }
+
 }

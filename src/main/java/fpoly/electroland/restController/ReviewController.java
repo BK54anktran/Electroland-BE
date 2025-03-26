@@ -1,24 +1,29 @@
 package fpoly.electroland.restController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.model.Review;
+import fpoly.electroland.service.ReviewService;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Product;
-import fpoly.electroland.model.Review;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.ReviewImgService;
-import fpoly.electroland.service.ReviewService;
 import fpoly.electroland.service.UserService;
 
 
@@ -35,7 +40,7 @@ import fpoly.electroland.util.ResponseEntityUtil;
 public class ReviewController {
     @Autowired
     ReviewService reviewService;
-
+    
     @Autowired
     CustomerService customerService;
 
@@ -93,6 +98,7 @@ public class ReviewController {
     public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
+
     
     @PostMapping("/createReview")
     public String postMethodName(@RequestBody Map<String, Object> object) {
@@ -119,4 +125,5 @@ public class ReviewController {
 
         return null;
     }
+
 }

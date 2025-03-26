@@ -28,6 +28,6 @@ public class CreateAction {
         actionService.saveAction(action);
 
         // Log thông tin
-        System.out.println("Action created: " + action);
+        // System.out.println("Action created: " + action);
     }
 }
