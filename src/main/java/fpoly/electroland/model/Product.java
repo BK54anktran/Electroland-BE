@@ -32,6 +32,18 @@ public class Product {
 	Double priceDiscount;
 
 	Boolean status = true;
+	
+	@Column(nullable = true)
+	Integer weight;
+
+	@Column(nullable = true)
+	Integer length;
+
+	@Column(nullable = true)
+	Integer width;
+
+	@Column(nullable = true)
+	Integer height;
 
 	@ManyToOne
 	@JoinColumn(name = "idCategory", nullable = false)

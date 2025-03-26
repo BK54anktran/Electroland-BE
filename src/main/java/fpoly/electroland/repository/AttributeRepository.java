@@ -14,4 +14,5 @@ public interface AttributeRepository extends JpaRepository<Attribute, Integer> {
     List<Attribute> findByProductAttribute(ProductAttribute productAttribute);
     Optional<Attribute> findByNameAndProductAttributeId(String name, int productAttributeId);
     void deleteByProductAttributeId(int productAttributeId);
+    List<Attribute> findByProductAttributeId(int id);
 }
