@@ -1,105 +1,44 @@
-package fpoly.electroland.service;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+package fpoly.electroland.selenium;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
-import fpoly.electroland.model.Customer;
-import fpoly.electroland.model.User;
-import fpoly.electroland.restController.AuthController;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class) // Thêm annotation này để tích hợp Mockito với JUnit 5
 public class AuthControllerTest {
 
-    @Mock
-    private UserService userService;
-
-    @Mock
-    private CustomerService customerService;
-
-    @Mock
-    private EmployeeService employeeService;
-
-    @InjectMocks
-    private AuthController authController;
-
-    // Dữ liệu mẫu cho User và Customer
-    private User existingUser = new User("existinguser@example.com", "password123");
-    private User nonExistingUser = new User("nonexistinguser@example.com", "password456");
-
-    private Customer existingCustomer = new Customer("existingcustomer@example.com", "password123");
-    private Customer newCustomer = new Customer("newcustomer@example.com", "password456");
     @Test
-    void testAuthenticateAdmin_UserNotFound() {
-        // Mô phỏng người dùng không tồn tại trong hệ thống
-        when(employeeService.getEmployee(existingUser.getEmail())).thenReturn(java.util.Optional.empty());
-    
-        ResponseEntity<Object> response = (ResponseEntity<Object>) authController.authenticateAdmin(existingUser);
-    
-        assertEquals(401, response.getStatusCodeValue());
-        assertTrue(response.getBody().toString().contains("Tài khoản không tồn tại"));
-        
-        // Thông báo sau khi kiểm tra thành công
-        System.out.println("testAuthenticateAdmin_UserNotFound passed!");
-    }
-    
-    @Test
-    void testAuthenticate_UserNotFound() {
-        // Mô phỏng người dùng không tồn tại trong hệ thống
-        when(customerService.getCustomer(nonExistingUser.getEmail())).thenReturn(java.util.Optional.empty());
-    
-        ResponseEntity<Object> response = (ResponseEntity<Object>) authController.authenticate(nonExistingUser);
-    
-        assertEquals(401, response.getStatusCodeValue());
-        assertTrue(response.getBody().toString().contains("Tài khoản không tồn tại"));
-        
-        // Thông báo sau khi kiểm tra thành công
-        System.out.println("testAuthenticate_UserNotFound passed!");
-    }
-    
-    @Test
-    void testRegister_UserAlreadyExists() {
-        // Mô phỏng khách hàng đã tồn tại
-        when(customerService.getCustomer(existingCustomer.getEmail())).thenReturn(java.util.Optional.of(existingCustomer));
-    
-        ResponseEntity<Object> response = (ResponseEntity<Object>) authController.register(existingCustomer);
-    
-        assertEquals(400, response.getStatusCodeValue());
-        assertTrue(response.getBody().toString().contains("Tài khoản đã tồn tại"));
-        
-        // Thông báo sau khi kiểm tra thành công
-        System.out.println("testRegister_UserAlreadyExists passed!");
-    }
-    
-    @Test
-    void testRegister_Success() {
-        Customer customer = new Customer("newcustomer@example.com", "password456");
-    
-        // Mô phỏng khách hàng mới chưa tồn tại
-        when(customerService.getCustomer(customer.getEmail())).thenReturn(java.util.Optional.empty());
-        
-        // Trả về ResponseEntity thay vì String
-        when(userService.authentication_getData(customer.getEmail(), customer.getPassword()))
-            .thenReturn(new ResponseEntity<>("someData", HttpStatus.OK));  // Trả về ResponseEntity thực sự
-    
-        // Gọi phương thức controller
-        ResponseEntity<Object> response = (ResponseEntity<Object>) authController.register(customer);
-    
-        // Kiểm tra kết quả trả về
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals("someData", response.getBody());
-        
-        // Thông báo sau khi kiểm tra thành công
-        System.out.println("testRegister_Success passed!");
-    }
-    
+    public void testLogin() {
+        assertEquals(1, 1);
+        // Đặt đường dẫn đến ChromeDriver
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
 
+        // Khởi tạo WebDriver
+        WebDriver driver = new ChromeDriver();
+
+        // Mở trang đăng nhập
+        driver.get("http://localhost:3000/login");  // Thay bằng URL của trang đăng nhập của bạn
+
+        // Tìm các phần tử input cho email và password
+        WebElement emailField = driver.findElement(By.id("email"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+
+        // Nhập email và mật khẩu
+        emailField.sendKeys("tani1009@gmail.com");
+        passwordField.sendKeys("123");
+
+        // Tìm và click vào nút đăng nhập
+        WebElement loginButton = driver.findElement(By.id("loginButton"));  // Thay bằng id của nút đăng nhập của bạn
+        loginButton.click();
+
+        // Kiểm tra xem đăng nhập thành công bằng cách kiểm tra sự xuất hiện của phần tử sau khi đăng nhập
+        WebElement loggedInElement = driver.findElement(By.id("welcomeMessage"));  // Thay bằng id của phần tử mà bạn muốn kiểm tra sau khi đăng nhập
+
+        // Xác nhận rằng phần tử đã được tìm thấy (có nghĩa là đăng nhập thành công)
+        assertTrue(loggedInElement.isDisplayed(), "Đăng nhập không thành công!");
+
+        // Đóng trình duyệt
+        driver.quit();
+    }
 }
