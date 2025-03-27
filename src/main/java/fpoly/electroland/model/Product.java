@@ -23,7 +23,7 @@ public class Product {
 	@Column(nullable = false, columnDefinition = "varchar(225)")
 	String avatar;
 
-	@Column(nullable = true, columnDefinition = "nvarchar(225)")
+	@Column(nullable = true, columnDefinition = "nvarchar(MAX)")
 	String description;
 
 	Double price;
