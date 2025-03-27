@@ -26,6 +26,7 @@ import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.model.ReceiptDetail;
 import fpoly.electroland.model.ReceiptStatus;
+import fpoly.electroland.model.TypeCustomer;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CartRepository;
@@ -41,6 +42,7 @@ import fpoly.electroland.repository.ReceiptCouponRepository;
 import fpoly.electroland.repository.ReceiptDetailRepository;
 import fpoly.electroland.repository.ReceiptRepository;
 import fpoly.electroland.repository.ReceiptStatusRepository;
+import fpoly.electroland.repository.TypeCustomerRepository;
 import fpoly.electroland.repository.ProductRepository;
 
 import fpoly.electroland.util.CreateAction;
@@ -100,6 +102,9 @@ public class ReceiptService {
 
     @Autowired
     private ConfigStoreRepository configStoreRepository;
+
+    @Autowired
+    private TypeCustomerRepository typeCustomerRepository;
 
     public List<Receipt> getAll() {
         return receiptRepository.findAll();
@@ -297,6 +302,30 @@ public class ReceiptService {
         }
         Customer customer = customerRepository.findById(userService.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
+        TypeCustomer typeCustomer = customer.getTypeCustomer();
+        List<Receipt> listReceipts = receiptRepository.findByCustomer(customer);
+
+        Double totalAmount = 0.0;
+        for (Receipt receipt1 : listReceipts) {
+            totalAmount += receipt1.getPayment().getAmount();
+        }
+
+        // Cập nhật điểm tích lũy
+        customer.setUserPoint(
+                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                        + (int) Math.round(payment.getAmount()
+                                * Double.parseDouble(
+                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+
+        // kiểm tra điểm tích lũy
+        while (totalAmount >= typeCustomer.getLevelPoint() && typeCustomerRepository.findById(typeCustomer.getId() + 1)
+                .isPresent()) {
+            typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
+            customer.setTypeCustomer(typeCustomer);
+            customer.setUserPoint(customer.getUserPoint()
+                    + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
+        }
+        customerRepository.save(customer);
 
         customer.setUserPoint(
                 (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
