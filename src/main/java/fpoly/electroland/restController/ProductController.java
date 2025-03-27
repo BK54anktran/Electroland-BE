@@ -98,7 +98,6 @@ public class ProductController {
     @PostMapping("/saveProduct")
     public void saveProduct(@RequestBody ProductDTO productDTO) {
         Product product = mapToEntity(productDTO);
-        System.out.println(product.getDescription());
         productService.editProduct(product);
     }
 

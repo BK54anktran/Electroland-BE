@@ -20,4 +20,7 @@ public class TypeCustomer {
 
 	@Column
 	Integer levelPoint = 0;
+
+	@Column
+	Integer levelReward;
 }
