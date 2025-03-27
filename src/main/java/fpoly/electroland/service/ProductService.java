@@ -66,12 +66,12 @@ public class ProductService {
         if (product.getId() == 0) {
             Product savedProduct = productRepository.save(product);
             // Trường hợp thêm mới Product
-           if (product.getProductImgs() != null && !product.getProductImgs().isEmpty()) {
-            for (ProductImg img : product.getProductImgs()) {
-                img.setProduct(savedProduct); // Đảm bảo tham chiếu tới savedProduct
-                productImgRepository.save(img);
+            if (product.getProductImgs() != null && !product.getProductImgs().isEmpty()) {
+                for (ProductImg img : product.getProductImgs()) {
+                    img.setProduct(savedProduct); // Đảm bảo tham chiếu tới savedProduct
+                    productImgRepository.save(img);
+                }
             }
-        }
 
             if (product.getProductAttributes() != null) {
                 for (ProductAttribute attr : product.getProductAttributes()) {
@@ -84,7 +84,7 @@ public class ProductService {
                     }
                 }
             }
-            
+
         } else {
             // Trường hợp chỉnh sửa Product đã tồn tại
             Product existingProduct = productRepository.findById(product.getId())
@@ -258,7 +258,7 @@ public class ProductService {
 
     public Product getProduct(int id) {
         Optional<Product> product = productRepository.findById(id);
-        if (product.isPresent()) {
+        if (product.isPresent() && product.get() != null) {
             return product.get();
         }
         return null;
