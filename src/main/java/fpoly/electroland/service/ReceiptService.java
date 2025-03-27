@@ -29,7 +29,9 @@ import fpoly.electroland.model.ReceiptStatus;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CartRepository;
+import fpoly.electroland.repository.ConfigStoreRepository;
 import fpoly.electroland.repository.CustomerCouponRepository;
+import fpoly.electroland.repository.CustomerRepository;
 import fpoly.electroland.repository.EmployeeRepository;
 import fpoly.electroland.repository.PaymentRepository;
 import fpoly.electroland.repository.PaymentStatusRepository;
@@ -71,7 +73,7 @@ public class ReceiptService {
     private UserService userService;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
 
     @Autowired
     private ProductCouponRepository productCouponRepository;
@@ -95,6 +97,9 @@ public class ReceiptService {
 
     @Autowired
     private CartProductAttributeRepository cartProductAttributeRepository;
+
+    @Autowired
+    private ConfigStoreRepository configStoreRepository;
 
     public List<Receipt> getAll() {
         return receiptRepository.findAll();
@@ -290,7 +295,15 @@ public class ReceiptService {
             // Xóa sản phẩm ra khỏi giỏ hàng
             cartRepository.delete(cart);
         }
+        Customer customer = customerRepository.findById(userService.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
+        customer.setUserPoint(
+                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                        + (int) Math.round(payment.getAmount()
+                                * Double.parseDouble(
+                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+        customerRepository.save(customer);
         return receipt;
     }
 
@@ -315,7 +328,7 @@ public class ReceiptService {
         }
 
         // Lấy thông tin khách hàng
-        Customer customer = customerService.findCustomerById(userService.getUser().getId())
+        Customer customer = customerRepository.findById(userService.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         // Khởi tạo đơn hàng mới

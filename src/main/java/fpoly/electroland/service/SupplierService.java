@@ -18,4 +18,8 @@ public class SupplierService {
         return supplierRepository.findAll();
     }
 
+    public Supplier findSupplierById(int id){
+        return supplierRepository.findById(id).get();
+    }
+
 }
