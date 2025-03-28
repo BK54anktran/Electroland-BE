@@ -5,7 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import fpoly.electroland.service.ConfigStoreService;
 import fpoly.electroland.util.ResponseEntityUtil;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,9 +45,13 @@ public class ConfigStoreController {
     }
 
     @PostMapping("/key")
-    public Object setKey(@RequestParam String key, @RequestParam String value) {
-        String respon = configStoreService.setKey(key, value);
-        return ResponseEntityUtil.ok(respon);
+    public ResponseEntity<?> setKey(@RequestBody Map<String, String> data) {
+        String key = data.get("key");
+        String value = data.get("value");
+
+        configStoreService.setKey(key, value); // Lưu vào DB hoặc cache
+
+        return ResponseEntity.ok("Lưu thành công");
     }
 
 }
