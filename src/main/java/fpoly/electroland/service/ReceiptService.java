@@ -247,7 +247,7 @@ public class ReceiptService {
         Payment payment = paymentRepository.save(new Payment(0, receiptRequest.getCreateTime(), new Date(),
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
-                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));
+                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get(), receiptRequest.getFee()));
 
         // Tạo hóa đơn
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
@@ -268,11 +268,13 @@ public class ReceiptService {
 
             for (Integer integer : listCouponProduct) {
                 Optional<CustomerCoupon> customerCoupon = customerCouponRepository.findById(integer);
-                if (cart.getProduct() == customerCoupon.get().getProductCoupon().getProduct()) {
+                System.out.println("customerCoupon: " + customerCoupon);
+                if (customerCoupon.isPresent()
+                        && cart.getProduct() == customerCoupon.get().getProductCoupon().getProduct()) {
                     productCoupon = customerCoupon.get().getProductCoupon();
                     removei = i;
+                    customerCouponRepository.deleteById(customerCoupon.get().getId());
                 }
-                customerCouponRepository.delete(customerCoupon.get());
                 i++;
             }
 

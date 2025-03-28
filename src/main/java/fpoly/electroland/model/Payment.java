@@ -38,4 +38,6 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "idPaymentStatus", nullable = true)
     PaymentStatus paymentStatus;
+
+    Double fee;
 }
