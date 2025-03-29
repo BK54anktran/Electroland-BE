@@ -20,6 +20,6 @@ public class ConfigStore {
     @Column(columnDefinition = "varchar(225)")
     String keyword;
 
-    @Column(columnDefinition = "nvarchar(225)")
+    @Column(columnDefinition = "nvarchar(max)")
     String value;
 }

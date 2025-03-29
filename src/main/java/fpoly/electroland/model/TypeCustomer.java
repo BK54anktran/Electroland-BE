@@ -19,8 +19,8 @@ public class TypeCustomer {
 	String nameType;
 
 	@Column
-	Integer levelExp = 0;
+	Integer levelPoint = 0;
 
 	@Column
-	Integer levelReward ;
+	Integer levelReward;
 }
