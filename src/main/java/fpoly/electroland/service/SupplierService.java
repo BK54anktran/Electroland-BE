@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Employee;
-import fpoly.electroland.model.ProductCoupon;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.EmployeeRepository;
 import fpoly.electroland.repository.SupplierRepository;
@@ -56,5 +55,9 @@ public class SupplierService {
         } else {
             throw new RuntimeException("Employee not found with id: " + id);
         }
+    }
+
+    public Supplier findSupplierById(int id){
+        return supplierRepository.findById(id).get();
     }
 }

@@ -2,13 +2,16 @@ package fpoly.electroland.restController;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import fpoly.electroland.dto.request.ProductDTO;
 import fpoly.electroland.model.Category;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.ProductAttribute;
 import fpoly.electroland.model.ProductImg;
 import fpoly.electroland.model.Supplier;
+import fpoly.electroland.service.CategoryService;
 import fpoly.electroland.service.ProductService;
+import fpoly.electroland.service.SupplierService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
 import jakarta.servlet.http.HttpServlet;
@@ -42,6 +45,12 @@ public class ProductController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    SupplierService supplierService;
 
     @GetMapping("/product")
     public Object getMethodName(
@@ -87,8 +96,48 @@ public class ProductController {
     }
 
     @PostMapping("/saveProduct")
-    public void saveProduct(@RequestBody Product product) {
+    public void saveProduct(@RequestBody ProductDTO productDTO) {
+        Product product = mapToEntity(productDTO);
         productService.editProduct(product);
+    }
+
+    private Product mapToEntity(ProductDTO dto) {
+        Product product = new Product();
+        if (dto.getId() != null) {
+            product.setId(dto.getId());
+        }
+
+        product.setName(dto.getName());
+        product.setAvatar(dto.getAvatar());
+        product.setDescription(dto.getDescription());
+        product.setPrice(dto.getPrice());
+        product.setPriceDiscount(dto.getPriceDiscount());
+        product.setStatus(dto.getStatus() != null ? dto.getStatus() : true);
+        product.setWeight(dto.getWeight());
+        product.setWidth(dto.getWidth());
+        product.setHeight(dto.getHeight());
+        product.setLength(dto.getLength());
+
+        if (dto.getCategory() != null) {
+            product.setCategory(categoryService.findBCategoryId(dto.getCategory()));
+        }
+
+        if (dto.getSupplier() != null) {
+            product.setSupplier(supplierService.findSupplierById(dto.getSupplier()));
+        }
+
+        if (dto.getProductImgs() != null) {
+            product.setProductImgs(dto.getProductImgs());
+            dto.getProductImgs().forEach(img -> img.setProduct(product));
+        }
+
+        if (dto.getProductAttributes() != null) {
+            product.setProductAttributes(dto.getProductAttributes());
+
+            dto.getProductAttributes().forEach(attr -> attr.setProduct(product));
+        }
+
+        return product;
     }
 
     @PutMapping("/update/{id}")

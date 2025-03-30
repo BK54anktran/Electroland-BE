@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import fpoly.electroland.model.Category;
 import fpoly.electroland.model.Employee;
-import fpoly.electroland.model.Supplier;
 import fpoly.electroland.repository.CategoryRepository;
 import fpoly.electroland.repository.EmployeeRepository;
 import fpoly.electroland.util.CreateAction;
@@ -55,5 +54,9 @@ public class CategoryService {
         } else {
             throw new RuntimeException("Employee not found with id: " + id);
         }
+    }
+
+    public Category findBCategoryId(int id){
+        return categoryRepository.findById(id).get();
     }
 }

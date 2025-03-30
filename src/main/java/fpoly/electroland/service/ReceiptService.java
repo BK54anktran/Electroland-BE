@@ -26,10 +26,13 @@ import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.model.ReceiptDetail;
 import fpoly.electroland.model.ReceiptStatus;
+import fpoly.electroland.model.TypeCustomer;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CartRepository;
+import fpoly.electroland.repository.ConfigStoreRepository;
 import fpoly.electroland.repository.CustomerCouponRepository;
+import fpoly.electroland.repository.CustomerRepository;
 import fpoly.electroland.repository.EmployeeRepository;
 import fpoly.electroland.repository.PaymentRepository;
 import fpoly.electroland.repository.PaymentStatusRepository;
@@ -39,6 +42,7 @@ import fpoly.electroland.repository.ReceiptCouponRepository;
 import fpoly.electroland.repository.ReceiptDetailRepository;
 import fpoly.electroland.repository.ReceiptRepository;
 import fpoly.electroland.repository.ReceiptStatusRepository;
+import fpoly.electroland.repository.TypeCustomerRepository;
 import fpoly.electroland.repository.ProductRepository;
 
 import fpoly.electroland.util.CreateAction;
@@ -71,7 +75,7 @@ public class ReceiptService {
     private UserService userService;
 
     @Autowired
-    private CustomerService customerService;
+    private CustomerRepository customerRepository;
 
     @Autowired
     private ProductCouponRepository productCouponRepository;
@@ -95,6 +99,12 @@ public class ReceiptService {
 
     @Autowired
     private CartProductAttributeRepository cartProductAttributeRepository;
+
+    @Autowired
+    private ConfigStoreRepository configStoreRepository;
+
+    @Autowired
+    private TypeCustomerRepository typeCustomerRepository;
 
     public List<Receipt> getAll() {
         return receiptRepository.findAll();
@@ -237,7 +247,7 @@ public class ReceiptService {
         Payment payment = paymentRepository.save(new Payment(0, receiptRequest.getCreateTime(), new Date(),
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
-                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get()));
+                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get(), receiptRequest.getFee()));
 
         // Tạo hóa đơn
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
@@ -258,11 +268,13 @@ public class ReceiptService {
 
             for (Integer integer : listCouponProduct) {
                 Optional<CustomerCoupon> customerCoupon = customerCouponRepository.findById(integer);
-                if (cart.getProduct() == customerCoupon.get().getProductCoupon().getProduct()) {
+                System.out.println("customerCoupon: " + customerCoupon);
+                if (customerCoupon.isPresent()
+                        && cart.getProduct() == customerCoupon.get().getProductCoupon().getProduct()) {
                     productCoupon = customerCoupon.get().getProductCoupon();
                     removei = i;
+                    customerCouponRepository.deleteById(customerCoupon.get().getId());
                 }
-                customerCouponRepository.delete(customerCoupon.get());
                 i++;
             }
 
@@ -290,7 +302,39 @@ public class ReceiptService {
             // Xóa sản phẩm ra khỏi giỏ hàng
             cartRepository.delete(cart);
         }
+        Customer customer = customerRepository.findById(userService.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        TypeCustomer typeCustomer = customer.getTypeCustomer();
+        List<Receipt> listReceipts = receiptRepository.findByCustomer(customer);
 
+        Double totalAmount = 0.0;
+        for (Receipt receipt1 : listReceipts) {
+            totalAmount += receipt1.getPayment().getAmount();
+        }
+
+        // Cập nhật điểm tích lũy
+        customer.setUserPoint(
+                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                        + (int) Math.round(payment.getAmount()
+                                * Double.parseDouble(
+                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+
+        // kiểm tra điểm tích lũy
+        while (totalAmount >= typeCustomer.getLevelPoint() && typeCustomerRepository.findById(typeCustomer.getId() + 1)
+                .isPresent()) {
+            typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
+            customer.setTypeCustomer(typeCustomer);
+            customer.setUserPoint(customer.getUserPoint()
+                    + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
+        }
+        customerRepository.save(customer);
+
+        customer.setUserPoint(
+                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                        + (int) Math.round(payment.getAmount()
+                                * Double.parseDouble(
+                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+        customerRepository.save(customer);
         return receipt;
     }
 
@@ -315,7 +359,7 @@ public class ReceiptService {
         }
 
         // Lấy thông tin khách hàng
-        Customer customer = customerService.findCustomerById(userService.getUser().getId())
+        Customer customer = customerRepository.findById(userService.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         // Khởi tạo đơn hàng mới

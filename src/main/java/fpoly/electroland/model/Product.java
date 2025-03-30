@@ -23,7 +23,7 @@ public class Product {
 	@Column(nullable = false, columnDefinition = "varchar(225)")
 	String avatar;
 
-	@Column(nullable = true, columnDefinition = "nvarchar(225)")
+	@Column(nullable = true, columnDefinition = "nvarchar(MAX)")
 	String description;
 
 	Double price;
@@ -32,6 +32,18 @@ public class Product {
 	Double priceDiscount;
 
 	Boolean status = true;
+	
+	@Column(nullable = true)
+	Integer weight;
+
+	@Column(nullable = true)
+	Integer length;
+
+	@Column(nullable = true)
+	Integer width;
+
+	@Column(nullable = true)
+	Integer height;
 
 	@ManyToOne
 	@JoinColumn(name = "idCategory", nullable = false)
