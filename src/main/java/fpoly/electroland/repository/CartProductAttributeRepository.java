@@ -16,4 +16,5 @@ public interface CartProductAttributeRepository extends JpaRepository<CartProduc
     void deleteByCart(Cart cart);
     List<CartProductAttribute> findByAttribute(Attribute attribute);
     void deleteByAttribute(Attribute attribute);
+    void deleteByAttributeId(int id);
 }

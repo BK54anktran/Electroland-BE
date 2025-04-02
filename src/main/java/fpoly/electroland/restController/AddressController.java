@@ -32,6 +32,11 @@ public class AddressController {
         return addressService.getAddresses(customerService.getCustomer(userService.getUser().getId()).get());
     }
 
+    @GetMapping("/user/address")
+    public Object getUserAddress() {
+        return addressService.getUserAddress();
+    }
+
     @PostMapping("/updateAddress")
     public void updateUserAddress(@RequestBody Address address) {
         address.setCustomer(customerService.getCustomer(userService.getUser().getId()).get());
@@ -46,17 +51,11 @@ public class AddressController {
             });
         }
         ;
-        addressService.saveAddress(address);
-    }
-
-    @GetMapping("/user/address")
-    public Object getUserAddress() {
-        return addressService.getUserAddress();
+        addressService.savAddress(address);
     }
 
     @PostMapping("/deleteAddress")
     public void deleteAddress(@RequestBody Address address) {
         addressService.deletAddress(address);
     }
-
 }

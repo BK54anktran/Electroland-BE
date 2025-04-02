@@ -22,5 +22,6 @@ public class ReceiptRequest {
     private Double totalAmount;
     private String content;
     private Date createTime;
+    private Double fee;
 
 }

@@ -12,5 +12,5 @@ import fpoly.electroland.model.Customer;
 public interface AddressRepository extends JpaRepository<Address, Integer> {
     List<Address> getAddressesByCustomer(Customer customer);
 
-    List<Address> findByCustomerId(int id);
+    List<Address> findByCustomerId(int customerId);
 }
