@@ -131,16 +131,19 @@ public class PdfService {
         productListTitle.setSpacingAfter(10);
         document.add(productListTitle);
         
-        PdfPTable productTable = new PdfPTable(5);
+        // Sửa lại số cột của bảng sản phẩm (6 cột thay vì 5)
+        PdfPTable productTable = new PdfPTable(6);
         productTable.setWidthPercentage(100);
         productTable.setSpacingBefore(5);
-        productTable.setWidths(new float[]{0.5f, 3f, 0.8f, 1.2f, 1.5f});
+        // Điều chỉnh độ rộng của các cột
+        productTable.setWidths(new float[]{0.5f, 3f, 0.8f, 1.2f, 1.2f, 1.5f});
 
         // Header với background color
-        addStyledTableHeader(productTable, "STT");
+        addStyledTableHeader(productTable, "NO");
         addStyledTableHeader(productTable, "Tên sản phẩm");
-        addStyledTableHeader(productTable, "SL");
+        addStyledTableHeader(productTable, "Số lượng");
         addStyledTableHeader(productTable, "Đơn giá");
+        addStyledTableHeader(productTable, "Giảm giá");
         addStyledTableHeader(productTable, "Thành tiền");
 
         // Dữ liệu sản phẩm với màu nền xen kẽ
@@ -148,11 +151,30 @@ public class PdfService {
         for (ReceiptDTO.Item item : receipt.getItems()) {
             Color rowColor = (index % 2 == 0) ? SECONDARY_COLOR : Color.WHITE;
             
+            // STT
             addStyledCell(productTable, String.valueOf(index++), normalFont, rowColor, Element.ALIGN_CENTER);
+            
+            // Tên sản phẩm
             addStyledCell(productTable, item.getName(), normalFont, rowColor, Element.ALIGN_LEFT);
+            
+            // Số lượng
             addStyledCell(productTable, String.valueOf(item.getQuantity()), normalFont, rowColor, Element.ALIGN_CENTER);
+            
+            // Đơn giá
             addStyledCell(productTable, String.format("%,.0f VNĐ", item.getPrice()), normalFont, rowColor, Element.ALIGN_RIGHT);
-            addStyledCell(productTable, String.format("%,.0f VNĐ", item.getQuantity() * item.getPrice()), boldFont, rowColor, Element.ALIGN_RIGHT);
+            
+            // Giảm giá
+            double discountValue = 0;
+            if (item.getProductCoupon() != null && item.getProductCoupon().getValue() != null) {
+                discountValue = item.getProductCoupon().getValue();
+                System.err.println("Giảm giá: " + discountValue);
+            }
+            addStyledCell(productTable, 
+                String.format("%,.0f VNĐ", discountValue),
+                normalFont, rowColor, Element.ALIGN_RIGHT);
+            // Thành tiền
+            addStyledCell(productTable, String.format("%,.0f VNĐ", item.getQuantity() * item.getPrice()), 
+                boldFont, rowColor, Element.ALIGN_RIGHT);
         }
         document.add(productTable);
 
@@ -163,12 +185,13 @@ public class PdfService {
         summaryTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
         summaryTable.setWidths(new float[]{1.5f, 1f});
 
-        double totalPrice = receipt.totalPrice;
+        double totalPrice = receipt.getTotalPrice();
+        double shippingFee = receipt.getShippingFee();
         double discount = receipt.getDiscount();
-        double finalPrice = receipt.finalPrice;
+        double finalPrice = receipt.getFinalPrice();
 
         addSummaryRow(summaryTable, "Tổng tiền hàng:", String.format("%,.0f VNĐ", totalPrice), boldFont, normalFont);
-        addSummaryRow(summaryTable, "Phí vận chuyển:", "0 VNĐ", boldFont, normalFont);
+        addSummaryRow(summaryTable, "Phí vận chuyển:", String.format("%,.0f VNĐ", shippingFee), boldFont, normalFont);
         addSummaryRow(summaryTable, "Giảm giá:", String.format("%,.0f VNĐ", discount), boldFont, normalFont);
         
         // Tổng thanh toán với highlight
