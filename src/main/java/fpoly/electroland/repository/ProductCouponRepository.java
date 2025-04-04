@@ -10,5 +10,5 @@ import fpoly.electroland.model.ProductCoupon;
 @Repository
 public interface ProductCouponRepository extends JpaRepository<ProductCoupon, Integer> {
     Optional<ProductCoupon> findById(Long id);
-    List<ProductCoupon> findByRedemptionCostOrProductNameContainingOrValue(Integer redemptionCost, String productName, Double value);
+    List<ProductCoupon> findByPointOrProductNameContainingOrValue(Integer point, String productName, Double value);
 }

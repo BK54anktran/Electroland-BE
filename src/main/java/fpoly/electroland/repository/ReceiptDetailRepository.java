@@ -34,7 +34,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
     // Truy vấn doanh thu từ bảng Payment, từ ngày đầu tháng đến ngày truyền vào
     @Query("SELECT SUM(p.amount) FROM Receipt r " +
             "JOIN r.payment p " +
-            "WHERE r.receiptStatus.id = 6 AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
+            "WHERE r.receiptStatus.id = 3 AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
     Long getRevenueByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // Truy vấn số lượng đơn hàng từ bảng Receipt, từ ngày đầu tháng đến ngày truyền
@@ -45,7 +45,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
 
     // Truy vấn số lượng đơn thành công từ đầu tháng đến ngày truyền vào
     @Query("SELECT COUNT(r) FROM Receipt r " +
-            "WHERE r.receiptStatus.id = 6 AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
+            "WHERE r.receiptStatus.id = 3 AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
     Long getSuccessfulOrders(@Param("startDate") LocalDateTime startOfMonth, @Param("endDate") LocalDateTime endDate);
 
     // Truy vấn số lượng đơn hàng thất bại từ đầu tháng đến ngày truyền vào
@@ -60,13 +60,14 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
     Long getCustomerCount(@Param("startDate") LocalDateTime startOfMonth, @Param("endDate") LocalDateTime endDate);
 
     // Truy vấn doanh thu theo tháng từ đầu năm đến ngày truyền vào
-    @Query(value = "SELECT MONTH(r.receiptDate) AS month, SUM(p.amount) AS value " +
-            "FROM receipt r " +
-            "JOIN payment p ON r.idPayment = p.id " +
-            "WHERE YEAR(r.receiptDate) = :year " +
-            "GROUP BY MONTH(r.receiptDate) " +
-            "ORDER BY month", nativeQuery = true)
-    List<Object[]> getRevenueByMonth(@Param("year") int year);
+   @Query(value = "SELECT MONTH(r.receiptDate) AS month, COALESCE(SUM(p.amount), 0) AS value " +
+               "FROM receipt r " +
+               "JOIN receiptStatus rs ON r.idReceiptStatus = rs.id " +
+               "JOIN payment p ON r.idPayment = p.id " +
+               "WHERE rs.id = 3 AND YEAR(r.receiptDate) = :year " +
+               "GROUP BY MONTH(r.receiptDate) " +
+               "ORDER BY month", nativeQuery = true)
+List<Object[]> getRevenueByMonth(@Param("year") int year);
 
     // truy vấn tỉ lệ phương thức thanh toán theo tháng từ đầu tháng đến ngày truyền
     // vào
