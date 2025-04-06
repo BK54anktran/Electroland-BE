@@ -44,13 +44,13 @@ public class productCouponTest {
     void setUp() {
         existingProductCoupon = new ProductCoupon();
         existingProductCoupon.setId(1);
-        existingProductCoupon.setRedemptionCost(100);
+        existingProductCoupon.setPoint(100);
         existingProductCoupon.setDescription("Old description");
         existingProductCoupon.setValue(500.0);
         existingProductCoupon.setStatus(true);  // Initial status
 
         updateProductCoupon = new ProductCoupon();
-        updateProductCoupon.setRedemptionCost(150);
+        updateProductCoupon.setPoint(150);
         updateProductCoupon.setDescription("Updated description");
         updateProductCoupon.setValue(700.0);
 
@@ -138,7 +138,7 @@ public class productCouponTest {
         // Now, mock the productCouponRepository.findById to return an existing product coupon if needed
         ProductCoupon productCoupon = new ProductCoupon();
         productCoupon.setId(1);
-        productCoupon.setRedemptionCost(100);
+        productCoupon.setPoint(100);
         productCoupon.setStatus(true);  // Assuming the initial status is true
         when(productCouponRepository.findById(longID)).thenReturn(Optional.of(productCoupon));
 
