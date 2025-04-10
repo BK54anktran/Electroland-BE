@@ -56,8 +56,4 @@ public class Receipt {
 	private Customer customer;
 	@Column(nullable = true)
 	private Boolean isRead = false;
-	public boolean isPresent() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'isPresent'");
-	}
 }
