@@ -34,6 +34,9 @@ public class ReceiptCoupon {
 
 	@Column(nullable = true)
 	Boolean status = true;
+	
+	@Column
+	Integer redemptionCost;
 
 	@Column(nullable = true)
 	Integer point;
