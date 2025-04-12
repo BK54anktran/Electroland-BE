@@ -26,7 +26,7 @@ public class ReceiptDTO {
         private String name;
         private int quantity;
         private double price;
-        private ProductCoupon productCoupon;
+        private double discount;
     }
     public double totalPrice;
     

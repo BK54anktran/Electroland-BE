@@ -163,15 +163,9 @@ public class PdfService {
             // Đơn giá
             addStyledCell(productTable, String.format("%,.0f VNĐ", item.getPrice()), normalFont, rowColor, Element.ALIGN_RIGHT);
             
-            // Giảm giá
-            double discountValue = 0;
-            if (item.getProductCoupon() != null && item.getProductCoupon().getValue() != null) {
-                discountValue = item.getProductCoupon().getValue();
-                System.err.println("Giảm giá: " + discountValue);
-            }
+    
             addStyledCell(productTable, 
-                String.format("%,.0f VNĐ", discountValue),
-                normalFont, rowColor, Element.ALIGN_RIGHT);
+                String.format("%,.0f VNĐ",  item.getDiscount()), normalFont, rowColor, Element.ALIGN_RIGHT);
             // Thành tiền
             addStyledCell(productTable, String.format("%,.0f VNĐ", item.getQuantity() * item.getPrice()), 
                 boldFont, rowColor, Element.ALIGN_RIGHT);
