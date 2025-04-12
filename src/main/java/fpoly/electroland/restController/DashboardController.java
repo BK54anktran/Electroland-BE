@@ -139,44 +139,67 @@ public class DashboardController {
         return ResponseEntity.ok(paymentStats);
     }
     @GetMapping("/dashboard/all-dashboard-data")
-    public void exportAllDashboardData(
-            @RequestParam(value = "date") String endDateStr,
-            HttpServletResponse response) throws IOException {
-    
-        LocalDateTime endDate = null;
-        if (endDateStr != null) {
-            endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
-        }
-    
+public void exportAllDashboardData(
+        @RequestParam(value = "date") String endDateStr,
+        HttpServletResponse response) throws IOException {
+
+    LocalDateTime endDate = null;
+    if (endDateStr != null && !endDateStr.isEmpty()) {
+        endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+    }
+
+    try {
         // Get all data
         Map<String, Object> salesData = getSalesDataMap(endDate);
         List<Object[]> revenueByMonth = receiptDetailService.getRevenueByMonth(endDate);
         Double successRate = receiptDetailService.getSuccessRate(endDate);
         List<Object[]> paymentStats = receiptDetailService.getPaymentMethodStats(endDate);
         List<Object[]> salesDataByMonth = receiptDetailService.getSalesDataByMonthRange(endDate);
-    
+
+        // Ensure all data is initialized to avoid null pointer exceptions
+        if (salesData == null) salesData = new HashMap<>();
+        if (revenueByMonth == null) revenueByMonth = List.of();
+        if (successRate == null) successRate = 0.0;
+        if (paymentStats == null) paymentStats = List.of();
+        if (salesDataByMonth == null) salesDataByMonth = List.of();
+
+        // Check each statistic in salesData to ensure no null values
+        for (String key : new String[]{"doanhSo", "donThanhCong", "donThatBai", "soLuongKhachHang"}) {
+            if (!salesData.containsKey(key) || salesData.get(key) == null) {
+                salesData.put(key, createStatistic(key, 0L, "", 0.0));
+            } else {
+                // Ensure no null values inside each statistic map
+                @SuppressWarnings("unchecked")
+                Map<String, Object> stat = (Map<String, Object>) salesData.get(key);
+                if (stat.get("value") == null) stat.put("value", 0L);
+                if (stat.get("percentChange") == null) stat.put("percentChange", 0.0);
+                if (stat.get("suffix") == null) stat.put("suffix", "");
+            }
+        }
+
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=bao_cao.xlsx");
+
+        excelExportService.exportAllDashboardData(
+            salesData,
+            revenueByMonth,
+            successRate,
+            paymentStats,
+            salesDataByMonth,
+            endDate,
+            response
+        );
+    } catch (Exception e) {
+        // Log the error with detailed information
+        e.printStackTrace();
+        System.err.println("Error in exportAllDashboardData: " + e.getMessage());
         
-        // Export all data to a single Excel file with multiple sheets
-        try {
-            excelExportService.exportAllDashboardData(
-                salesData,
-                revenueByMonth,
-                successRate,
-                paymentStats,
-                salesDataByMonth,
-                endDate,
-                response // passing response to export method to write to OutputStream
-            );
-        } catch (IOException e) {
-            // Log the error
-            e.printStackTrace();
-            // Set an error status
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Error exporting Excel file: " + e.getMessage());
-        }
+        // Set an error status
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("Error exporting Excel file: " + e.getMessage());
     }
+}
+    
     
     
     
