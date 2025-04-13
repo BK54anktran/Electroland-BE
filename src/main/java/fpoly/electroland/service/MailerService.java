@@ -55,4 +55,12 @@ public class MailerService {
         redisTemplate.opsForValue().set("otp:" + email, otp + "", 5, TimeUnit.MINUTES);
         return "Otp đã được gửi thành công";
     }
+
+    public Object sendOtpCodeToVerifyEmail(String email) throws MessagingException{
+        int otp = 100000 + (int) (Math.random() * 900000);
+        Mail mailOtp = new Mail(email, "Mã OTP xác minh email người dùng", "Mã OTP của bạn là: " + otp);
+        this.send(mailOtp);
+        redisTemplate.opsForValue().set("otp:" + email, otp + "", 5, TimeUnit.MINUTES);
+        return "Otp đã được gửi thành công";
+    }
 }

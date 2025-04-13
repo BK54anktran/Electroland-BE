@@ -111,4 +111,23 @@ public class CustomerController {
         customerService.updateCustomer(id, customer);
     }
 
+    @PostMapping("/createUser")
+    public void createUser(@RequestBody Map<String, Object> object) {
+        String dateOfBirthStr = (String) object.get("dateOfBirth");
+        Date dob = (Date) DateUtil.formatDate(dateOfBirthStr);
+        String fullName = (String) object.get("fullName");
+        Boolean gender = (Boolean) object.get("gender");
+        String phoneNumber = (String) object.get("phoneNumber");
+        String email = (String) object.get("email");
+        String password = (String) object.get("password");
+
+        Customer customer = new Customer();
+        customer.setDateOfBirth(dob);
+        customer.setGender(gender);
+        customer.setEmail(email);
+        customer.setPassword(password);
+        customer.setFullName(fullName);
+        customer.setPhoneNumber(phoneNumber);
+        customerService.createCustomer(customer);
+    }
 }

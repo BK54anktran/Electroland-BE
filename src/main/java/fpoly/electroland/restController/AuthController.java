@@ -2,19 +2,27 @@ package fpoly.electroland.restController;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.User;
-import fpoly.electroland.service.CustomerService;
-import fpoly.electroland.service.EmployeeService;
-import fpoly.electroland.service.UserService;
+import fpoly.electroland.repository.ActionRepository;
+import fpoly.electroland.service.*;
+import fpoly.electroland.util.JwtUtil;
 import fpoly.electroland.util.ResponseEntityUtil;
+import jakarta.mail.MessagingException;
+
 import java.util.Optional;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -25,6 +33,10 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 @RestController
 public class AuthController {
 
+    private final ActionService actionService;
+
+    private final ActionRepository actionRepository;
+
     @Autowired
     UserService userService;
 
@@ -33,6 +45,19 @@ public class AuthController {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    MailerService mailerService;
+
+    @Autowired
+    RedisTemplate<String, String> redisTemplate;
+
+    JwtUtil jwtUtil = new JwtUtil();
+
+    AuthController(ActionRepository actionRepository, ActionService actionService) {
+        this.actionRepository = actionRepository;
+        this.actionService = actionService;
+    }
 
     @PostMapping("admin/login")
     public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
@@ -51,14 +76,57 @@ public class AuthController {
         return userService.authentication_getData(user.getEmail(), user.getPassword());
     }
 
-    @PostMapping("/register")
-    public Object register(@RequestBody Customer user) throws AuthenticationException {
-        if (customerService.getCustomer(user.getEmail()).isPresent())
-            return ResponseEntityUtil.badRequest("Tài khoản đã tồn tại");
-        else {
-            customerService.createCustomer(user);
-            return userService.authentication_getData(user.getEmail(), user.getPassword());
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (customerService.getCustomer(email).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đã tồn tại.");
+        }   
+
+        try {
+            mailerService.sendOtpCodeToVerifyEmail(email);
+            return ResponseEntity.ok("OTP đã được gửi thành công. Vui lòng kiểm tra email để xác nhận.");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Có lỗi khi gửi OTP. Vui lòng thử lại.");
         }
+    }
+
+    @PostMapping("/register")
+    public Object register(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String otp = request.get("otp");
+
+        String storedOtp = redisTemplate.opsForValue().get("otp:" + email);
+        if(storedOtp == null || !storedOtp.equals(otp)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("OTP không hợp lệ hoặc đã hết hạn.");
+        } 
+
+        if(customerService.getCustomer(email).isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đã tồn tại.");
+        }
+
+        Customer newCustomer = new Customer();
+        newCustomer.setEmail(email);
+        newCustomer.setAvatar(request.get("avatar"));
+        newCustomer.setFullName(request.get("fullName"));
+        newCustomer.setPassword(request.get("password"));
+        newCustomer.setPhoneNumber(request.get("phoneNumber"));
+        newCustomer.setStatus(true);
+        String dob = request.get("dateOfBirth");
+        Date dateOfBirth = null;
+        try {
+            dateOfBirth = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
+        } catch (ParseException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ngày sinh không hợp lệ.");
+        }
+        newCustomer.setDateOfBirth(dateOfBirth);
+
+        Boolean gender = Boolean.parseBoolean(request.get("gender"));
+        newCustomer.setGender(gender);
+
+        customerService.createCustomer(newCustomer);
+        return userService.authentication_getData(email, request.get("password"));
     }
 
     @PostMapping("/google-login")
@@ -96,14 +164,13 @@ public class AuthController {
             return userService.authentication_getData(email, existingCustomer.get().getPassword());
         } else { // Ngược lại tạo mới
             Customer newCustomer = new Customer();
+            newCustomer.setAvatar(image);
+            newCustomer.setDateOfBirth(new Date());
             newCustomer.setEmail(email);
             newCustomer.setFullName(fullName);
-            newCustomer.setDateOfBirth(new Date());
-            newCustomer.setPhoneNumber("0123456789");
-            newCustomer.setPassword("Password123!");
             newCustomer.setGender(true);
-            newCustomer.setAvatar(image);
-            System.out.println(newCustomer);
+            newCustomer.setPassword("Password123");
+            newCustomer.setPhoneNumber("0123456789");
             customerService.createCustomerGoogle(newCustomer);
             return userService.authentication_getData(email, newCustomer.getPassword()); // Rồi đăng nhập
         }

@@ -45,7 +45,7 @@ public class ProductCouponService {
         if (optionalProductCoupon.isPresent()) {
             ProductCoupon existingProductCoupon = optionalProductCoupon.get();
 
-            existingProductCoupon.setRedemptionCost(updateProductCoupon.getRedemptionCost());
+            existingProductCoupon.setPoint(updateProductCoupon.getPoint());
             existingProductCoupon.setDescription(updateProductCoupon.getDescription());
             existingProductCoupon.setValue(updateProductCoupon.getValue());
             existingProductCoupon.setProduct(updateProductCoupon.getProduct());
@@ -88,7 +88,7 @@ public class ProductCouponService {
                 keyString = key;
             }
         }
-        return productCouponRepository.findByRedemptionCostOrProductNameContainingOrValue(keyNumeric, keyString,
+        return productCouponRepository.findByPointOrProductNameContainingOrValue(keyNumeric, keyString,
                 keyDouble);
     }
 

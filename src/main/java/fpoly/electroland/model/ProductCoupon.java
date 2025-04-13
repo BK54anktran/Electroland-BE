@@ -17,9 +17,6 @@ public class ProductCoupon {
 
 	Double value;
 
-	@Column
-	Integer redemptionCost;
-
 	@Column(columnDefinition = "nvarchar(225)", nullable = true)
 	String description;
 
