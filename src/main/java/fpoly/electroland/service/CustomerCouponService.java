@@ -20,6 +20,7 @@ import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.repository.CustomerCouponRepository;
 import fpoly.electroland.repository.CustomerRepository;
 import fpoly.electroland.repository.ReceiptCouponRepository;
+import fpoly.electroland.repository.CustomerRepository;
 
 @Service
 public class CustomerCouponService {
@@ -30,7 +31,6 @@ public class CustomerCouponService {
     private ReceiptCouponRepository receiptCouponRepository;
     @Autowired
     private CustomerService customerService;
-
 
     @Autowired
     UserService userService;
@@ -67,20 +67,46 @@ public class CustomerCouponService {
     }
 
     public Object getListTrue() {
-        List<CustomerCoupon> list = customerCouponRepository.findByCustomerIdAndStatusTrue(userService.getUser().getId());
+        List<CustomerCoupon> list = customerCouponRepository
+                .findByCustomerIdAndStatusTrue(userService.getUser().getId());
         return list;
     }
 
-    
-    public Integer getUserPoint(){
+    // Tạo mới ReceiptCoupon và lưu vào cơ sở dữ liệu
+    public ReceiptCoupon createReceiptCoupon(ReceiptCoupon coupon) {
+        // Log để kiểm tra coupon trước khi lưu
+        System.out.println("Creating coupon with discount: " + coupon.getDiscountMoney());
+        return receiptCouponRepository.save(coupon);
+    }
+
+    public void addReceiptCouponToCustomer(int customerId, ReceiptCoupon coupon) {
+        // Log để kiểm tra
+        System.out.println("Adding coupon for customer ID: " + customerId);
+
+        // Lấy đối tượng Customer từ CustomerService dựa trên customerId
+        Customer customer = customerService.getCustomer(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // Tạo CustomerCoupon mới và gán các giá trị
+        CustomerCoupon customerCoupon = new CustomerCoupon();
+        customerCoupon.setCustomer(customer); // Gán đối tượng Customer vào customerCoupon
+        customerCoupon.setReceiptCoupon(coupon); // Gán ReceiptCoupon vào customerCoupon
+        customerCoupon.setStatus(true); // Đảm bảo coupon có trạng thái đúng
+
+        // Lưu CustomerCoupon vào cơ sở dữ liệu
+        customerCouponRepository.save(customerCoupon);
+        System.out.println("Coupon successfully added for customer ID: " + customerId);
+    }
+
+    public Integer getUserPoint() {
         Customer customer = customerRepository.findById(userService.getUser().getId()).get();
         return customer.getUserPoint();
     }
 
-    public CustomerCoupon addCustomerReciptCouponrRC(ReceiptCoupon receiptCoupon){
+    public CustomerCoupon addCustomerReciptCouponrRC(ReceiptCoupon receiptCoupon) {
 
         LocalDate today = LocalDate.now();
-        LocalDate futureDate = today.plusDays(30); 
+        LocalDate futureDate = today.plusDays(30);
         Date sqlDate = Date.valueOf(futureDate);
         Customer customer = customerRepository.findById(userService.getUser().getId()).get();
         CustomerCoupon newCustomerCoupon = new CustomerCoupon();
@@ -88,15 +114,15 @@ public class CustomerCouponService {
         newCustomerCoupon.setCustomer(customer);
         newCustomerCoupon.setReceiptCoupon(receiptCoupon);
         newCustomerCoupon.setStatus(true);
-        customer.setUserPoint(customer.getUserPoint()-receiptCoupon.getPoint());
+        customer.setUserPoint(customer.getUserPoint() - receiptCoupon.getPoint());
         customerRepository.save(customer);
         return customerCouponRepository.save(newCustomerCoupon);
     }
 
-    public CustomerCoupon addCustomerProductCouponrRC(ProductCoupon productCoupon){
+    public CustomerCoupon addCustomerProductCouponrRC(ProductCoupon productCoupon) {
 
         LocalDate today = LocalDate.now();
-        LocalDate futureDate = today.plusDays(30); 
+        LocalDate futureDate = today.plusDays(30);
         Date sqlDate = Date.valueOf(futureDate);
         Customer customer = customerRepository.findById(userService.getUser().getId()).get();
         CustomerCoupon newCustomerCoupon = new CustomerCoupon();
@@ -104,34 +130,8 @@ public class CustomerCouponService {
         newCustomerCoupon.setCustomer(customer);
         newCustomerCoupon.setProductCoupon(productCoupon);
         newCustomerCoupon.setStatus(true);
-        customer.setUserPoint(customer.getUserPoint()-productCoupon.getPoint());
+        customer.setUserPoint(customer.getUserPoint() - productCoupon.getPoint());
         customerRepository.save(customer);
         return customerCouponRepository.save(newCustomerCoupon);
     }
-       // Tạo mới ReceiptCoupon và lưu vào cơ sở dữ liệu
-       public ReceiptCoupon createReceiptCoupon(ReceiptCoupon coupon) {
-        // Log để kiểm tra coupon trước khi lưu
-        System.out.println("Creating coupon with discount: " + coupon.getDiscountMoney());
-        return receiptCouponRepository.save(coupon);
-    }
-    
-
-    public void addReceiptCouponToCustomer(int customerId, ReceiptCoupon coupon) {
-        // Log để kiểm tra
-        System.out.println("Adding coupon for customer ID: " + customerId);
-    
-        // Lấy đối tượng Customer từ CustomerService dựa trên customerId
-        Customer customer = customerService.getCustomer(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
-    
-        // Tạo CustomerCoupon mới và gán các giá trị
-        CustomerCoupon customerCoupon = new CustomerCoupon();
-        customerCoupon.setCustomer(customer); // Gán đối tượng Customer vào customerCoupon
-        customerCoupon.setReceiptCoupon(coupon); // Gán ReceiptCoupon vào customerCoupon
-        customerCoupon.setStatus(true); // Đảm bảo coupon có trạng thái đúng
-    
-        // Lưu CustomerCoupon vào cơ sở dữ liệu
-        customerCouponRepository.save(customerCoupon);
-        System.out.println("Coupon successfully added for customer ID: " + customerId);
-    }
-    
 }

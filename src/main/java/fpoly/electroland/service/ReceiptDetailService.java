@@ -92,8 +92,8 @@ public class ReceiptDetailService {
         if (revenuePreviousMonth == null || revenuePreviousMonth == 0) {
             return revenueCurrentMonth != null && revenueCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0, nếu tháng trước không có doanh thu
         }
-        double percentChange = ((double) (revenueCurrentMonth != null ? revenueCurrentMonth : 0) - revenuePreviousMonth) / revenuePreviousMonth;
-        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        double percentChange = ((double) (revenueCurrentMonth != null ? revenueCurrentMonth : 0) - (revenuePreviousMonth != null ? revenuePreviousMonth : 0)) / (revenuePreviousMonth != null && revenuePreviousMonth > 0 ? revenuePreviousMonth : 1);
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange * 100).setScale(2, RoundingMode.HALF_UP);
         return roundedPercentChange.doubleValue();
     }
 
@@ -115,8 +115,8 @@ public class ReceiptDetailService {
         if (successfulOrdersPreviousMonth == 0) {
             return successfulOrdersCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0
         }
-        double percentChange = ((double) successfulOrdersCurrentMonth - successfulOrdersPreviousMonth) / successfulOrdersPreviousMonth ;
-        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        double percentChange = ((double) (successfulOrdersCurrentMonth != null ? successfulOrdersCurrentMonth : 0) - (successfulOrdersPreviousMonth != null ? successfulOrdersPreviousMonth : 0)) / (successfulOrdersPreviousMonth != null && successfulOrdersPreviousMonth > 0 ? successfulOrdersPreviousMonth : 1);
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange * 100).setScale(2, RoundingMode.HALF_UP);
         return roundedPercentChange.doubleValue();
     }
 
@@ -141,7 +141,7 @@ public class ReceiptDetailService {
             return failedOrdersCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0
         }
         double percentChange = ((double) failedOrdersCurrentMonth - failedOrdersPreviousMonth) / failedOrdersPreviousMonth;
-        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange* 100).setScale(2, RoundingMode.HALF_UP);
         return roundedPercentChange.doubleValue();
     }
 
@@ -164,7 +164,7 @@ public class ReceiptDetailService {
             return customerCountCurrentMonth > 0 ? 100.0 : 0.0;  // Tránh chia cho 0
         }
         double percentChange = ((double) customerCountCurrentMonth - customerCountPreviousMonth) / customerCountPreviousMonth;
-        BigDecimal roundedPercentChange = new BigDecimal(percentChange).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal roundedPercentChange = new BigDecimal(percentChange* 100).setScale(2, RoundingMode.HALF_UP);
         return roundedPercentChange.doubleValue();
     }
 
@@ -204,14 +204,13 @@ public class ReceiptDetailService {
 
     // Tính tỷ lệ thành công theo phần trăm
     double successRate = 0.0;
-    if (totalOrders > 0) {
+    if (totalOrders != null && successfulOrders != null && totalOrders > 0) {
         successRate = (double) successfulOrders / totalOrders;  // Tỷ lệ thành công (0.3, 0.7, v.v.)
     }
 
     // Chuyển tỷ lệ thành công thành phần trăm và làm tròn đến 2 chữ số thập phân
     BigDecimal percent = new BigDecimal(successRate ).setScale(2, RoundingMode.HALF_UP);  // Nhân với 100 để chuyển thành phần trăm
-
-    return percent.doubleValue();  // Trả về tỷ lệ phần trăm làm tròn
+    return percent != null ? percent.doubleValue() : 0.0;  // Trả về tỷ lệ phần trăm làm tròn hoặc 0 nếu null
 }
    // Phương thức lấy thông tin thống kê phương thức thanh toán
    public List<Object[]> getPaymentMethodStats(LocalDateTime compareDate) {

@@ -24,7 +24,6 @@ public class AddressService {
     }
 
     public List<Address> getAddresses(Customer customer) {
-        // System.out.println(customer);
         return addressRepository.getAddressesByCustomer(customer);
     }
 
@@ -33,7 +32,7 @@ public class AddressService {
     }
 
     public void deletAddress(Address address) {
-        // System.out.println(address);
+        System.out.println(address);
         addressRepository.delete(address);
     }
 }
