@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+      <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <!-- Định nghĩa biến LOG_PATH để quản lý thư mục log -->
+    <property name="LOG_PATH" value="logs" />
+    <!-- File Appender chính -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/electroland.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/electroland.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap> <!-- Giới hạn tổng dung lượng log -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] %class.%method - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender dành cho lỗi -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/electroland-error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/electroland-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap> <!-- Giới hạn dung lượng log lỗi -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{requestId}, %X{userId}] %class.%method - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Console Appender (disabled) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>OFF</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
+    <!-- Optional : filter logs at or above a level -->
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <log>application.log</log> <!-- Optional : default java.log -->
+    <resourceType>gae_app</resourceType> <!-- Optional : default: auto-detected, fallback: global -->
+    <enhancer>com.example.logging.logback.enhancers.ExampleEnhancer</enhancer> <!-- Optional -->
+    <flushLevel>WARN</flushLevel> <!-- Optional : default ERROR -->
+  </appender>
+
+  <root level="info">
+    <appender-ref ref="CLOUD" />
+  </root>
+    <!-- Google Cloud Logging Appender -->
+    <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
+        <projectId>electroland-454016</projectId>
+        <logName>application-log</logName>
+        <jsonPayload>true</jsonPayload>
+    </appender>
+
+    <!-- Async Appender cho hiệu suất tốt hơn -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <appender name="ASYNC_ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="ERROR_FILE"/>
+    </appender>
+     <!-- Log HTTP requests -->
+    <logger name="org.springframework.web" level="DEBUG" />
+
+    <!-- Log SQL queries và SQL binding -->
+    <logger name="org.hibernate.SQL" level="DEBUG" />
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+
+    <!-- Log hoạt động ứng dụng -->
+    <logger name="fpoly.electroland" level="DEBUG" />
+
+    <!-- Log bảo mật -->
+    <logger name="org.springframework.security" level="DEBUG" />
+    <!-- Root Logger -->
+    <root level="INFO">
+        <appender-ref ref="ASYNC_FILE" />
+        <appender-ref ref="CLOUD" />
+        <!-- Note: CONSOLE appender is defined but not referenced here, so no console logging will occur -->
+    </root>
+
+</configuration>
