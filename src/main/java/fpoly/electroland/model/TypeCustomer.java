@@ -15,7 +15,7 @@ public class TypeCustomer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(columnDefinition = "nvarchar(225)", nullable = false)
+	@Column(columnDefinition = "nvarchar(225)")
 	String nameType;
 
 	@Column

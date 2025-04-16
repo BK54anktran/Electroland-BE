@@ -17,32 +17,32 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false, columnDefinition = "nvarchar(225)")
+	@Column(columnDefinition = "nvarchar(225)")
 	String name;
 
-	@Column(nullable = false, columnDefinition = "varchar(225)")
+	@Column(columnDefinition = "varchar(225)")
 	String avatar;
 
-	@Column(nullable = true, columnDefinition = "nvarchar(MAX)")
+	@Column(columnDefinition = "nvarchar(MAX)")
 	String description;
 
 	Double price;
 
-	@Column(nullable = true)
+	@Column()
 	Double priceDiscount;
 
 	Boolean status = true;
-	
-	@Column(nullable = true)
+
+	@Column()
 	Integer weight;
 
-	@Column(nullable = true)
+	@Column()
 	Integer length;
 
-	@Column(nullable = true)
+	@Column()
 	Integer width;
 
-	@Column(nullable = true)
+	@Column()
 	Integer height;
 
 	@ManyToOne
@@ -56,6 +56,6 @@ public class Product {
 	@OneToMany(mappedBy = "product")
 	List<ProductImg> productImgs;
 
-	@OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<ProductAttribute> productAttributes;
 }

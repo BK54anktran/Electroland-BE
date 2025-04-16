@@ -29,43 +29,43 @@ public class Customer {
 		this.email = email;
 		this.password = password;
 	}
-	
-    // Constructor mặc định (chỉ với email và password)
-    public Customer(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+
+	// Constructor mặc định (chỉ với email và password)
+	public Customer(String email, String password) {
+		this.email = email;
+		this.password = password;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(columnDefinition = "nvarchar(225)", nullable = false)
+	@Column(columnDefinition = "nvarchar(225)")
 	String fullName;
 
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date dateOfBirth;
 
-	@Column(columnDefinition = "varchar(15)", nullable = true)
+	@Column(columnDefinition = "varchar(15)")
 	String phoneNumber;
 
 	Boolean gender;
 
-	@Column(columnDefinition = "varchar(225)", nullable = true)
+	@Column(columnDefinition = "varchar(225)")
 	String email;
 
-	@Column(columnDefinition = "varchar(225)", nullable = false)
+	@Column(columnDefinition = "varchar(225)")
 	String password;
 
-	@Column(columnDefinition = "varchar(225)", nullable = true)
+	@Column(columnDefinition = "varchar(225)")
 	String avatar;
 
-	@Column(nullable = true)
+	@Column()
 	Boolean status;
 
 	@ManyToOne
-	@JoinColumn(name = "idTypeCustomer", nullable = true)
+	@JoinColumn(name = "idTypeCustomer")
 	private TypeCustomer typeCustomer;
 
 	@Column

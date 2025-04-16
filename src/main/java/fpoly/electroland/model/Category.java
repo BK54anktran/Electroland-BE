@@ -17,9 +17,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(columnDefinition = "nvarchar(225)", nullable = false)
+    @Column(columnDefinition = "nvarchar(225)")
     String name;
 
-    @Column(columnDefinition = "varchar(225)", nullable = false)
+    @Column(columnDefinition = "varchar(225)")
     String img;
 }

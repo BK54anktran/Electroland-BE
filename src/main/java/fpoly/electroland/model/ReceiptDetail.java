@@ -21,7 +21,7 @@ public class ReceiptDetail {
 
 	private Double price;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(225)")
+	@Column(columnDefinition = "NVARCHAR(225)")
 	String description;
 
 	@ManyToOne
