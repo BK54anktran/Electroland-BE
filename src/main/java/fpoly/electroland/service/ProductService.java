@@ -263,7 +263,7 @@ public class ProductService {
         }
         return null;
     }
-
+    
     public List<Product> getProductSupplier(int id) {
         List<Product> products = productRepository.findBySupplier(supplierRepository.findById(id).get());
         if (products.size() > 0) {

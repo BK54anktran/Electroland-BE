@@ -8,9 +8,12 @@ import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Product;
 import fpoly.electroland.model.ProductAttribute;
 import fpoly.electroland.model.ProductImg;
+import fpoly.electroland.model.ReceiptDetail;
 import fpoly.electroland.model.Supplier;
+import fpoly.electroland.model.User;
 import fpoly.electroland.service.CategoryService;
 import fpoly.electroland.service.ProductService;
+import fpoly.electroland.service.ReceiptDetailService;
 import fpoly.electroland.service.SupplierService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.ResponseEntityUtil;
@@ -23,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import org.checkerframework.checker.units.qual.s;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -40,6 +44,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 public class ProductController {
 
+    private final ReceiptController receiptController;
+
     @Autowired
     ProductService productService;
 
@@ -51,6 +57,13 @@ public class ProductController {
 
     @Autowired
     SupplierService supplierService;
+
+    @Autowired
+    ReceiptDetailService receiptDetailService;
+
+    ProductController(ReceiptController receiptController) {
+        this.receiptController = receiptController;
+    }
 
     @GetMapping("/product")
     public Object getMethodName(
@@ -196,6 +209,16 @@ public class ProductController {
         LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
 
         return ResponseEntity.ok(productService.getTop10ProductRevenue(startDate, endDate));
+    }
+
+    @GetMapping("/product/checkReceiptDetail")
+    public Boolean checkReview(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
+       
+        if (userService.getUser() == null) {
+            return false;
+        } else {
+            return receiptDetailService.checkReceiptDetailExist(id, userService.getUser().getId());
+        }
     }
 
 }

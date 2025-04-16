@@ -23,6 +23,7 @@ import fpoly.electroland.model.Mail;
 import fpoly.electroland.model.User;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.service.*;
+import fpoly.electroland.util.DateUtil;
 import fpoly.electroland.util.JwtUtil;
 import fpoly.electroland.util.ResponseEntityUtil;
 import jakarta.mail.MessagingException;
@@ -125,8 +126,8 @@ public class AuthController {
         String dob = request.get("dateOfBirth");
         Date dateOfBirth = null;
         try {
-            dateOfBirth = new SimpleDateFormat("yyyy-MM-dd").parse(dob);
-        } catch (ParseException e) {
+            dateOfBirth = DateUtil.formatDate(dob);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ngày sinh không hợp lệ.");
         }
         newCustomer.setDateOfBirth(dateOfBirth);

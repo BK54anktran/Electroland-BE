@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
+import fpoly.electroland.model.ReceiptDetail;
 
 @Repository
 public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
@@ -115,4 +116,6 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
                         @Param("endDate") LocalDateTime endDate);
 
         List<Receipt> findByCustomer(Customer customer);
+
+       
 }

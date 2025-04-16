@@ -131,17 +131,18 @@ public class CustomerController {
         customerService.createCustomer(customer);
     }
     @PostMapping("/customerPassword")
-    public ResponseEntity<Customer> changePassword(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
         String oldPassword = request.get("oldPassword");
         String newPassword = request.get("newPassword");
-
+        
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         if (passwordEncoder.matches(oldPassword, customer.getPassword())) {
             customer.setPassword(passwordEncoder.encode(newPassword));
             Customer updatedCustomer= customerService.updateCustomer(customer.getId(), customer);
             return ResponseEntity.ok(updatedCustomer);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        } 
+        else {
+            return ResponseEntityUtil.badRequest("Mật khẩu hiện tại không chinh xác");
         }
     }
 }

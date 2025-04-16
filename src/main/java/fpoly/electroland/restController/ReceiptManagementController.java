@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -23,8 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.dto.request.ReceiptDTO;
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.model.TypeCustomer;
+import fpoly.electroland.repository.ConfigStoreRepository;
+import fpoly.electroland.repository.CustomerRepository;
+import fpoly.electroland.repository.TypeCustomerRepository;
 import fpoly.electroland.service.EmailReceiptService;
 import fpoly.electroland.service.EmployeeService;
 import fpoly.electroland.service.PdfService;
@@ -47,6 +54,15 @@ public class ReceiptManagementController {
     @Autowired
     EmailReceiptService emailService;
 
+    @Autowired
+    TypeCustomerRepository typeCustomerRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    ConfigStoreRepository configStoreRepository;
+
     @GetMapping("/receipts")
     public List<Receipt> GetAllList() {
         List<Receipt> list = receiptService.getAll();
@@ -64,6 +80,11 @@ public class ReceiptManagementController {
         return ResponseEntity.ok(receiptDetails);
     }
 
+    @GetMapping("/orders/details")
+    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
+        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
+        return ResponseEntity.ok(orders);
+    }
     @GetMapping("/receipts/date-range")
     public List<Receipt> getReceiptsByDateRange(
             @RequestParam(value = "startDate", required = false) String startDateStr,
@@ -106,6 +127,43 @@ public class ReceiptManagementController {
             Integer userId = userService.getUser().getId();
 
             Receipt updatedReceipt = receiptService.updateReceiptStatus(receiptID, receiptStatusID, userId);
+
+            if (receiptStatusID == 3) {
+                Customer customer = customerRepository.findById(userService.getUser().getId())
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+                TypeCustomer typeCustomer = customer.getTypeCustomer();
+                List<Receipt> listReceipts = receiptService.getReceiptsByUser(customer);
+
+                Double totalAmount = 0.0;
+                for (Receipt receipt1 : listReceipts) {
+                    totalAmount += receipt1.getPayment().getAmount();
+                }
+                
+                // Cập nhật điểm tích lũy
+                customer.setUserPoint(
+                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
+                                        * Double.parseDouble(
+                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+
+                // kiểm tra điểm tích lũy
+                while (totalAmount >= typeCustomer.getLevelPoint()
+                        && typeCustomerRepository.findById(typeCustomer.getId() + 1)
+                                .isPresent()) {
+                    typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
+                    customer.setTypeCustomer(typeCustomer);
+                    customer.setUserPoint(customer.getUserPoint()
+                            + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
+                }
+                customerRepository.save(customer);
+
+                customer.setUserPoint(
+                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
+                                        * Double.parseDouble(
+                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+                customerRepository.save(customer);
+            }
 
             return ResponseEntity.ok(updatedReceipt);
 
@@ -157,11 +215,7 @@ public class ReceiptManagementController {
         }
     }
 
-    @GetMapping("/orders/details")
-    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
-        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
-        return ResponseEntity.ok(orders);
-    }
+  
 
     @GetMapping("/orders/by-date")
     public ResponseEntity<List<Receipt>> getOrdersByDateRange(
