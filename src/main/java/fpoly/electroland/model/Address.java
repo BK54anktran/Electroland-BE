@@ -19,13 +19,13 @@ public class Address {
 
 	private Integer districtID;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(10)")
+	@Column(columnDefinition = "NVARCHAR(10)")
 	private String wardCode;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(255) ")
+	@Column(columnDefinition = "NVARCHAR(255) ")
 	private String street;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(255) ")
+	@Column(columnDefinition = "NVARCHAR(255) ")
 	private String stringAddress;
 
 	private boolean status;

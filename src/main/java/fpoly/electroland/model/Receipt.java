@@ -21,10 +21,10 @@ public class Receipt {
 	@Column(columnDefinition = "NVARCHAR(225)")
 	private String address;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String nameReciver;
 
-	@Column(nullable = false, columnDefinition = "VARCHAR(15)")
+	@Column(columnDefinition = "VARCHAR(15)")
 	private String phoneReciver;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -36,24 +36,24 @@ public class Receipt {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date deliveryDate;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String note;
 
 	@ManyToOne
-	@JoinColumn(name = "idReceiptStatus", nullable = true)
+	@JoinColumn(name = "idReceiptStatus")
 	private ReceiptStatus receiptStatus;
 
 	@ManyToOne
-	@JoinColumn(name = "idPayment", nullable = true)
+	@JoinColumn(name = "idPayment")
 	private Payment payment;
 
 	@ManyToOne
-	@JoinColumn(name = "idReceiptCoupon", nullable = true)
+	@JoinColumn(name = "idReceiptCoupon")
 	private ReceiptCoupon ReceiptCoupon;
 
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	private Customer customer;
-	@Column(nullable = true)
+	@Column()
 	private Boolean isRead = false;
 }
