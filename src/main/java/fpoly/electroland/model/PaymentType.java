@@ -15,7 +15,7 @@ public class PaymentType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+    @Column(columnDefinition = "NVARCHAR(225)")
     String name;
 
     String icon;

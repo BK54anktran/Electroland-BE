@@ -17,16 +17,16 @@ public class ProductCoupon {
 
 	Double value;
 
-	@Column(columnDefinition = "nvarchar(225)", nullable = true)
+	@Column(columnDefinition = "nvarchar(225)")
 	String description;
 
-	@Column(nullable = false)
+	@Column()
 	Boolean status = true;
 
 	@ManyToOne
 	@JoinColumn(name = "idProduct", nullable = false)
 	Product product;
 
-	@Column(nullable = true)
+	@Column()
 	Integer point;
 }

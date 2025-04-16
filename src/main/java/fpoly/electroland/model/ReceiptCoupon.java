@@ -17,27 +17,27 @@ public class ReceiptCoupon {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = true)
+	@Column()
 	Double discountMoney;
 
-	@Column(nullable = true)
+	@Column()
 	Double discountPercent;
 
-	@Column(nullable = true)
+	@Column()
 	Double maxDiscount;
 
-	@Column(nullable = true)
+	@Column()
 	Double minReceiptPrice;
 
-	@Column(columnDefinition = "nvarchar(225)", nullable = true)
+	@Column(columnDefinition = "nvarchar(225)")
 	String description;
 
-	@Column(nullable = true)
+	@Column()
 	Boolean status = true;
-	
+
 	@Column
 	Integer redemptionCost;
 
-	@Column(nullable = true)
+	@Column()
 	Integer point;
 }

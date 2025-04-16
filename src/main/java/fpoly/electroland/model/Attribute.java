@@ -17,7 +17,7 @@ public class Attribute {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false, columnDefinition = "nvarchar(225)")
+	@Column(columnDefinition = "nvarchar(225)")
 	String name;
 
 	Double AttributePrice = 0.0;
@@ -33,5 +33,4 @@ public class Attribute {
 				+ productAttribute + "]";
 	}
 
-	
 }

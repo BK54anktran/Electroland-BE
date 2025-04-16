@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -18,7 +17,7 @@ public class ProductImg {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(columnDefinition = "varchar(225)", nullable = false)
+	@Column(columnDefinition = "varchar(225)")
 	String link;
 
 	@JsonIgnore
@@ -31,5 +30,4 @@ public class ProductImg {
 		return "ProductImg [id=" + id + ", link=" + link + ", product=" + product.id + "]";
 	}
 
-	
 }
