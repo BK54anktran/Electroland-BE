@@ -88,6 +88,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true); // Nếu sử dụng cookie hoặc xác thực
         config.addAllowedOrigin("http://localhost:3000"); // URL React app
         config.addAllowedOrigin("https://bk54anktran.web.app");
+        config.addAllowedOrigin("https://electroland-fpl.web.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);

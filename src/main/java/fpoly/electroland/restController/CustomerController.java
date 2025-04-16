@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import fpoly.electroland.model.Customer;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.DateUtil;
+import fpoly.electroland.util.ResponseEntityUtil;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -27,6 +30,9 @@ public class CustomerController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/admin/customer")
     public List<Customer> GetAllList() {

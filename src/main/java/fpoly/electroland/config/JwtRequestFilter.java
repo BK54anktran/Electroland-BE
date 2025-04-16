@@ -92,7 +92,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authorities.add(new SimpleGrantedAuthority("Employee"));
                     userDetails = new User(userInfo.get().getId(), userInfo.get().getFullName(),
                             userInfo.get().getEmail(),
-                            passwordEncoder.encode(userInfo.get().getPassword()), "EMPLOYEE",
+                            userInfo.get().getPassword(), "EMPLOYEE",
                             authorities);
                 } else
                     throw new UsernameNotFoundException(username);
@@ -103,7 +103,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     authorities.add(new SimpleGrantedAuthority("Customer"));
                     userDetails = new User(customer.get().getId(), customer.get().getFullName(),
                             customer.get().getEmail(),
-                            passwordEncoder.encode(customer.get().getPassword()), "CUSTOMER", authorities);
+                            customer.get().getPassword(), "CUSTOMER", authorities);
                 } else
                     throw new UsernameNotFoundException(username);
             }
