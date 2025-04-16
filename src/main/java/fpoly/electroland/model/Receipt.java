@@ -36,7 +36,7 @@ public class Receipt {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	private Date deliveryDate;
 
-	@Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+	@Column(nullable = true, columnDefinition = "NVARCHAR(225)")
 	private String note;
 
 	@ManyToOne
