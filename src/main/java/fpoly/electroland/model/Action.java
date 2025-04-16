@@ -25,10 +25,10 @@ public class Action {
 
 	Date time = new Date();
 
-	@Column(nullable = false, columnDefinition = "nvarchar(max)")
+	@Column(columnDefinition = "nvarchar(max)")
 	String oldValue;
 
-	@Column(nullable = false, columnDefinition = "nvarchar(max)")
+	@Column(columnDefinition = "nvarchar(max)")
 	String newValue;
 
 	@ManyToOne

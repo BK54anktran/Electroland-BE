@@ -20,10 +20,10 @@ public class Review {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(nullable = true)
+	@Column()
 	private int point = 5;
 
-	@Column(nullable = true, columnDefinition = "NVARCHAR(225)")
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String content;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -31,7 +31,7 @@ public class Review {
 	private Date date = new Date();
 
 	private Boolean status = true;
-    
+
 	@OneToMany(mappedBy = "review")
 	private List<ReviewImg> imgs;
 
@@ -43,6 +43,6 @@ public class Review {
 	@JoinColumn(name = "idProduct", nullable = false)
 	private Product product;
 
-	@Column(nullable = true)
+	@Column()
 	private Boolean isRead = false;
 }

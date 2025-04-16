@@ -17,22 +17,22 @@ public class Employee {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
-	@Column(nullable = false, columnDefinition = "nvarchar(225)")
+	@Column(columnDefinition = "nvarchar(225)")
 	String fullName;
 
-	@Column(nullable = false, columnDefinition = "varchar(15)")
+	@Column(columnDefinition = "varchar(15)")
 	String phoneNumber;
 
-	@Column(nullable = true, columnDefinition = "nvarchar(225)")
+	@Column(columnDefinition = "nvarchar(225)")
 	String role;
 
-	@Column(nullable = false, columnDefinition = "varchar(225)")
+	@Column(columnDefinition = "varchar(225)")
 	String email;
 
-	@Column(nullable = false, columnDefinition = "varchar(225)")
+	@Column(columnDefinition = "varchar(225)")
 	String password;
 
-	@Column(nullable = true)
+	@Column()
 	Boolean status = true;
 
 	@OneToMany(mappedBy = "employee")

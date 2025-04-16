@@ -20,15 +20,15 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ReviewImg {
-    @Id
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-    @Column(nullable = false, columnDefinition = "NVARCHAR(225)")
+	@Column(columnDefinition = "NVARCHAR(225)")
 	private String nameIMG;
-    
-    @ManyToOne
+
+	@ManyToOne
 	@JoinColumn(name = "idReview")
-    @JsonIgnore
+	@JsonIgnore
 	private Review review;
 }
