@@ -78,8 +78,8 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         // Tổng doanh thu trong khoảng thời gian
         @Query("SELECT COALESCE(SUM(rd.price * rd.quantity), 0) FROM ReceiptDetail rd JOIN rd.receipt r " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
-                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " + 
-                        "AND (r.receiptStatus.name IN ('Hoàn thành', 'Đã thanh toán'))")
+                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate)" + 
+                        "AND (r.receiptStatus.name IN ('Hoàn thành', 'Đã thanh toán'))") 
         Double getTotalRevenueByDateRange(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 

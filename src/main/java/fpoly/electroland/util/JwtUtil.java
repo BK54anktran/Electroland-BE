@@ -15,13 +15,6 @@ import java.util.Map;
 public class JwtUtil {
     private static String SECRET_KEY = "YfEFxZSwggJkuYXcd6+2qLJpvoQo6Th2kvnScSx1b4U=";
 
-    // static {
-    // Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); // Tạo khóa bảo mật đủ
-    // mạnh
-    // SECRET_KEY = Encoders.BASE64.encode(key.getEncoded());
-    // System.out.println(SECRET_KEY);
-    // }
-
     @SuppressWarnings("deprecation")
     public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();

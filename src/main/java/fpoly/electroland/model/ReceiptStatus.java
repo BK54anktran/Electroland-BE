@@ -26,7 +26,7 @@ public class ReceiptStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @Column(nullable = false, columnDefinition = "nvarchar(225)")
+    @Column(columnDefinition = "nvarchar(225)")
     String name;
 
     @OneToMany(mappedBy = "receiptStatus")

@@ -20,10 +20,10 @@ public class Cart {
 
 	int quantity;
 
-	@Column(nullable = true, columnDefinition = "nvarchar(225)")
+	@Column(columnDefinition = "nvarchar(225)")
 	String description;
 
-	@Column(nullable = true)
+	@Column()
 	Boolean status;
 
 	@ManyToOne
