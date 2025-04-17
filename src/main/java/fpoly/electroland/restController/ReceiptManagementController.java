@@ -163,43 +163,6 @@ public class ReceiptManagementController {
                 customerRepository.save(customer);
             }
 
-            if (receiptStatusID == 3) {
-                Customer customer = customerRepository.findById(userService.getUser().getId())
-                        .orElseThrow(() -> new RuntimeException("Customer not found"));
-                TypeCustomer typeCustomer = customer.getTypeCustomer();
-                List<Receipt> listReceipts = receiptService.getReceiptsByUser(customer);
-
-                Double totalAmount = 0.0;
-                for (Receipt receipt1 : listReceipts) {
-                    totalAmount += receipt1.getPayment().getAmount();
-                }
-
-                // Cập nhật điểm tích lũy
-                customer.setUserPoint(
-                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
-                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
-                                        * Double.parseDouble(
-                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
-
-                // kiểm tra điểm tích lũy
-                while (totalAmount >= typeCustomer.getLevelPoint()
-                        && typeCustomerRepository.findById(typeCustomer.getId() + 1)
-                                .isPresent()) {
-                    typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
-                    customer.setTypeCustomer(typeCustomer);
-                    customer.setUserPoint(customer.getUserPoint()
-                            + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
-                }
-                customerRepository.save(customer);
-
-                customer.setUserPoint(
-                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
-                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
-                                        * Double.parseDouble(
-                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
-                customerRepository.save(customer);
-            }
-
             return ResponseEntity.ok(updatedReceipt);
 
         } catch (NoSuchElementException e) {
