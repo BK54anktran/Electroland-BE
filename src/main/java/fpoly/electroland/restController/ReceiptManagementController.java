@@ -153,13 +153,7 @@ public class ReceiptManagementController {
                     customer.setUserPoint(customer.getUserPoint()
                             + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
                 }
-                customerRepository.save(customer);
 
-                customer.setUserPoint(
-                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
-                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
-                                        * Double.parseDouble(
-                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
                 customerRepository.save(customer);
             }
 
