@@ -167,6 +167,9 @@ public class AuthController {
         Optional<Customer> existingCustomer = customerService.getCustomer(email); // Kiểm tra đã tồn tại Email này thì
                                                                                   // login luôn
         if (existingCustomer.isPresent()) {
+            if (existingCustomer.get().getStatus() == false) {
+                return ResponseEntityUtil.unauthorizedError("Tài khoản đã bị khóa");
+            }
             return userService.returnUser(existingCustomer.get().getEmail(), "CUSTOMER",
                     existingCustomer.get().getFullName());
         } else { // Ngược lại tạo mới
