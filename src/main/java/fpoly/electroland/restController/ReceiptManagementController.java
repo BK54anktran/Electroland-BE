@@ -85,6 +85,7 @@ public class ReceiptManagementController {
         List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
         return ResponseEntity.ok(orders);
     }
+
     @GetMapping("/receipts/date-range")
     public List<Receipt> getReceiptsByDateRange(
             @RequestParam(value = "startDate", required = false) String startDateStr,
@@ -124,9 +125,43 @@ public class ReceiptManagementController {
             @PathVariable Long receiptID,
             @PathVariable Integer receiptStatusID) {
         try {
-            Integer userId = userService.getUser().getId();
+            Receipt updatedReceipt = receiptService.updateReceiptStatus(receiptID, receiptStatusID);
 
-            Receipt updatedReceipt = receiptService.updateReceiptStatus(receiptID, receiptStatusID, userId);
+            if (receiptStatusID == 3) {
+                Customer customer = updatedReceipt.getCustomer();
+                TypeCustomer typeCustomer = customer.getTypeCustomer();
+                List<Receipt> listReceipts = receiptService.getReceiptsByUser(customer);
+
+                Double totalAmount = 0.0;
+                for (Receipt receipt1 : listReceipts) {
+                    totalAmount += receipt1.getPayment().getAmount();
+                }
+
+                // Cập nhật điểm tích lũy
+                customer.setUserPoint(
+                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
+                                        * Double.parseDouble(
+                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+
+                // kiểm tra điểm tích lũy
+                while (totalAmount >= typeCustomer.getLevelPoint()
+                        && typeCustomerRepository.findById(typeCustomer.getId() + 1)
+                                .isPresent()) {
+                    typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
+                    customer.setTypeCustomer(typeCustomer);
+                    customer.setUserPoint(customer.getUserPoint()
+                            + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
+                }
+                customerRepository.save(customer);
+
+                customer.setUserPoint(
+                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
+                                        * Double.parseDouble(
+                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+                customerRepository.save(customer);
+            }
 
             if (receiptStatusID == 3) {
                 Customer customer = customerRepository.findById(userService.getUser().getId())
@@ -138,7 +173,7 @@ public class ReceiptManagementController {
                 for (Receipt receipt1 : listReceipts) {
                     totalAmount += receipt1.getPayment().getAmount();
                 }
-                
+
                 // Cập nhật điểm tích lũy
                 customer.setUserPoint(
                         (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
@@ -214,8 +249,6 @@ public class ReceiptManagementController {
             return ResponseEntity.internalServerError().body("Error sending email!");
         }
     }
-
-  
 
     @GetMapping("/orders/by-date")
     public ResponseEntity<List<Receipt>> getOrdersByDateRange(

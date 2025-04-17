@@ -135,7 +135,7 @@ public class ReceiptService {
         return results;
     }
 
-    public Receipt updateReceiptStatus(Long id, Integer statusId, int userId) {
+    public Receipt updateReceiptStatus(Long id, Integer statusId) {
         // Tìm hóa đơn theo ID
         Receipt existingReceipt = receiptRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Không tìm thấy hóa đơn với ID: " + id));
