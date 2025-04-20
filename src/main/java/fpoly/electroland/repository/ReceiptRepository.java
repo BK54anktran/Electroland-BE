@@ -30,12 +30,14 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
-        @Query("SELECT r FROM Receipt r WHERE " +
-                        "CAST(r.id AS string) LIKE %:searchKey% OR " +
+                        @Query("SELECT r FROM Receipt r WHERE " +
+                        "CAST(r.id AS string) LIKE CONCAT('%', :searchKey, '%') OR " +
                         "LOWER(r.address) LIKE LOWER(CONCAT('%', :searchKey, '%')) OR " +
                         "LOWER(r.nameReciver) LIKE LOWER(CONCAT('%', :searchKey, '%')) OR " +
-                        "r.phoneReciver LIKE %:searchKey%")
-        List<Receipt> searchReceipts(@Param("searchKey") String searchKey);
+                        "r.phoneReciver LIKE CONCAT('%', :searchKey, '%')")
+                 List<Receipt> findBySearchKey(@Param("searchKey") String searchKey);
+
+                 
 
         @Query("SELECT r.id, r.receiptDate, r.deliveryDate, rs.name, p.paymentType.name " +
                         "FROM Receipt r " +

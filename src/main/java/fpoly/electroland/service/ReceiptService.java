@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -131,7 +132,23 @@ public class ReceiptService {
     }
 
     public List<Receipt> searchReceipts(String searchKey) {
-        List<Receipt> results = receiptRepository.searchReceipts(searchKey);
+        List<Receipt> results = receiptRepository.findBySearchKey(searchKey);
+
+        // If searchKey contains only digits, prioritize ID and phone matches
+        if (searchKey.matches("^[0-9]+$")) {
+            List<Receipt> idMatches = results.stream()
+                    .filter(receipt -> String.valueOf(receipt.getId()).contains(searchKey))
+                    .collect(Collectors.toList());
+
+            if (!idMatches.isEmpty()) {
+                return idMatches;
+            }
+
+            return results.stream()
+                    .filter(receipt -> receipt.getPhoneReciver().contains(searchKey))
+                    .collect(Collectors.toList());
+        }
+
         return results;
     }
 
