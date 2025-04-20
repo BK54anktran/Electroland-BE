@@ -23,7 +23,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
                         "FROM ReceiptDetail rd " +
                         "JOIN rd.receipt r " +
                         "JOIN rd.product p " +
-                        "WHERE r.receiptStatus.id = 3 AND r.receiptDate BETWEEN :startDate AND :endDate " +
+                        "WHERE r.receiptDate BETWEEN :startDate AND :endDate " +
                         "GROUP BY p.name " +
                         "ORDER BY SUM(rd.quantity) DESC " +
                         "LIMIT 10")
