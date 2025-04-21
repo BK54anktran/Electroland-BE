@@ -42,9 +42,13 @@ public class UserService {
             return ResponseEntityUtil.unauthorizedError("Mật khẩu không chính xác");
         }
         User user = (User) authentication.getPrincipal();
+        return returnUser(user.getEmail(), user.getRole(), user.getName());
+    }
+
+    public Object returnUser(String email, String role, String username) {
         Map<String, String> data = new HashMap<>();
-        data.put("token", jwtUtil.generateToken(user.getEmail(), user.getRole()));
-        data.put("userName", user.getName());
+        data.put("token", jwtUtil.generateToken(email, role));
+        data.put("userName", username);
         return ResponseEntity.ok(data);
     }
 }

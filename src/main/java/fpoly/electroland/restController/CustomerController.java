@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import fpoly.electroland.model.Customer;
 import fpoly.electroland.service.CustomerService;
 import fpoly.electroland.service.UserService;
 import fpoly.electroland.util.DateUtil;
+import fpoly.electroland.util.ResponseEntityUtil;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -27,6 +30,9 @@ public class CustomerController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @GetMapping("/admin/customer")
     public List<Customer> GetAllList() {
@@ -81,7 +87,6 @@ public class CustomerController {
     @PostMapping("/userAvatar")
     public void saveUserAva(@RequestBody String avaUrl) {
         avaUrl = avaUrl.replace("\"", "");
-        // System.out.println(userService.getUser());
         int id = userService.getUser().getId();
         Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
         customer.setAvatar(avaUrl);
@@ -103,11 +108,6 @@ public class CustomerController {
         customer.setGender(gender);
         customer.setPhoneNumber(phoneNumber);
         customer.setFullName(fullName);
-        if (object.get("newPassword") != null) {
-            String newPassword = (String) object.get("newPassword");
-            customer.setPassword(newPassword);
-        }
-        // System.out.println(customer);
         customerService.updateCustomer(id, customer);
     }
 
@@ -129,5 +129,19 @@ public class CustomerController {
         customer.setFullName(fullName);
         customer.setPhoneNumber(phoneNumber);
         customerService.createCustomer(customer);
+    }
+    @PostMapping("/customerPassword")
+    public ResponseEntity<Customer> changePassword(@RequestBody Map<String, String> request) {
+        String oldPassword = request.get("oldPassword");
+        String newPassword = request.get("newPassword");
+
+        Customer customer = customerService.getCustomer(userService.getUser().getId()).get();
+        if (passwordEncoder.matches(oldPassword, customer.getPassword())) {
+            customer.setPassword(passwordEncoder.encode(newPassword));
+            Customer updatedCustomer= customerService.updateCustomer(customer.getId(), customer);
+            return ResponseEntity.ok(updatedCustomer);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 }
