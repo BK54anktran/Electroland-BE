@@ -35,7 +35,7 @@ public class EmployeeController {
 
     // API: Thêm mới nhân viên
     @PostMapping("/employees/save")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) throws Exception {
         Integer userId = userService.getUser().getId();
         Employee createdEmployee = employeeService.createEmployee(employee, userId);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
