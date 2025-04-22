@@ -104,7 +104,7 @@ public class PdfService {
         
         addInfoLine(leftCell, "Mã hóa đơn:", receipt.getId(), boldFont, normalFont);
         addInfoLine(leftCell, "Ngày tạo:", formattedDate, boldFont, normalFont);
-        addInfoLine(leftCell, "Phương thức thanh toán:", "Thanh toán khi nhận hàng", boldFont, normalFont);
+        addInfoLine(leftCell, "Phương thức thanh toán:", receipt.getPaymentMethod(), boldFont, normalFont);
         
         // Cột phải: Thông tin khách hàng
         PdfPCell rightCell = new PdfPCell();
@@ -246,11 +246,11 @@ public class PdfService {
         companyName.setAlignment(Element.ALIGN_RIGHT);
         infoCell.addElement(companyName);
         
-        Paragraph address = new Paragraph("Địa chỉ: 123 Đường Công Nghệ, Quận 9, TP.HCM", companyInfoFont);
+        Paragraph address = new Paragraph("Địa chỉ: 135 Nguyễn Thái Sơn, P.4, Q.Gò Vấp, TP.Hồ Chí Minh, Xã Tây Vinh, Huyện Tây Sơn, Bình Định", companyInfoFont);
         address.setAlignment(Element.ALIGN_RIGHT);
         infoCell.addElement(address);
         
-        Paragraph contact = new Paragraph("Hotline: 1900 1234 | Email: info@electroland.com", companyInfoFont);
+        Paragraph contact = new Paragraph("Hotline: 0865854002 | Email: info@electroland.com", companyInfoFont);
         contact.setAlignment(Element.ALIGN_RIGHT);
         infoCell.addElement(contact);
         
@@ -287,7 +287,7 @@ public class PdfService {
         policy.setAlignment(Element.ALIGN_CENTER);
         thankYouCell.addElement(policy);
         
-        Paragraph contact = new Paragraph("Mọi thắc mắc xin liên hệ: 1900 1234 hoặc email: support@electroland.com", footerFont);
+        Paragraph contact = new Paragraph("Mọi thắc mắc xin liên hệ: 0865854002 hoặc email: support@electroland.com", footerFont);
         contact.setAlignment(Element.ALIGN_CENTER);
         thankYouCell.addElement(contact);
         
