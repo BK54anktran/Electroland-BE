@@ -121,4 +121,8 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
+    public boolean existsByEmail(String email) {
+        return employeeRepository.findByEmail(email).isPresent();
+    }
+
 }

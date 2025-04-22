@@ -32,15 +32,18 @@ public class EmployeeController {
     public List<Employee> GetAllList() {
         return employeeService.getAll();
     }
-
+    
     // API: Thêm mới nhân viên
     @PostMapping("/employees/save")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) throws Exception {
+    public ResponseEntity<?> createEmployee(@RequestBody Employee employee) throws Exception {
+        if (employeeService.existsByEmail(employee.getEmail())) {
+            // Nếu email đã tồn tại, trả về lỗi 400 với thông báo chi tiết
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại trong hệ thống");
+        }
         Integer userId = userService.getUser().getId();
         Employee createdEmployee = employeeService.createEmployee(employee, userId);
         return ResponseEntity.ok(createdEmployee); // Trả về đối tượng được tạo
     }
-
     @PutMapping("/employees/update/{id}")
     public ResponseEntity<?> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         try {
