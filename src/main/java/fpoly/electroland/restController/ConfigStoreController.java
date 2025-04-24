@@ -42,16 +42,16 @@ public class ConfigStoreController {
     public Object getKey(@RequestParam String key) {
         String value = configStoreService.getKey(key);
         return ResponseEntityUtil.ok(value);
+        
     }
 
     @PostMapping("/key")
     public ResponseEntity<?> setKey(@RequestBody Map<String, String> data) {
         String key = data.get("key");
         String value = data.get("value");
-
         configStoreService.setKey(key, value); // Lưu vào DB hoặc cache
-
         return ResponseEntity.ok("Lưu thành công");
+
     }
 
 }

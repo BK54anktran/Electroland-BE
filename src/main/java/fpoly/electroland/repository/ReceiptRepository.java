@@ -70,7 +70,6 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         @Query("SELECT pt.name, COUNT(r) FROM Receipt r JOIN r.payment p JOIN p.paymentType pt GROUP BY pt.name")
         List<Object[]> countOrdersByPaymentMethod();
 
-
         @Query("SELECT COALESCE(SUM(p.amount), 0) FROM Receipt r " +
                         "JOIN r.payment p " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
@@ -115,5 +114,4 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
 
         List<Receipt> findByCustomer(Customer customer);
 
-       
 }
