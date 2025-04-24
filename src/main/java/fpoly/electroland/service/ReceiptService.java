@@ -131,7 +131,7 @@ public class ReceiptService {
     }
 
     public List<Receipt> searchReceipts(String searchKey) {
-        List<Receipt> results = receiptRepository.searchReceipts(searchKey);
+        List<Receipt> results = receiptRepository.findBySearchKey(searchKey);
         return results;
     }
 
