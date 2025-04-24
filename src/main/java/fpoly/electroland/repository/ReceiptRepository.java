@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
+import fpoly.electroland.model.ReceiptDetail;
 
 @Repository
 public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
@@ -30,11 +31,11 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
                         @Param("endDate") LocalDateTime endDate);
 
         @Query("SELECT r FROM Receipt r WHERE " +
-                        "CAST(r.id AS string) LIKE %:searchKey% OR " +
+                        "CAST(r.id AS string) LIKE CONCAT('%', :searchKey, '%') OR " +
                         "LOWER(r.address) LIKE LOWER(CONCAT('%', :searchKey, '%')) OR " +
                         "LOWER(r.nameReciver) LIKE LOWER(CONCAT('%', :searchKey, '%')) OR " +
-                        "r.phoneReciver LIKE %:searchKey%")
-        List<Receipt> searchReceipts(@Param("searchKey") String searchKey);
+                        "r.phoneReciver LIKE CONCAT('%', :searchKey, '%')")
+        List<Receipt> findBySearchKey(@Param("searchKey") String searchKey);
 
         @Query("SELECT r.id, r.receiptDate, r.deliveryDate, rs.name, p.paymentType.name " +
                         "FROM Receipt r " +
@@ -69,22 +70,19 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         @Query("SELECT pt.name, COUNT(r) FROM Receipt r JOIN r.payment p JOIN p.paymentType pt GROUP BY pt.name")
         List<Object[]> countOrdersByPaymentMethod();
 
-        // 🔹 7. Tính tỷ lệ đơn hoàn trả
-        @Query("SELECT (COUNT(r) * 1.0 / (SELECT COUNT(r2) FROM Receipt r2)) FROM Receipt r WHERE r.receiptStatus.name = 'Hoàn hàng'")
-        Double refundRate();
-
-        // Tổng doanh thu trong khoảng thời gian
-        @Query("SELECT COALESCE(SUM(rd.price * rd.quantity), 0) FROM ReceiptDetail rd JOIN rd.receipt r " +
+        @Query("SELECT COALESCE(SUM(p.amount), 0) FROM Receipt r " +
+                        "JOIN r.payment p " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
-                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate)")
+                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +
+                        "AND r.receiptStatus.id = 3")
         Double getTotalRevenueByDateRange(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
-        // Doanh thu theo tháng trong khoảng thời gian
-        @Query("SELECT YEAR(r.receiptDate), MONTH(r.receiptDate), COALESCE(SUM(rd.price * rd.quantity), 0) " +
-                        "FROM ReceiptDetail rd JOIN rd.receipt r " +
+        @Query("SELECT YEAR(r.receiptDate), MONTH(r.receiptDate), COALESCE(SUM(p.amount), 0) " +
+                        "FROM Receipt r JOIN r.payment p " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
                         "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +
+                        "AND r.receiptStatus.id = 3 " +
                         "GROUP BY YEAR(r.receiptDate), MONTH(r.receiptDate) " +
                         "ORDER BY YEAR(r.receiptDate), MONTH(r.receiptDate)")
         List<Object[]> getRevenueByMonth(@Param("startDate") LocalDateTime startDate,
@@ -115,4 +113,5 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
                         @Param("endDate") LocalDateTime endDate);
 
         List<Receipt> findByCustomer(Customer customer);
+
 }

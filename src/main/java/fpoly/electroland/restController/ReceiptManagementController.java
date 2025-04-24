@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -23,12 +25,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fpoly.electroland.dto.request.ReceiptDTO;
+import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.model.ReceiptStatus;
+import fpoly.electroland.model.TypeCustomer;
+import fpoly.electroland.repository.ConfigStoreRepository;
+import fpoly.electroland.repository.CustomerRepository;
+import fpoly.electroland.repository.TypeCustomerRepository;
 import fpoly.electroland.service.EmailReceiptService;
 import fpoly.electroland.service.EmployeeService;
 import fpoly.electroland.service.PdfService;
 import fpoly.electroland.service.ReceiptService;
+import fpoly.electroland.service.ReceiptStatusService;
 import fpoly.electroland.service.UserService;
 
 @RestController
@@ -40,12 +49,22 @@ public class ReceiptManagementController {
     EmployeeService employeeService;
     @Autowired
     UserService userService;
-
+    @Autowired
+    ReceiptStatusService receiptStatusService;
     @Autowired
     PdfService pdfService;
 
     @Autowired
     EmailReceiptService emailService;
+  
+    @Autowired
+    TypeCustomerRepository typeCustomerRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    ConfigStoreRepository configStoreRepository;
 
     @GetMapping("/receipts")
     public List<Receipt> GetAllList() {
@@ -62,6 +81,18 @@ public class ReceiptManagementController {
             return ResponseEntity.status(404).body("Receipt not found.");
         }
         return ResponseEntity.ok(receiptDetails);
+    }
+    @GetMapping("/receipts/receiptStatus")
+    public List<ReceiptStatus>  getAllReceiptStatus() {
+            List<ReceiptStatus> receiptStatusList = receiptStatusService.getAll();
+            return receiptStatusList;
+    }
+    
+    
+    @GetMapping("/orders/details")
+    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
+        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
+        return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/receipts/date-range")
@@ -103,9 +134,37 @@ public class ReceiptManagementController {
             @PathVariable Long receiptID,
             @PathVariable Integer receiptStatusID) {
         try {
-            Integer userId = userService.getUser().getId();
+            Receipt updatedReceipt = receiptService.updateReceiptStatus(receiptID, receiptStatusID);
 
-            Receipt updatedReceipt = receiptService.updateReceiptStatus(receiptID, receiptStatusID, userId);
+            if (receiptStatusID == 3) {
+                Customer customer = updatedReceipt.getCustomer();
+                TypeCustomer typeCustomer = customer.getTypeCustomer();
+                List<Receipt> listReceipts = receiptService.getReceiptsByUser(customer);
+
+                Double totalAmount = 0.0;
+                for (Receipt receipt1 : listReceipts) {
+                    totalAmount += receipt1.getPayment().getAmount();
+                }
+
+                // Cập nhật điểm tích lũy
+                customer.setUserPoint(
+                        (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
+                                + (int) Math.round(updatedReceipt.getPayment().getAmount()
+                                        * Double.parseDouble(
+                                                configStoreRepository.findByKeyword("tranpoint").get().getValue())));
+
+                // kiểm tra điểm tích lũy
+                while (totalAmount >= typeCustomer.getLevelPoint()
+                        && typeCustomerRepository.findById(typeCustomer.getId() + 1)
+                                .isPresent()) {
+                    typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
+                    customer.setTypeCustomer(typeCustomer);
+                    customer.setUserPoint(customer.getUserPoint()
+                            + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
+                }
+
+                customerRepository.save(customer);
+            }
 
             return ResponseEntity.ok(updatedReceipt);
 
@@ -155,12 +214,6 @@ public class ReceiptManagementController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("Error sending email!");
         }
-    }
-
-    @GetMapping("/orders/details")
-    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
-        List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();
-        return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/orders/by-date")

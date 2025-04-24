@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,6 +32,10 @@ public class ForgotPassController {
 
     @Autowired
     MailerService mailerService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -62,16 +67,18 @@ public class ForgotPassController {
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
         String token = request.getToken();
         String newPassword = request.getNewPassword();
-
+    
         String email = jwtUtil.extractEmailTokenResetPasseowd(token);
         Customer customer = customerService.getCustomer(email)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-        // emp.setPassword(new BCryptPasswordEncoder().encode(newPassword));
-        customer.setPassword(newPassword);
+    
+        // ✅ Mã hóa mật khẩu
+        customer.setPassword(passwordEncoder.encode(newPassword));
         customerService.updateCustomer(customer);
-
+    
         return ResponseEntity.ok("Mật khẩu đã được cập nhật thành công.");
     }
+    
 
     @PostMapping("/updatePassword")
     public Object updatePassword(@RequestParam String email, @RequestParam String password) throws MessagingException {
@@ -104,14 +111,15 @@ public class ForgotPassController {
     public ResponseEntity<String> resetPasswordADM(@RequestBody ResetPasswordRequest request) {
         String token = request.getToken();
         String newPassword = request.getNewPassword();
-
+    
         String email = jwtUtil.extractEmailTokenResetPasseowd(token);
         Employee employee = employeeService.getEmployee(email)
                 .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-        // emp.setPassword(new BCryptPasswordEncoder().encode(newPassword));
-        employee.setPassword(newPassword);
+    
+        // ✅ Mã hóa mật khẩu
+        employee.setPassword(passwordEncoder.encode(newPassword));
         employeeService.updateEmployee((long)employee.getId(), employee, employee.getId());
-
+    
         return ResponseEntity.ok("Mật khẩu đã được cập nhật thành công.");
     }
     

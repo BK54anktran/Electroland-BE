@@ -1,17 +1,21 @@
 package fpoly.electroland.restController;
 
-import fpoly.electroland.dto.request.AdminUserDTO;
-import fpoly.electroland.service.UserService;
-import fpoly.electroland.service.EmployeeService;
-import fpoly.electroland.model.User;
-import fpoly.electroland.model.Employee;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.Optional;
+import fpoly.electroland.dto.request.AdminUserDTO;
+import fpoly.electroland.model.Employee;
+import fpoly.electroland.model.User;
+import fpoly.electroland.service.EmployeeService;
+import fpoly.electroland.service.UserService;
 
 @RestController
 @RequestMapping("/admin/info")
@@ -60,6 +64,7 @@ public class AdminUserController {
     @GetMapping("/getUserInfo")
     public AdminUserDTO getUserInfo() {
         User user = userService.getUser();
+        System.out.println("USER: " + user);
         if (user == null) {
             throw new RuntimeException("User not found");
         }

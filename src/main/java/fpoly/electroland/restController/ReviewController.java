@@ -26,13 +26,11 @@ import fpoly.electroland.service.ProductService;
 import fpoly.electroland.service.ReviewImgService;
 import fpoly.electroland.service.UserService;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-
 
 import fpoly.electroland.util.ResponseEntityUtil;
 
@@ -40,7 +38,7 @@ import fpoly.electroland.util.ResponseEntityUtil;
 public class ReviewController {
     @Autowired
     ReviewService reviewService;
-    
+
     @Autowired
     CustomerService customerService;
 
@@ -99,7 +97,6 @@ public class ReviewController {
         return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
     }
 
-    
     @PostMapping("/createReview")
     public String postMethodName(@RequestBody Map<String, Object> object) {
         Optional<Customer> customer = customerService.getCustomer(userService.getUser().getId());
@@ -124,6 +121,7 @@ public class ReviewController {
         }
 
         return null;
+        
     }
 
 }

@@ -135,7 +135,7 @@ public class ReceiptService {
         return results;
     }
 
-    public Receipt updateReceiptStatus(Long id, Integer statusId, int userId) {
+    public Receipt updateReceiptStatus(Long id, Integer statusId) {
         // Tìm hóa đơn theo ID
         Receipt existingReceipt = receiptRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Không tìm thấy hóa đơn với ID: " + id));
@@ -304,37 +304,6 @@ public class ReceiptService {
         }
         Customer customer = customerRepository.findById(userService.getUser().getId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-        TypeCustomer typeCustomer = customer.getTypeCustomer();
-        List<Receipt> listReceipts = receiptRepository.findByCustomer(customer);
-
-        Double totalAmount = 0.0;
-        for (Receipt receipt1 : listReceipts) {
-            totalAmount += receipt1.getPayment().getAmount();
-        }
-
-        // Cập nhật điểm tích lũy
-        customer.setUserPoint(
-                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
-                        + (int) Math.round(payment.getAmount()
-                                * Double.parseDouble(
-                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
-
-        // kiểm tra điểm tích lũy
-        while (totalAmount >= typeCustomer.getLevelPoint() && typeCustomerRepository.findById(typeCustomer.getId() + 1)
-                .isPresent()) {
-            typeCustomer = typeCustomerRepository.findById(typeCustomer.getId() + 1).get();
-            customer.setTypeCustomer(typeCustomer);
-            customer.setUserPoint(customer.getUserPoint()
-                    + (typeCustomer.getLevelReward() != null ? typeCustomer.getLevelReward() : 0));
-        }
-        customerRepository.save(customer);
-
-        customer.setUserPoint(
-                (customer.getUserPoint() != null ? customer.getUserPoint() : 0)
-                        + (int) Math.round(payment.getAmount()
-                                * Double.parseDouble(
-                                        configStoreRepository.findByKeyword("tranpoint").get().getValue())));
-        customerRepository.save(customer);
         return receipt;
     }
 
