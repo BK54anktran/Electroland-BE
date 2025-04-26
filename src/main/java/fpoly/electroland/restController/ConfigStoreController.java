@@ -24,7 +24,7 @@ public class ConfigStoreController {
 
     @GetMapping("/addressStore")
     public Object getAddressStore() {
-        String addressStore = configStoreService.getKey("addressStore");
+        String addressStore = configStoreService.getKey("addressStore"); // lấy giá trị key "addressStore" từ database
         addressStore = addressStore == null ? "Chưa cấu hình" : addressStore;
         return ResponseEntityUtil.ok(addressStore);
     }
@@ -32,17 +32,16 @@ public class ConfigStoreController {
     @PostMapping("/addressStore")
     public Object postAddressStore(@RequestParam Integer WardCode, @RequestParam Integer DistrictID,
             @RequestParam String addressStore) {
-        configStoreService.setKey("addressStore", addressStore);
+        configStoreService.setKey("addressStore", addressStore); // lưulưu
         configStoreService.setKey("WardCode", WardCode.toString());
         configStoreService.setKey("DistrictID", DistrictID.toString());
         return ResponseEntityUtil.ok(addressStore);
     }
 
     @GetMapping("/key")
-    public Object getKey(@RequestParam String key) {
-        String value = configStoreService.getKey(key);
-        return ResponseEntityUtil.ok(value);
-        
+    public Object getKey(@RequestParam String key) { // lấy giá trị theo keykey
+        String value = configStoreService.getKey(key); // truy vấn gtri tương ứng với keykey
+        return ResponseEntityUtil.ok(value); // trả về valuevalue
     }
 
     @PostMapping("/key")
@@ -53,5 +52,4 @@ public class ConfigStoreController {
         return ResponseEntity.ok("Lưu thành công");
 
     }
-
 }

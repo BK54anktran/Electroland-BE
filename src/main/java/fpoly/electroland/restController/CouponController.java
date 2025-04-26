@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fpoly.electroland.dto.response.ProductCouponDto;
 import fpoly.electroland.dto.response.ReceiptCouponDto;
 import fpoly.electroland.model.CustomerCoupon;
@@ -96,5 +93,4 @@ public class CouponController {
             System.out.println("sai");
         }
     }
-
 }
