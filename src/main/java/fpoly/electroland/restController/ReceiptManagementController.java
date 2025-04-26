@@ -28,6 +28,7 @@ import fpoly.electroland.dto.request.ReceiptDTO;
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptDetail;
+import fpoly.electroland.model.ReceiptStatus;
 import fpoly.electroland.model.TypeCustomer;
 import fpoly.electroland.repository.ConfigStoreRepository;
 import fpoly.electroland.repository.CustomerRepository;
@@ -36,6 +37,7 @@ import fpoly.electroland.service.EmailReceiptService;
 import fpoly.electroland.service.EmployeeService;
 import fpoly.electroland.service.PdfService;
 import fpoly.electroland.service.ReceiptService;
+import fpoly.electroland.service.ReceiptStatusService;
 import fpoly.electroland.service.UserService;
 
 @RestController
@@ -47,13 +49,14 @@ public class ReceiptManagementController {
     EmployeeService employeeService;
     @Autowired
     UserService userService;
-
+    @Autowired
+    ReceiptStatusService receiptStatusService;
     @Autowired
     PdfService pdfService;
 
     @Autowired
     EmailReceiptService emailService;
-
+  
     @Autowired
     TypeCustomerRepository typeCustomerRepository;
 
@@ -79,7 +82,13 @@ public class ReceiptManagementController {
         }
         return ResponseEntity.ok(receiptDetails);
     }
-
+    @GetMapping("/receipts/receiptStatus")
+    public List<ReceiptStatus>  getAllReceiptStatus() {
+            List<ReceiptStatus> receiptStatusList = receiptStatusService.getAll();
+            return receiptStatusList;
+    }
+    
+    
     @GetMapping("/orders/details")
     public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithDetails() {
         List<Map<String, Object>> orders = receiptService.getAllOrdersWithDetails();

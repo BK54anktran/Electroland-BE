@@ -49,6 +49,7 @@ public class UserService {
         Map<String, String> data = new HashMap<>();
         data.put("token", jwtUtil.generateToken(email, role));
         data.put("userName", username);
+        data.put("role", role);
         return ResponseEntity.ok(data);
     }
 }

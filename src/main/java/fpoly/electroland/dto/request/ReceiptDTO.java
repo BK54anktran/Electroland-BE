@@ -31,5 +31,5 @@ public class ReceiptDTO {
     public double totalPrice;
     
     public double finalPrice;
-    
+    public String paymentMethod;
 }

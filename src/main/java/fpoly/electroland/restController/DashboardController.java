@@ -40,7 +40,7 @@ public class DashboardController {
         @RequestParam(value = "date", required = false) String  CompareDateStr) {
             LocalDateTime CompareDate = null;
             if (CompareDateStr != null) {
-                CompareDate = LocalDateTime.parse(CompareDateStr + "T00:00:00");
+                CompareDate = LocalDateTime.parse(CompareDateStr + "T23:59:59");
                 System.out.println("CompareDate: " + CompareDate);
             }
         List<Object[]> salesData = receiptDetailService.getSalesDataByMonthRange(CompareDate);
@@ -53,7 +53,7 @@ public class DashboardController {
             LocalDateTime endDate = null;
             // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
             if (endDateStr != null) {
-                endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                endDate = LocalDateTime.parse(endDateStr + "T23:59:59");
                 System.out.println("CompareDate: " + endDate);
             }
         // Tạo một Map để trả về dữ liệu
@@ -97,7 +97,7 @@ public class DashboardController {
                 LocalDateTime endDate = null;
                 // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
                 if (endDateStr != null) {
-                    endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                    endDate = LocalDateTime.parse(endDateStr + "T23:59:59");
                     System.out.println("CompareDate: " + endDate);
                 }
 
@@ -114,7 +114,7 @@ public class DashboardController {
                  LocalDateTime endDate = null;
                  // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
                  if (endDateStr != null) {
-                     endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                     endDate = LocalDateTime.parse(endDateStr + "T23:59:59");
                      System.out.println("CompareDate: " + endDate);
                  }
  
@@ -129,7 +129,7 @@ public class DashboardController {
             LocalDateTime endDate = null;
             // Kiểm tra nếu endDateStr không null và chuyển thành LocalDateTime
             if (endDateStr != null) {
-                endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+                endDate = LocalDateTime.parse(endDateStr + "T23:59:59");
                 System.out.println("CompareDate: " + endDate);
             }
         // Gọi service để lấy dữ liệu
@@ -145,7 +145,7 @@ public void exportAllDashboardData(
 
     LocalDateTime endDate = null;
     if (endDateStr != null && !endDateStr.isEmpty()) {
-        endDate = LocalDateTime.parse(endDateStr + "T00:00:00");
+        endDate = LocalDateTime.parse(endDateStr + "T23:59:59");
     }
 
     try {
