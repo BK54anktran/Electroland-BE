@@ -76,7 +76,6 @@ public class DashboardController {
         response.put("donThanhCong", createStatistic("Đơn thành công", successfulOrders, "Đơn", successfulOrdersPercentChange));
         response.put("donThatBai", createStatistic("Đơn thất bại", failedOrders, "Đơn", failedOrdersPercentChange));
         response.put("soLuongKhachHang", createStatistic("Số lượng khách hàng", customerCount, "Người", customerCountPercentChange));
-
         return ResponseEntity.ok(response);
     }
 
@@ -89,6 +88,7 @@ public class DashboardController {
         statistic.put("percentChange", percentChange);
         return statistic;
     }
+
     // API để nhận ngày và trả về doanh thu theo tháng
     @GetMapping("/dashboard/getRevenueByMonth")
     public ResponseEntity<List<Object[]>> getRevenueByMonth(
@@ -103,12 +103,12 @@ public class DashboardController {
 
          // Lấy doanh thu theo tháng từ Service
     List<Object[]> revenueData = receiptDetailService.getRevenueByMonth(endDate);
-
     return ResponseEntity.ok(revenueData);
     }
+
      // API tỉ lệ đơn hàng thành công trên tổng đơn hàng từ đầu tháng đến ngày truyền vào
-     @GetMapping("/dashboard/success-rate")
-     public ResponseEntity<Double> getSuccessRate(
+    @GetMapping("/dashboard/success-rate")
+    public ResponseEntity<Double> getSuccessRate(
              @RequestParam(value = "date") String endDateStr) {
          
                  LocalDateTime endDate = null;
@@ -120,10 +120,10 @@ public class DashboardController {
  
           // Lấy doanh thu theo tháng từ Service
      Double successratedata = receiptDetailService.getSuccessRate(endDate);
- 
      return ResponseEntity.ok(successratedata);
      }
-     @GetMapping("/dashboard/payment-method-stats")
+
+    @GetMapping("/dashboard/payment-method-stats")
     public ResponseEntity<List<Object[]>> getPaymentMethodStats(
         @RequestParam(value = "date") String endDateStr) {
             LocalDateTime endDate = null;
@@ -138,8 +138,9 @@ public class DashboardController {
         // Trả về dữ liệu
         return ResponseEntity.ok(paymentStats);
     }
+
     @GetMapping("/dashboard/all-dashboard-data")
-public void exportAllDashboardData(
+    public void exportAllDashboardData(
         @RequestParam(value = "date") String endDateStr,
         HttpServletResponse response) throws IOException {
 
@@ -189,6 +190,7 @@ public void exportAllDashboardData(
             endDate,
             response
         );
+
     } catch (Exception e) {
         // Log the error with detailed information
         e.printStackTrace();
@@ -199,9 +201,6 @@ public void exportAllDashboardData(
         response.getWriter().write("Error exporting Excel file: " + e.getMessage());
     }
 }
-    
-    
-    
     
      // Helper method to get sales data map (similar to getSalesData in DashboardController)
      private Map<String, Object> getSalesDataMap(LocalDateTime endDate) {
@@ -225,8 +224,6 @@ public void exportAllDashboardData(
         response.put("donThanhCong", createStatistic("Đơn thành công", successfulOrders, "Đơn", successfulOrdersPercentChange));
         response.put("donThatBai", createStatistic("Đơn thất bại", failedOrders, "Đơn", failedOrdersPercentChange));
         response.put("soLuongKhachHang", createStatistic("Số lượng khách hàng", customerCount, "Người", customerCountPercentChange));
-
         return response;
     }
-    
 }

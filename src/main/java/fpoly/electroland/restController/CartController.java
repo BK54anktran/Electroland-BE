@@ -111,6 +111,7 @@ public class CartController {
                 cartProductAttributeService.creatCartPA(newCartProductAttribute);
                 // System.out.println(newCartProductAttribute);
             });
+
         } else {
             int quantity = cart.get().getQuantity();
             cart.get().setQuantity(quantity += 1);
@@ -118,6 +119,4 @@ public class CartController {
             // System.out.println(cart.get());
         }
     }
-
-    
 }

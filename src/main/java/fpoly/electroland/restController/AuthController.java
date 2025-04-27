@@ -129,6 +129,7 @@ public class AuthController {
         newCustomer.setStatus(true);
         String dob = request.get("dateOfBirth");
         Date dateOfBirth = null;
+
         try {
             dateOfBirth = DateUtil.formatDate(dob);
         } catch (Exception e) {

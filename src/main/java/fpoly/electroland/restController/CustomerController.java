@@ -130,6 +130,7 @@ public class CustomerController {
         customer.setPhoneNumber(phoneNumber);
         customerService.createCustomer(customer);
     }
+    
     @PostMapping("/customerPassword")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
         String oldPassword = request.get("oldPassword");
