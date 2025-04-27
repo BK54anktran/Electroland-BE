@@ -47,6 +47,7 @@ public class CategoryController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
             }
             return ResponseEntity.ok(update);
+            
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy Mã giảm giá với ID: " + id);
         } catch (Exception e) {
@@ -55,5 +56,4 @@ public class CategoryController {
                 .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
         }
     }
-
 }
