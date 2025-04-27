@@ -69,10 +69,14 @@ public class AuthController {
 
     @PostMapping("admin/login")
     public Object authenticateAdmin(@RequestBody User user) throws AuthenticationException {
-        if (!employeeService.getEmployee(user.getEmail()).isPresent())
+        if (!employeeService.getEmployee(user.getEmail()).isPresent()){
             return ResponseEntityUtil.unauthorizedError("Tài khoản không tồn tại");
+        } else if (employeeService.getEmployee(user.getEmail()).isPresent()
+                && employeeService.getEmployee(user.getEmail()).get().getStatus() == false) {
+            return ResponseEntityUtil.unauthorizedError("Tài khoản đã bị khóa");
+        }
         return userService.authentication_getData(user.getEmail(), user.getPassword());
-    }
+    }   
 
     @PostMapping("/login")
     public Object authenticate(@RequestBody User user) throws AuthenticationException {
