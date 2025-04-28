@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Receipt {
 
+public class Receipt {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -54,6 +54,7 @@ public class Receipt {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	private Customer customer;
+	
 	@Column()
 	private Boolean isRead = false;
 }
