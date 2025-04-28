@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -127,10 +128,26 @@ public class ReceiptService {
 
     public List<Receipt> searchReceipts(String searchKey) {
         List<Receipt> results = receiptRepository.findBySearchKey(searchKey);
+
+        // If searchKey contains only digits, prioritize ID and phone matches
+        if (searchKey.matches("^[0-9]+$")) {
+            List<Receipt> idMatches = results.stream()
+                    .filter(receipt -> String.valueOf(receipt.getId()).contains(searchKey))
+                    .collect(Collectors.toList());
+
+            if (!idMatches.isEmpty()) {
+                return idMatches;
+            }
+
+            return results.stream()
+                    .filter(receipt -> receipt.getPhoneReciver().contains(searchKey))
+                    .collect(Collectors.toList());
+        }
+
         return results;
     }
 
-    public Receipt updateReceiptStatus(Long id, Integer statusId) {
+    public Receipt updateReceiptStatus(Long id, Integer statusId, int userId) {
         // Tìm hóa đơn theo ID
         Receipt existingReceipt = receiptRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Không tìm thấy hóa đơn với ID: " + id));
@@ -211,6 +228,19 @@ public class ReceiptService {
             data.put("year", row[0]);
             data.put("month", row[1]);
             data.put("totalOrders", row[2]);
+            ordersData.add(data);
+        }
+        return ordersData;
+    }
+
+    public List<Map<String, Object>> getOrdersCountByDay(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = receiptRepository.countOrdersByDay(startDate, endDate);
+        List<Map<String, Object>> ordersData = new ArrayList<>();
+
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("date", row[0].toString()); // Lấy ngày (yyyy-MM-dd)
+            data.put("totalOrders", row[1]); // Tổng đơn hàng trong ngày
             ordersData.add(data);
         }
         return ordersData;

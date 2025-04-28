@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -30,7 +31,7 @@ public class BirthdayService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Scheduled(cron = "0 31 19 * * ?") // Chạy vào mỗi ngày lúc 9h sáng
+    @Scheduled(cron = "0 54 17 * * ?") // Chạy vào mỗi ngày lúc 9h sáng
     public void checkBirthdaysAndSendEmail() throws MessagingException, IOException {
         List<Customer> customers = customerService.getAll();
         LocalDate today = LocalDate.now();
@@ -92,8 +93,9 @@ public class BirthdayService {
         helper.setText(emailContent, true);
     
         // Đính kèm hình ảnh vào email (sử dụng cid để nhúng ảnh vào email)
-        File birthdayImage = new File("C:\\Users\\ducdu\\Downloads\\Xanh dương và Hồng Dễ thương & Kỳ quặc Hình minh hoạ Lời chúc mừng Chung Sinh nhật Bài đăng Facebook.png"); // Đường dẫn tới hình ảnh bánh sinh nhật
-        helper.addInline("birthdayImage", birthdayImage);  // 'birthdayImage' là cid được sử dụng trong HTML để nhúng ảnh
+
+      File birthdayImage = new ClassPathResource("static/images/birthday.png").getFile();
+        helper.addInline("birthdayImage", birthdayImage);
     
         // Gửi email
         mailSender.send(message);

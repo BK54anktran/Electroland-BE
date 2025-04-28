@@ -244,12 +244,12 @@ public class ReceiptManagementController {
         List<Object[]> ordersByPaymentMethod = receiptService.countOrdersByPaymentMethodWithinRange(startDate, endDate);
         List<Map<String, Object>> ordersByMonth = receiptService.getOrdersCountByMonth(startDate, endDate);
 
+
         Map<String, Object> statistics = new HashMap<>();
         statistics.put("totalOrders", totalOrders);
         statistics.put("ordersByStatus", ordersByStatus);
         statistics.put("ordersByPaymentMethod", ordersByPaymentMethod);
         statistics.put("ordersByMonth", ordersByMonth);
-
         return ResponseEntity.ok(statistics);
     }
 
@@ -298,5 +298,20 @@ public class ReceiptManagementController {
 
         return ResponseEntity.ok(ordersData);
     }
+    @GetMapping("/orders/count/daily")
+    public ResponseEntity<List<Map<String, Object>>> getOrdersCountByDay(
+        @RequestParam(required = false) String startDateStr,
+        @RequestParam(required = false) String endDateStr) {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    LocalDateTime startDate = startDateStr != null ? LocalDate.parse(startDateStr, formatter).atStartOfDay() : null;
+    LocalDateTime endDate = endDateStr != null ? LocalDate.parse(endDateStr, formatter).atTime(23, 59, 59) : null;
+
+    List<Map<String, Object>> ordersData = receiptService.getOrdersCountByDay(startDate, endDate);
+
+    return ResponseEntity.ok(ordersData);
+}
+
+
 
 }

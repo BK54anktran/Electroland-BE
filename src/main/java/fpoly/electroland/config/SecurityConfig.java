@@ -28,7 +28,39 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        // Set<String> permitAllEndpoint = Set.of()
+        // Set<String> permitAllEndpoint = Set.of(
+        // "/google-login", "/login", "/product", "/employees", "/employees/save",
+        // "/employees/update/**", "/register", "/admin/customer",
+        // "/admin/customer/save",
+        // "/admin/customer/update/**",
+        // "/admin/customer/search/**", "/admin/customer/filter/**",
+        // "/admin/customer/search-filter/**",
+        // "/admin/review",
+        // "/admin/review/**", "admin/review/sreachs/**", "/admin/review/{id}/status",
+        // "/orders/count",
+        // "/admin/orders/status", "/admin/orders/revenue/monthly",
+        // "/admin/orders/payment-methods",
+        // "/admin/orders/processing-time", "/admin/orders/refund-rate",
+        // "/admin/orders/by-date",
+        // "/admin/orders/statistics", "/product/statistics", "/admin/orders/revenue",
+        // "/product/top10-revenue",
+        // "/orders/count/monthly", "/admin/reset-password", "/receiptCoupon",
+        // "/receiptCoupon/search",
+        // "/receiptCoupon/{id}", "/receiptCoupon/new", "/receiptCoupon/update/{id}",
+        // "/receiptCoupon/delete/{id}",
+        // "/info/getUserInfo", "/info/save", "/changePassword", "/admin/product",
+        // "/admin/product/search",
+        // "/discountProduct", "/discountProduct/newDiscountProduct",
+        // "/discountProduct/search",
+        // "/discountProduct/update/{id}", "/discountOrder/newDiscountOrder",
+        // "/discountOrder/updateDiscountOrder/{id}",
+        // "/discountOrder/deleteDiscountOrder/{id}", "/productCoupon/delete/{id}",
+        // "/action", "/action/search",
+        // "/customer/save", "/customer/update/**", "/customer/search/**",
+        // "/customer/filter/**",
+        // "/customer/search-filter/**",
+        // "/getUserInfo", "/updateInfo");
+
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
@@ -56,7 +88,6 @@ public class SecurityConfig {
         config.setAllowCredentials(true); // Nếu sử dụng cookie hoặc xác thực
         config.addAllowedOrigin("http://localhost:3000"); // URL React app
         config.addAllowedOrigin("https://bk54anktran.web.app");
-        config.addAllowedOrigin("https://electroland-fpl.web.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...
         source.registerCorsConfiguration("/**", config);
