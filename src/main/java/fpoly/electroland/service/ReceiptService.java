@@ -1,8 +1,6 @@
 package fpoly.electroland.service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,14 +17,12 @@ import fpoly.electroland.model.Cart;
 import fpoly.electroland.model.CartProductAttribute;
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.CustomerCoupon;
-import fpoly.electroland.model.Employee;
 import fpoly.electroland.model.Payment;
 import fpoly.electroland.model.ProductCoupon;
 import fpoly.electroland.model.Receipt;
 import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.model.ReceiptDetail;
 import fpoly.electroland.model.ReceiptStatus;
-import fpoly.electroland.model.TypeCustomer;
 import fpoly.electroland.repository.ActionRepository;
 import fpoly.electroland.repository.CartProductAttributeRepository;
 import fpoly.electroland.repository.CartRepository;
@@ -38,13 +34,12 @@ import fpoly.electroland.repository.PaymentRepository;
 import fpoly.electroland.repository.PaymentStatusRepository;
 import fpoly.electroland.repository.PaymentTypeRepository;
 import fpoly.electroland.repository.ProductCouponRepository;
+import fpoly.electroland.repository.ProductRepository;
 import fpoly.electroland.repository.ReceiptCouponRepository;
 import fpoly.electroland.repository.ReceiptDetailRepository;
 import fpoly.electroland.repository.ReceiptRepository;
 import fpoly.electroland.repository.ReceiptStatusRepository;
 import fpoly.electroland.repository.TypeCustomerRepository;
-import fpoly.electroland.repository.ProductRepository;
-
 import fpoly.electroland.util.CreateAction;
 
 @Service

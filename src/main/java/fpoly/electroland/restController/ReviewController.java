@@ -93,8 +93,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
-    public Object getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
-        return ResponseEntityUtil.ok(reviewService.getReviewsByproductId(id));
+    public List<Review> getMethodName(@RequestParam(name = "id", required = false, defaultValue = "0") int id) {
+       return reviewService.getReviewsByProductIdAndStatus(id, true);
     }
 
     @PostMapping("/createReview")
@@ -112,6 +112,7 @@ public class ReviewController {
         review.setContent(content);
         review.setCustomer(customer.get());
         review.setProduct(product);
+        review.setStatus(true);
         Review newReview = reviewService.creatReview(review);
 
         // // Lấy danh sách imgs

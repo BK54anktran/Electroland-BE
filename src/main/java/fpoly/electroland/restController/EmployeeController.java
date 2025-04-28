@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fpoly.electroland.model.Employee;
 import fpoly.electroland.service.EmployeeService;
 import fpoly.electroland.service.UserService;
+import fpoly.electroland.util.ResponseEntityUtil;
 
 @RestController
 @RequestMapping("/admin")
@@ -37,8 +38,7 @@ public class EmployeeController {
     @PostMapping("/employees/save")
     public ResponseEntity<?> createEmployee(@RequestBody Employee employee) throws Exception {
         if (employeeService.existsByEmail(employee.getEmail())) {
-            // Nếu email đã tồn tại, trả về lỗi 400 với thông báo chi tiết
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email đã tồn tại trong hệ thống");
+            return ResponseEntityUtil.unauthorizedError("Email đã tồn tại trong hệ thống");
         }
         Integer userId = userService.getUser().getId();
         Employee createdEmployee = employeeService.createEmployee(employee, userId);
@@ -51,7 +51,7 @@ public class EmployeeController {
             Employee updatedEmployee = employeeService.updateEmployee(id, employee, userId);
             return ResponseEntity.ok(updatedEmployee);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy nhân viên với ID: " + id);
+            return ResponseEntityUtil.unauthorizedError("Không tìm thấy nhân viên với ID: " + id);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

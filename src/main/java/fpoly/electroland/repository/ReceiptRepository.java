@@ -1,7 +1,5 @@
 package fpoly.electroland.repository;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import fpoly.electroland.model.Customer;
 import fpoly.electroland.model.Receipt;
-import fpoly.electroland.model.ReceiptDetail;
 
 @Repository
 public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
