@@ -11,20 +11,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Action {
 
+public class Action {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
 	int id;
-
 	String tableName;
-
 	String action;
-
 	int idRecord;
-
 	Date time = new Date();
-
+	
 	@Column(columnDefinition = "nvarchar(max)")
 	String oldValue;
 
