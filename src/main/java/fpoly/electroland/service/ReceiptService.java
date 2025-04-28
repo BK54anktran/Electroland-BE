@@ -236,6 +236,19 @@ public class ReceiptService {
         }
         return ordersData;
     }
+    public List<Map<String, Object>> getOrdersCountByDay(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Object[]> results = receiptRepository.countOrdersByDay(startDate, endDate);
+        List<Map<String, Object>> ordersData = new ArrayList<>();
+    
+        for (Object[] row : results) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("date", row[0].toString());   // Lấy ngày (yyyy-MM-dd)
+            data.put("totalOrders", row[1]);       // Tổng đơn hàng trong ngày
+            ordersData.add(data);
+        }
+        return ordersData;
+    }
+    
 
     public Map<String, Long> countOrdersByStatusWithinRange(LocalDateTime startDate, LocalDateTime endDate) {
         List<Object[]> results = receiptRepository.countOrdersByStatusWithinRange(startDate, endDate);

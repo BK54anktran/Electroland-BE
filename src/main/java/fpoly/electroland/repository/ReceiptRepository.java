@@ -69,7 +69,6 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         @Query("SELECT pt.name, COUNT(r) FROM Receipt r JOIN r.payment p JOIN p.paymentType pt GROUP BY pt.name")
         List<Object[]> countOrdersByPaymentMethod();
 
-
         @Query("SELECT COALESCE(SUM(p.amount), 0) FROM Receipt r " +
                         "JOIN r.payment p " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
@@ -95,6 +94,15 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
                         "GROUP BY YEAR(r.receiptDate), MONTH(r.receiptDate) " +
                         "ORDER BY YEAR(r.receiptDate), MONTH(r.receiptDate)")
         List<Object[]> countOrdersByMonth(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
+        @Query("SELECT DATE(r.receiptDate), COUNT(r) " +
+                        "FROM Receipt r " +
+                        "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
+                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +
+                        "GROUP BY DATE(r.receiptDate) " +
+                        "ORDER BY DATE(r.receiptDate)")
+        List<Object[]> countOrdersByDay(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
         @Query("SELECT r.receiptStatus.name, COUNT(r) FROM Receipt r " +
