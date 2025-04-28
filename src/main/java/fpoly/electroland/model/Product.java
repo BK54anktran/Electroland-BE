@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
 
+public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
