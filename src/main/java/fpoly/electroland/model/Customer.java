@@ -14,6 +14,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Customer {
 
 	public Customer(String fullName,
@@ -70,5 +71,4 @@ public class Customer {
 
 	@Column
 	Integer userPoint;
-
 }
