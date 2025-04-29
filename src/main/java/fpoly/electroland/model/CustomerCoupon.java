@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerCoupon {
 
+public class CustomerCoupon {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
@@ -36,5 +36,4 @@ public class CustomerCoupon {
 	@ManyToOne
 	@JoinColumn(name = "idProductCoupon")
 	ProductCoupon productCoupon;
-
 }

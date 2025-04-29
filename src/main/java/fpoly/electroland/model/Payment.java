@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Payment {
 
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
@@ -28,7 +28,6 @@ public class Payment {
     private Date successTime;
 
     Double amount;
-
     String content;
 
     @ManyToOne

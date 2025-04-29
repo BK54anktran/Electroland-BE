@@ -11,14 +11,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ReceiptDetail {
 
+public class ReceiptDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
 	private int quantity;
-
 	private Double price;
 
 	@Column(columnDefinition = "NVARCHAR(225)")

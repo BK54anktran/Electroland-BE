@@ -28,7 +28,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
-        // Set<String> permitAllEndpoint = Set.of()
+
         Set<String> AdminEndpoint = Set.of("/admin"); // Để tạm để test
         // jwtRequestFilter.setEndpoints(permitAllEndpoint);
         http
@@ -55,7 +55,6 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true); // Nếu sử dụng cookie hoặc xác thực
         config.addAllowedOrigin("http://localhost:3000"); // URL React app
-        config.addAllowedOrigin("https://bk54anktran.web.app");
         config.addAllowedOrigin("https://electroland-fpl.web.app");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, ...

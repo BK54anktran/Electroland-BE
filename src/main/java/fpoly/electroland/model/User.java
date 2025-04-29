@@ -15,8 +15,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class User implements UserDetails {
 
+public class User implements UserDetails {
     private int id;
     private String name;
     private String email;

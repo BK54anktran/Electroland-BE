@@ -94,6 +94,15 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Integer> {
         List<Object[]> countOrdersByMonth(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
+        @Query("SELECT DATE(r.receiptDate), COUNT(r) " +
+                        "FROM Receipt r " +
+                        "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
+                        "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +
+                        "GROUP BY DATE(r.receiptDate) " +
+                        "ORDER BY DATE(r.receiptDate)")
+        List<Object[]> countOrdersByDay(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
+
         @Query("SELECT r.receiptStatus.name, COUNT(r) FROM Receipt r " +
                         "WHERE (:startDate IS NULL OR r.receiptDate >= :startDate) " +
                         "AND (:endDate IS NULL OR r.receiptDate <= :endDate) " +

@@ -11,8 +11,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Category {
 
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;

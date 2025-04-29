@@ -53,4 +53,8 @@ public class ReviewService {
         return false;
     }
 
+    public List<Review> getReviewsByProductIdAndStatus(int productId, boolean status) {
+        return reviewRepository.findByProductIdAndStatus(productId, status);
+    }
+
 }
