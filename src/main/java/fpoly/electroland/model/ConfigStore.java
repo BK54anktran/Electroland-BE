@@ -11,8 +11,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ConfigStore {
 
+public class ConfigStore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;

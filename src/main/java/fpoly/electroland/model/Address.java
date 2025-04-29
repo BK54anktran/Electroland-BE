@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Address {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+
 	private int id;
-
 	private Integer provinceID;
-
 	private Integer districtID;
 
 	@Column(columnDefinition = "NVARCHAR(10)")
@@ -42,5 +42,4 @@ public class Address {
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	private Customer customer;
-
 }

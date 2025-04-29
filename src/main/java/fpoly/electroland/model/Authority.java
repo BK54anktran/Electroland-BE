@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Authority {
 
+public class Authority {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;

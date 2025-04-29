@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Attribute {
 
+public class Attribute {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
@@ -32,5 +32,4 @@ public class Attribute {
 		return "Attribute [name=" + name + ", AttributePrice=" + AttributePrice + ", productAttribute="
 				+ productAttribute + "]";
 	}
-
 }

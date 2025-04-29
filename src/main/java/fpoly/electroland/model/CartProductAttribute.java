@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
-public class CartProductAttribute {
 
+public class CartProductAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
@@ -32,6 +32,4 @@ public class CartProductAttribute {
         return "CartProductAttribute [id=" + id + ", cart=" + cart.id + " attribute="
                 + attribute.id + "]";
     }
-
-    
 }

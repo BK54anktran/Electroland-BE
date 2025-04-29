@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Mail {
     String from = "FPT Polytecnich<anhtnps37214@fpt.edu.vn>";
     String to;
@@ -26,5 +27,4 @@ public class Mail {
         this.subject = subject;
         this.body = body;
     }
-
 }
