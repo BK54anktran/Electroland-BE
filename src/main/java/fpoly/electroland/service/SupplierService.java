@@ -60,4 +60,9 @@ public class SupplierService {
     public Supplier findSupplierById(int id){
         return supplierRepository.findById(id).get();
     }
+
+    public List<Supplier> getSuppliersByCategory(Integer categoryId) {
+        return supplierRepository.findSuppliersByCategoryId(categoryId);
+    }
+    
 }

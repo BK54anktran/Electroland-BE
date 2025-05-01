@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import fpoly.electroland.model.ReceiptCoupon;
 import fpoly.electroland.model.Supplier;
 import fpoly.electroland.service.SupplierService;
 import fpoly.electroland.service.UserService;
@@ -18,6 +17,7 @@ import fpoly.electroland.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -58,4 +58,13 @@ public class SupplierController {
                 .body("Lỗi khi cập nhật mã giảm giá: " + e.getMessage());
         }
     }
+
+    @GetMapping("/suppliers")
+    public ResponseEntity<List<Supplier>> getSuppliersByCategory(@RequestParam(required = false) Integer categoryId) {
+        if (categoryId != null) {
+            return ResponseEntity.ok(supplierService.getSuppliersByCategory(categoryId));
+        }
+        return ResponseEntity.ok(supplierService.getAllSuppliers());
+    }
+
 }

@@ -93,4 +93,14 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
         List<Object[]> getTop10ProductRevenue(@Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate);
 
+        @Query(value = """
+                SELECT TOP 10 p.id, p.name
+                        FROM Product p
+                        JOIN ReceiptDetail rd ON p.id = rd.idProduct
+                        JOIN Receipt r ON r.id = rd.idReceipt
+                        WHERE p.idCategory = :categoryId
+                        GROUP BY p.id, p.name
+                        ORDER BY SUM(rd.quantity) DESC
+                """, nativeQuery = true)
+        List<Object[]> findTop10ProductIdAndNameByCategory(@Param("categoryId") int categoryId);
 }
