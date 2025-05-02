@@ -55,7 +55,7 @@ public class UserDetailsService_Custom implements UserDetailsService {
                         .collect(Collectors.toList());
                 return new User(userInfo.get().getId(), userInfo.get().getFullName(),
                         userInfo.get().getEmail(),
-                        userInfo.get().getPassword(), "EMPLOYEE",
+                        userInfo.get().getPassword(), userInfo.get().getRole(), // Lấy quyền
                         authorities);
             }
             throw new UsernameNotFoundException(email);
