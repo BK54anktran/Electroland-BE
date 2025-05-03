@@ -272,7 +272,7 @@ public class ReceiptService {
         Payment payment = paymentRepository.save(new Payment(0, receiptRequest.getCreateTime(), new Date(),
                 receiptRequest.getTotalAmount(), receiptRequest.getContent(),
                 paymentTypeRepository.findById(receiptRequest.getPaymentType()).get(),
-                paymentStatusRepository.findById(receiptRequest.getPaymentType()).get(), receiptRequest.getFee()));
+                paymentStatusRepository.findById(1).get(), receiptRequest.getFee()));
 
         // Tạo hóa đơn
         Receipt receipt = receiptRepository.save(receiptRequestToReceipt(receiptRequest, payment));
