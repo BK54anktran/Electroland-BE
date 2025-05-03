@@ -77,7 +77,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
                         "FROM Receipt r " +
                         "JOIN r.payment p " +
                         "JOIN p.paymentType pt " +
-                        "WHERE r.receiptDate BETWEEN :startDate AND :endDate " +
+                        "WHERE r.receiptStatus.id = 3 AND r.receiptDate BETWEEN :startDate AND :endDate " +
                         "GROUP BY pt.name " +
                         "ORDER BY totalOrders DESC")
         List<Object[]> getPaymentMethodStats(@Param("startDate") LocalDateTime startDate,
