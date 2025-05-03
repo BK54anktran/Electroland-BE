@@ -56,6 +56,12 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
                         "AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
         Long getFailedOrders(@Param("startDate") LocalDateTime startOfMonth, @Param("endDate") LocalDateTime endDate);
 
+        // Truy vấn số lượng đơn hàng đang xử lí từ đầu tháng đến ngày truyền vào
+        @Query("SELECT COUNT(r) FROM Receipt r " +
+                        "WHERE (r.receiptStatus.id = 1 OR r.receiptStatus.id = 2) " +
+                        "AND r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
+        Long getProcessingOrders(@Param("startDate") LocalDateTime startOfMonth, @Param("endDate") LocalDateTime endDate);
+
         // Truy vấn số lượng khách hàng từ đầu tháng đến ngày truyền vào
         @Query("SELECT COUNT(DISTINCT r.customer) FROM Receipt r " +
                         "WHERE r.receiptDate >= :startDate AND r.receiptDate <= :endDate")
@@ -77,7 +83,7 @@ public interface ReceiptDetailRepository extends JpaRepository<ReceiptDetail, In
                         "FROM Receipt r " +
                         "JOIN r.payment p " +
                         "JOIN p.paymentType pt " +
-                        "WHERE r.receiptStatus.id = 3 AND r.receiptDate BETWEEN :startDate AND :endDate " +
+                        "WHERE r.receiptDate BETWEEN :startDate AND :endDate " +
                         "GROUP BY pt.name " +
                         "ORDER BY totalOrders DESC")
         List<Object[]> getPaymentMethodStats(@Param("startDate") LocalDateTime startDate,

@@ -63,18 +63,21 @@ public class DashboardController {
         Long revenue = receiptDetailService.getRevenue(endDate);
         Long successfulOrders = receiptDetailService.getSuccessfulOrders(endDate);
         Long failedOrders = receiptDetailService.getFailedOrders(endDate);
+        Long processingOrders = receiptDetailService.getProcessingOrders(endDate);
         Long customerCount = receiptDetailService.getCustomerCount(endDate);
         
         // Tính toán phần trăm thay đổi so với tháng trước
         Double revenuePercentChange = receiptDetailService.getRevenuePercentChange(endDate);
         Double successfulOrdersPercentChange = receiptDetailService.getSuccessfulOrdersPercentChange(endDate);
         Double failedOrdersPercentChange = receiptDetailService.getFailedOrdersPercentChange(endDate);
+        Double processingOrdersPercentChange = receiptDetailService.getProcessingOrdersPercentChange(endDate);
         Double customerCountPercentChange = receiptDetailService.getCustomerCountPercentChange(endDate);
         
         // Thêm dữ liệu vào response
         response.put("doanhSo", createStatistic("Doanh số", revenue, "VND", revenuePercentChange));
         response.put("donThanhCong", createStatistic("Đơn thành công", successfulOrders, "Đơn", successfulOrdersPercentChange));
         response.put("donThatBai", createStatistic("Đơn thất bại", failedOrders, "Đơn", failedOrdersPercentChange));
+        response.put("donDangXuLy", createStatistic("Đơn đang xử lý", processingOrders, "Đơn", processingOrdersPercentChange));
         response.put("soLuongKhachHang", createStatistic("Số lượng khách hàng", customerCount, "Người", customerCountPercentChange));
         return ResponseEntity.ok(response);
     }
@@ -165,16 +168,19 @@ public class DashboardController {
         if (salesDataByMonth == null) salesDataByMonth = List.of();
 
         // Check each statistic in salesData to ensure no null values
-        for (String key : new String[]{"doanhSo", "donThanhCong", "donThatBai", "soLuongKhachHang"}) {
+        for (String key : new String[]{"doanhSo", "donThanhCong", "donThatBai", "donDangXuLy", "soLuongKhachHang"}) {
             if (!salesData.containsKey(key) || salesData.get(key) == null) {
                 salesData.put(key, createStatistic(key, 0L, "", 0.0));
             } else {
                 // Ensure no null values inside each statistic map
-                @SuppressWarnings("unchecked")
-                Map<String, Object> stat = (Map<String, Object>) salesData.get(key);
-                if (stat.get("value") == null) stat.put("value", 0L);
-                if (stat.get("percentChange") == null) stat.put("percentChange", 0.0);
-                if (stat.get("suffix") == null) stat.put("suffix", "");
+                Object statObj = salesData.get(key);
+                if (statObj instanceof Map<?, ?>) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> stat = (Map<String, Object>) statObj;
+                    stat.putIfAbsent("value", 0L);
+                    stat.putIfAbsent("percentChange", 0.0);
+                    stat.putIfAbsent("suffix", "");
+                }
             }
         }
 
@@ -211,18 +217,21 @@ public class DashboardController {
         Long revenue = receiptDetailService.getRevenue(endDate);
         Long successfulOrders = receiptDetailService.getSuccessfulOrders(endDate);
         Long failedOrders = receiptDetailService.getFailedOrders(endDate);
+        Long processingOrders = receiptDetailService.getProcessingOrders(endDate);
         Long customerCount = receiptDetailService.getCustomerCount(endDate);
         
         // Tính toán phần trăm thay đổi so với tháng trước
         Double revenuePercentChange = receiptDetailService.getRevenuePercentChange(endDate);
         Double successfulOrdersPercentChange = receiptDetailService.getSuccessfulOrdersPercentChange(endDate);
         Double failedOrdersPercentChange = receiptDetailService.getFailedOrdersPercentChange(endDate);
+        Double processingOrdersPercentChange = receiptDetailService.getProcessingOrdersPercentChange(endDate);
         Double customerCountPercentChange = receiptDetailService.getCustomerCountPercentChange(endDate);
         
         // Thêm dữ liệu vào response
         response.put("doanhSo", createStatistic("Doanh số", revenue, "VND", revenuePercentChange));
         response.put("donThanhCong", createStatistic("Đơn thành công", successfulOrders, "Đơn", successfulOrdersPercentChange));
         response.put("donThatBai", createStatistic("Đơn thất bại", failedOrders, "Đơn", failedOrdersPercentChange));
+        response.put("donDangXuLy", createStatistic("Đơn đang xử lý", processingOrders, "Đơn", processingOrdersPercentChange));
         response.put("soLuongKhachHang", createStatistic("Số lượng khách hàng", customerCount, "Người", customerCountPercentChange));
         return response;
     }

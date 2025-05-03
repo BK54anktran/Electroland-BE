@@ -66,7 +66,12 @@ public class ReceiptDetailService {
         LocalDateTime startDate = LocalDateTime.of(endDate.getYear(), endDate.getMonth(), 1, 0, 0, 0, 0);
         return receiptDetailRepository.getFailedOrders(startDate, endDate);
     }
-
+    // Lấy số lượng đơn đang xử lí từ đầu tháng đến ngày truyền vào (endDate)
+    public Long getProcessingOrders(LocalDateTime endDate) {
+        // Tính toán ngày đầu tháng
+        LocalDateTime startDate = LocalDateTime.of(endDate.getYear(), endDate.getMonth(), 1, 0, 0, 0, 0);
+        return receiptDetailRepository.getProcessingOrders(startDate, endDate);
+    }
     // Lấy số lượng khách hàng từ đầu tháng đến ngày truyền vào (endDate)
     public Long getCustomerCount(LocalDateTime endDate) {
         // Tính toán ngày đầu tháng
@@ -158,7 +163,33 @@ public class ReceiptDetailService {
         BigDecimal roundedPercentChange = new BigDecimal(percentChange * 100).setScale(2, RoundingMode.HALF_UP);
         return roundedPercentChange.doubleValue();
     }
-
+    // Tính phần trăm thay đổi số đơn đang xử lí so với tháng trước
+    public Double getProcessingOrdersPercentChange(LocalDateTime endDate) {
+            // Tính toán startDate và endDate cho tháng hiện tại
+            LocalDateTime startDateCurrentMonth = LocalDateTime.of(endDate.getYear(), endDate.getMonth(), 1, 0, 0, 0, 0);
+            LocalDateTime endDateCurrentMonth = endDate;
+    
+            // Tính toán startDate và endDate cho tháng trước
+            LocalDateTime startDatePreviousMonth = startDateCurrentMonth.minusMonths(1);
+            LocalDateTime endDatePreviousMonth = endDateCurrentMonth.minusMonths(1);
+    
+            // Lấy số lượng đơn thất bại của tháng hiện tại và tháng trước
+            Long ProcessingOrdersCurrentMonth = receiptDetailRepository.getProcessingOrders(startDateCurrentMonth,
+                    endDateCurrentMonth);
+            System.out.println("failedOrdersCurrentMonth: " + ProcessingOrdersCurrentMonth);
+    
+            Long ProcessingOrdersPreviousMonth = receiptDetailRepository.getProcessingOrders(startDatePreviousMonth,
+                    endDatePreviousMonth);
+            System.out.println("failedOrdersCurrentMonth: " + ProcessingOrdersPreviousMonth);
+            // Tính phần trăm thay đổi
+            if (ProcessingOrdersPreviousMonth == 0) {
+                return ProcessingOrdersCurrentMonth > 0 ? 100.0 : 0.0; // Tránh chia cho 0
+            }
+            double percentChange = ((double) ProcessingOrdersCurrentMonth - ProcessingOrdersPreviousMonth)
+                    / ProcessingOrdersPreviousMonth;
+            BigDecimal roundedPercentChange = new BigDecimal(percentChange * 100).setScale(2, RoundingMode.HALF_UP);
+            return roundedPercentChange.doubleValue();
+        }
     // Tính phần trăm thay đổi số khách hàng so với tháng trước
     public Double getCustomerCountPercentChange(LocalDateTime endDate) {
         // Tính toán startDate và endDate cho tháng hiện tại
