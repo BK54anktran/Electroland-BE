@@ -85,18 +85,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Xác thực nếu username không null và chưa được xác thực trước đó
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = null;
-            if ("EMPLOYEE".equals(role)) {
-                Optional<Employee> userInfo = employeeService.getEmployee(username);
-                if (userInfo.isPresent()) {
-                    List<GrantedAuthority> authorities = new ArrayList<>();
-                    authorities.add(new SimpleGrantedAuthority("Employee"));
-                    userDetails = new User(userInfo.get().getId(), userInfo.get().getFullName(),
-                            userInfo.get().getEmail(),
-                            userInfo.get().getPassword(), "EMPLOYEE",
-                            authorities);
-                } else
-                    throw new UsernameNotFoundException(username);
-            } else if ("CUSTOMER".equals(role)) {
+
+            if ("CUSTOMER".equals(role)) {
                 Optional<Customer> customer = customerService.getCustomer(username);
                 if (customer.isPresent()) {
                     List<GrantedAuthority> authorities = new ArrayList<>();
@@ -104,6 +94,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     userDetails = new User(customer.get().getId(), customer.get().getFullName(),
                             customer.get().getEmail(),
                             customer.get().getPassword(), "CUSTOMER", authorities);
+                } else
+                    throw new UsernameNotFoundException(username);
+            } else {
+                Optional<Employee> userInfo = employeeService.getEmployee(username);
+                if (userInfo.isPresent()) {
+                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    authorities.add(new SimpleGrantedAuthority(userInfo.get().getRole()));
+                    userDetails = new User(userInfo.get().getId(), userInfo.get().getFullName(),
+                            userInfo.get().getEmail(),
+                            userInfo.get().getPassword(), userInfo.get().getRole(),
+                            authorities);
                 } else
                     throw new UsernameNotFoundException(username);
             }
